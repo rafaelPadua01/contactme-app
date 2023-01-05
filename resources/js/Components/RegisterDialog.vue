@@ -7,10 +7,19 @@
                 </template>
                 <template v-slot:default="{ isActive }" v-model="dialogForm" v-if="dialogForm == true">
                     <v-card>
-                        <v-toolbar class="bg-blue-lighten-1 text-white dark" dark>Cadastro de usuário</v-toolbar>
+                        <v-toolbar class="bg-pink-accent-1 text-white dark" dark>
+                            <v-toolbar-title>
+                                Cadastro de usuário
+                            </v-toolbar-title>
+                            <template v-slot:append>
+                                <v-btn icon @click="dialogForm = false">
+                                    <v-icon>mdi-close</v-icon>
+                                </v-btn>
+                            </template>
+                        </v-toolbar>
                         <v-card-text>
                             <div class="text-h2" cols="auto">
-                                <v-tabs>
+                                <v-tabs color="pink-accent-3">
                                     <v-tab @click="tabCliente = true">
                                         Cliente
                                     </v-tab>
@@ -25,42 +34,34 @@
                                             <v-form ref="form" v-model="valid">
                                                 <v-container>
                                                     <v-row>
-                                                        <v-col cols="12" md="4">
+                                                        <v-col cols="12" md="6">
                                                             <v-text-field v-model="name" :rules="nameRules"
-                                                                :counter="10" label="name" required>
+                                                                :counter="100" label="Seu nome:" required>
                                                             </v-text-field>
                                                         </v-col>
-                                                      <!--  <v-col cols="12" md="4">
+                                                        <!--  <v-col cols="12" md="4">
                                                             <v-text-field v-model="lastname" :rules="lastnameRules"
                                                                 :counter="10" label="last name" required></v-text-field>
                                                         </v-col> -->
-                                                        <v-col cols="12" md="4">
+                                                        <v-col cols="12" md="6">
                                                             <v-text-field v-model="email" :rules="emailRules"
-                                                                :counter="10" label="Email" required></v-text-field>
+                                                                :counter="10" label="Seu E-mail"
+                                                                required></v-text-field>
                                                         </v-col>
-                                                    </v-row> 
-                                                    
+                                                    </v-row>
+
                                                     <v-row>
-                                                        <v-col cols="12" md="4">
-                                                        <v-text-field 
-                                                            v-model="password"
-                                                            :rules="passwordRules"
-                                                            :counter="10"
-                                                            type="password"
-                                                            label="Password"
-                                                            required>
-                                                        </v-text-field>
-                                                    </v-col>
-                                                    <v-col cols="12" md="4">
-                                                        <v-text-field
-                                                            v-model="confirmPassword"
-                                                            :rules="confirmPasswordRules" 
-                                                            :counter="10"
-                                                            type="password"
-                                                            label="confirmPassword" 
-                                                            required>
-                                                        </v-text-field>
-                                                    </v-col>
+                                                        <v-col cols="12" md="6">
+                                                            <v-text-field v-model="password" :rules="passwordRules"
+                                                                :counter="10" type="password" label="Password" required>
+                                                            </v-text-field>
+                                                        </v-col>
+                                                        <v-col cols="12" md="6">
+                                                            <v-text-field v-model="confirmPassword"
+                                                                :rules="confirmPasswordRules" :counter="10"
+                                                                type="password" label="confirmPassword" required>
+                                                            </v-text-field>
+                                                        </v-col>
                                                     </v-row>
                                                 </v-container>
                                             </v-form>
@@ -77,13 +78,19 @@
                             </div>
                         </v-card-text>
                         <v-card-actions class="justify-end">
-                            <v-btn color="success" class="mr-4" @click="validate">
-                                Cadastrar
-                            </v-btn>
-                            <v-btn color="error" class="mr-4" @click='reset'>
-                                Limpar
-                            </v-btn>
-                            <v-btn text @click="isActive.value = false">Close</v-btn>
+                            <v-btn-group>
+                                <v-btn color="pink-accent-4" class="mr-4" @click="validate" link>
+                                    <v-icon>mdi-content-save-plus</v-icon> Cadastrar
+                                </v-btn>
+                                <v-btn color="pink-accent-4" @click='reset' link>
+                                    <v-icon>mdi-backspace-outline</v-icon> Limpar
+                                </v-btn>
+                                <v-btn color="pink-accent-4" link @click="isActive.value = false">
+                                    <v-icon>mdi-close</v-icon>
+                                    Close
+                                </v-btn>
+                            </v-btn-group>
+
                         </v-card-actions>
                     </v-card>
                 </template>
@@ -119,40 +126,40 @@ export default {
         confirmPasswordRules: [
             v => !!v || 'Confirm password is required',
             v => (v && v.length <= 10) || 'Confirm password must be like password',
-           
+
         ]
     }),
     methods: {
         async validate() {
             const { valid } = await this.$refs.form.validate();
-            
-            if(this.password != this.confirmPassword)
-            {
+
+            if (this.password != this.confirmPassword) {
                 alert('Os campos senha e confirmação de senha devem ser iguais');
                 return false;
             }
-            if(!valid){
+            if (!valid) {
+
                 alert('Os campos devem ser preenchidos corretamente')
                 return false;
             }
+
             else return this.save();
         },
         reset() {
             this.$refs.form.reset();
         },
         save() {
-            axios.post('/create/' + this.email + '/' + this.name + '/' + this.password )
-            .then((response) => {
-                alert(response.data);
-                window.location = '/dashboard';
-               this.dialogForm = false;
-                return true;
-            })
-            .catch((response) => {
-                alert('Error:' + response);
-                return false;
-            });
-           // alert(this.email + this.password + this.confirmPassword +'Sentimos muito o Cadastro de usuario ainda não está finalizado');
+            axios.post('/create/' + this.email + '/' + this.name + '/' + this.password)
+                .then((response) => {
+                    alert(response.data);
+                    window.location = '/dashboard';
+                    this.dialogForm = false;
+                    return true;
+                })
+                .catch((response) => {
+                    alert('Error:' + response);
+                    return false;
+                });
         }
     }
 }
