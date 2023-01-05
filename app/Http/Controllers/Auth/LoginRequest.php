@@ -13,15 +13,26 @@
             //    'email' => $request->email,
             //    'password' => $request->password,
             //]);
-           
-            if(Auth::attempt(['email' => $request->email,'password' => $request->password])){
+            
+           try{
+             if(Auth::attempt(['email' => $request->email,'password' => $request->password])){
                 $request->session()->regenerate();
                 $response = 'Usuario logado com sucesso';
                 return  \Response::json($response); //redirect()->inteded('dashboard');
-            }
+             }
+             else{
+                $response = 'Usuario não encontrado';
+                return \Response::json($response);
+             }
+            
+           }
+           catch(Exception $e){
+                return \Response::json($e);
+           }
+            
 
-            return back()->withErrors([
-                'email' => 'The provided credentials do not match our records.',
-            ])->onlyInput('email');
+            //return back()->withErrors([
+            //    'email' => 'The provided credentials do not match our records.',
+            //])->onlyInput('email');
         }
     }

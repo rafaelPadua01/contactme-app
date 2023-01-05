@@ -1,105 +1,97 @@
 <template>
-    <v-parallax 
-                    src="storage/images/box-braids.jpg"
-                    width="100%" 
-                    height="1500px"
-                    max-width="100%"
-                    max-height="1000" 
-                    gradient="to top right, rgba(19, 84, 122, .4), rgba(128, 208, 199, .4)">
-                    <v-container>
-                        <v-card 
-                            max-width="550"
-                            max-height="600"
-                            class="float-right"
-                            style="margin-top: 10%"
-                            elevation="12"
-                        >
+    <v-parallax src="storage/images/box-braids.jpg" width="100%" height="900px" max-width="100%" max-height="900"
+        style="margin-top: -25px;">
+        <v-container>
 
-                            <v-form ref="form">
-                                <v-toolbar class="bg-light-blue darken-4 text-white dark" >
-                                    <p justify="justify-center">
-                                       <strong>Selecione uma das opções de login</strong>
-                                    </p>
-                                </v-toolbar>
-                                <hr>
-                                <v-container>
+            <v-card class="float-right" style="margin-top: 10%" elevation="12" draggable>
+
+                <v-toolbar class="bg-pink-accent-3 darken-4 text-white dark">
+                    <v-toolbar-title>
+                        Selecione uma das opções de login
+                    </v-toolbar-title>
+
+                </v-toolbar>
+
+                <v-card-text>
+
+                    <v-form ref="form">
+                        <v-tabs class="bg-pink-accent-1" color="pink-accent-4">
+                            <v-tab @click="tabCliente = true">
+                                Cliente
+                            </v-tab>
+                            <v-tab @click="tabEmpresa = true, tabCliente = false">
+                                Empresa
+                            </v-tab>
+                        </v-tabs>
+                        <v-divider></v-divider>
+                        <v-spacer></v-spacer>
+
+                        <v-window v-model="tabCliente" v-if="tabCliente">
+                            <div>
+                                <v-alert v-if="error" @click="this.error = false" type="error" color="pink-accent-2">
+                                    {{ error }}
                                     
-                                    <v-card-text>
-                                        <div cols="auto">
-                                            <v-tabs>
-                                                <v-tab @click="tabCliente = true">
-                                                    Cliente
-                                                </v-tab>
-                                                <v-tab @click="tabEmpresa = true, tabCliente = false">
-                                                    Empresa
-                                                </v-tab>
-                                            </v-tabs>
-                                            <v-window v-model="tabCliente" v-if="tabCliente">
-                                                <v-row>
-                                                    <v-col>
-                                                        <v-text-field v-model="email" :rules="emailRules" label="E-mail"
-                                                            type="email" required>
-                                                        </v-text-field>
-                                                    </v-col>
-                                                </v-row>
+                                </v-alert>
+                            </div>
+                            <v-row>
+                                <v-col>
+                                    <v-text-field v-model="email" :rules="emailRules" label="E-mail" type="email"
+                                        required>
+                                    </v-text-field>
+                                </v-col>
+                            </v-row>
 
-                                                <v-row>
-                                                    <v-col>
+                            <v-row>
+                                <v-col>
+                                    <v-text-field v-model="password" :rules="passwordRules" :counter="8" label="Senha"
+                                        type="password" @keyup.enter="login" required>
 
-                                                        <v-text-field 
-                                                            v-model="password"
-                                                            :rules="passwordRules"
-                                                            :counter="8"
-                                                            label="Senha"
-                                                            type="password"
-                                                            @keyup.enter="login"
-                                                            required
-                                                        >
+                                    </v-text-field>
+                                </v-col>
+                            </v-row>
 
-                                                        </v-text-field>
-                                                    </v-col>
-                                                </v-row>
+                            <v-row>
+                                <v-col>
+                                    <v-btn size="x-small" color="pink-accent-4" variant="plain"
+                                        class="float-right bg-pink-lighten-3">
+                                        Esqueci a Senha
+                                    </v-btn>
+                                </v-col>
+                            </v-row>
+                            <br>
 
-                                                <v-row>
-                                                    <v-col>
-                                                        <v-btn size="x-small" color="primary" variant="plain"
-                                                            class="float-right">
-                                                            Esqueci a Senha
-                                                        </v-btn>
-                                                    </v-col>
-                                                </v-row>
-                                                <br>
+                            <v-row>
+                                <v-col>
+                                    <v-card-actions class="justify-center">
+                                        <v-btn-group>
+                                            <v-btn v-model="send" color="pink-accent-4" @click="login" elevation="3"
+                                                text>
+                                                <v-icon>mdi-login</v-icon>
 
-                                                <v-row>
-                                                    <v-col>
-                                                        <v-card-actions class="justify-center">
-                                                            <v-btn 
-                                                                v-model="send"
-                                                                color="success"
-                                                                @click="login"
-                                                                elevation="3">
-                                                                Login
-                                                            </v-btn>
-                                                            <v-btn color="error" @click="reset" elevation="3">
-                                                                Limpar
-                                                            </v-btn>
-                                                        </v-card-actions>
-                                                    </v-col>
-                                                </v-row>
-                                            </v-window>
+                                            </v-btn>
+                                            <v-btn color="pink-accent-4" @click="reset" elevation="3" text>
+                                                <v-icon>mdi-backspace</v-icon>
 
-                                            <v-window v-model="tabEmpresa" v-if="tabEmpresa && tabCliente == false">
-                                                Formulário de login da empresa
-                                            </v-window>
-                                        </div>
-                                    </v-card-text>
+                                            </v-btn>
+                                        </v-btn-group>
 
-                                </v-container>
-                            </v-form>
-                        </v-card>
-                    </v-container>
-                </v-parallax>
-           
+                                    </v-card-actions>
+                                </v-col>
+                            </v-row>
+                        </v-window>
+
+                        <v-window v-model="tabEmpresa" v-if="tabEmpresa && tabCliente == false">
+                            Formulário de login da empresa
+                        </v-window>
+
+
+
+                    </v-form>
+                </v-card-text>
+            </v-card>
+        </v-container>
+    </v-parallax>
+
 </template>
 
 <script>
@@ -119,13 +111,26 @@ export default {
             v => !!v || 'Password is required',
             v => (v && v.length <= 10) || 'Password must be less than 8 characters',
         ],
+        error: false,
     }),
     methods: {
         login() {
-            axios.post('/login/' + this.email + '/' + this.password)
+            let data = { email: this.email, password: this.password }
+            if (!this.email || !this.password) {
+                alert('preencha todos os campos');
+                return;
+            }
+            axios.post('/login', data)
+                
                 .then((response) => {
+                    if (response.data == "Usuario n\u00e3o encontrado") {
+                        this.error = response.data;
+                        return false;
+                    }
                     window.location = '/dashboard';
-                }).catch((response) => {
+                })
+                .catch((response) => {
+                    this.error = response;
                     alert('Error' + response);
                 });
 

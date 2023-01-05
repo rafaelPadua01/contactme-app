@@ -46,7 +46,7 @@ Route::get('/dashboard', function () {
 require __DIR__.'/auth.php';
 
 //Rotas de login logoff
-Route::post('/login/{email}/{password}', [LoginRequest::class, 'authenticate'])->name('authenticate');
+Route::post('/login', [LoginRequest::class, 'authenticate'])->name('authenticate');
 Route::post('/logout', [LogoutRequest::class, 'logout'])->name('logout')->middleware('auth');
 
 //Rotas de usuario comum
