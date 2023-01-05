@@ -14,7 +14,15 @@ export default defineConfig({
                     base: null,
                     includeAbsolute: false,
                 },
+                "scripts": {
+                    "preview": "vite preview --port 8080"
+                  }
             },
         }),
     ],
+    build: {
+        chunkSizeWarningLimit: 1600,
+        
+    },
+    
 });
