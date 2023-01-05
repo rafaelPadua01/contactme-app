@@ -1,6 +1,5 @@
 <template>
-    <v-parallax src="storage/images/smille.jpeg" width="100%" height="1500px" max-height="1500"
-            gradient="to top right, rgba(19, 84, 122, .4), rgba(128, 208, 199, .4) ">
+    <v-parallax src="storage/images/smille.jpeg" width="100%" height="1500px" max-height="1500"  style="margin-top: -25px;">
             <v-row aling="left" justify="center">
                 <v-col class="text-center text-white" cols="12">
                     <v-hover>
