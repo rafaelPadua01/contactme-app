@@ -1,9 +1,8 @@
 <template>
-  
-        <meta name="csrf-token" content="{{ csrf_token() }}" />
+   <meta name="csrf-token" content="{{ csrf_token() }}" />
     <v-card class="mx-auto" elevation="12">
         <v-layout ref="app">
-            <v-navigation-drawer v-if="auth_user != 0" permanent v-model="drawer" rail expand-on-hover
+           <v-navigation-drawer v-if="auth_user != 0 && auth_user.type == 'default'" permanent v-model="drawer" rail expand-on-hover
                 class="text-white dark" gradient="to top right, rgba(19, 84, 122, .8), rgba(128, 208, 199, .8) "
                 image="https://picsum.photos/1920/1080?random">
                 <v-list>
@@ -62,14 +61,7 @@
                             <vilist-item-title>Agenda</vilist-item-title>
                         </template>
                     </v-list-item>
-                    <v-list-item v-for="[icon, text] in links" :key="icon" link>
-                        <template v-slot:prepend>
-                            <v-icon>{{ icon }}</v-icon>
-                        </template>
-
-                        <v-list-item-title>{{ text }}</v-list-item-title>
-                    </v-list-item>
-
+                    
                     <v-list-item link to="/profileClient">
                         <template v-slot:prepend>
                             <v-icon>mdi-account</v-icon>
@@ -87,7 +79,91 @@
                 </v-list>
             </v-navigation-drawer>
 
-            <v-app-bar color="grey-lighten-2 text-white" name="app-bar" class="justify-center"
+            <v-navigation-drawer v-if="auth_user != 0 && auth_user.type == 'enterprise'" permanent v-model="drawer" rail expand-on-hover
+                gradient="to top right, rgba(19, 84, 122, .8), rgba(128, 208, 199, .8) "
+                >
+                <v-list>
+                    <v-list-item :prepend-avatar="'storage/avatars/' + this.profile_img.image_name"
+                        :title="auth_user.name + profile_user.lastname" 
+                        :subtitle="auth_user.email"
+                        v-on:click="this.dialog = true" 
+                        nav
+                    >
+
+                    </v-list-item>
+
+                    <v-divider></v-divider>
+
+                    <v-list-item link to="/dashboardEnt">
+                        <template v-slot:prepend>
+                            <v-icon>mdi-view-dashboard-outline</v-icon>
+                        </template>
+
+                        <v-list-item-title>Dashboard</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item link to="/profileProf">
+                        <template v-slot:prepend>
+                            <v-icon>mdi-inbox-arrow-down</v-icon>
+                        </template>
+
+                        <v-list-item-title>See my profile</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item link to="/searchService">
+                        <template v-slot:prepend>
+                            <v-icon>mdi-magnify</v-icon>
+                            <vilist-item-title>search service</vilist-item-title>
+                        </template>
+                    </v-list-item>
+                    <v-list-item link :to="'/galery/' + auth_user.id">
+                        <template v-slot:prepend>
+                            <v-icon>mdi-folder-multiple-image</v-icon>
+                            <vilist-item-title>Galery</vilist-item-title>
+                        </template>
+                    </v-list-item>
+                    <v-list-item link :to="'/followers/' + auth_user.id">
+                        <template v-slot:prepend>
+                            <v-icon>mdi-account-group</v-icon>
+                            <vilist-item-title>Followers</vilist-item-title>
+                        </template>
+                    </v-list-item>
+                    <v-list-item link :to="'/chats/' + auth_user.id">
+                        <template v-slot:prepend>
+                            <v-icon>mdi-send</v-icon>
+                            <vilist-item-title>Messages</vilist-item-title>
+                        </template>
+                    </v-list-item>
+                    <v-list-item link :to="'/appointment_book/' + auth_user.id">
+                        <template v-slot:prepend>
+                            <v-icon>mdi-notebook-plus</v-icon>
+                            <vilist-item-title>Agenda</vilist-item-title>
+                        </template>
+                    </v-list-item>
+                    
+                    <v-list-item link to="/#/">
+                        <template v-slot:prepend>
+                            <v-icon>mdi-wrench-cog</v-icon>
+                            Settings
+                        </template>
+
+                    </v-list-item>
+                    <v-list-item link to="/profileClient">
+                        <template v-slot:prepend>
+                            <v-icon>mdi-account</v-icon>
+                            Profile
+                        </template>
+
+                    </v-list-item>
+                    <v-list-item link>
+                        <template v-slot:prepend>
+                            <v-icon>mdi-logout</v-icon>
+                        </template>
+
+                        <v-list-item-title @click="logout()">Logout</v-list-item-title>
+                    </v-list-item>
+                </v-list>
+            </v-navigation-drawer>
+
+            <v-app-bar v-if="auth_user.type == 'default'" color="grey-lighten-2 text-white" name="app-bar" class="justify-center"
                 image="https://picsum.photos/1920/1080?random">
                 <template v-slot:image>
                     <v-img>
@@ -142,6 +218,54 @@
                         <v-btn to="/profileRequired">buscar</v-btn>
                     </template>
                 </v-col>-->
+                
+
+                <v-btn icon>
+                    <v-icon>mdi-dots-vertical</v-icon>
+                </v-btn>
+
+            </v-app-bar>
+            
+            <v-app-bar v-if="auth_user.type == 'enterprise'" color="grey-lighten-2 text-white" name="app-bar" class="justify-center"
+            >
+                <template v-slot:image>
+                    <v-img>
+                    </v-img>
+                </template>
+
+                <template v-slot:prepend>
+                    <v-btn v-if="auth_user" icon>
+                        <v-icon @click="drawer = !drawer">mdi-hamburger</v-icon>
+                    </v-btn>
+                    <v-app-bar-nav-icon icon="mdi-home" to="/">
+
+                    </v-app-bar-nav-icon>
+                    <v-btn icon to="/dashboardEnt" v-if="auth_user">
+                        <v-icon>mdi-view-dashboard-outline</v-icon>
+                    </v-btn>
+
+                </template>
+
+                <v-app-bar-title>TiTulo</v-app-bar-title>
+
+                <v-spacer></v-spacer>
+
+                <v-btn icon to="/login" v-if="(auth_user.length == 0)">
+                    <v-icon>mdi-login</v-icon>
+
+                </v-btn>
+
+                <v-btn icon to="/logout" v-else @click="logout">
+                    <v-icon>mdi-logout</v-icon>
+                </v-btn>
+
+
+                <div class="d-flex justify-center align-center w-100" id="title_name">
+
+                    <v-btn @click="print('app-bar')" transition="scroll-y-transition" v-if="(auth_user)">
+                        {{ auth_user.name }} {{ profile_user.lastname }}
+                    </v-btn>
+                </div>
                 
 
                 <v-btn icon>
@@ -272,9 +396,6 @@ export default {
         drawer: true,
         rail: true,
         layout: null,
-        links: [
-            ['mdi-delete', 'Trash'],
-        ],
         auth_user: [],
         profile_user: [],
         profile_img: [],

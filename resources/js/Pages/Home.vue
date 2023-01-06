@@ -22,8 +22,6 @@
                                 <div class="my-6" style="">
                                     <RegisterDialog />
                                 </div>
-
-
                                 <v-spacer></v-spacer>
 
                             </v-card-text>
