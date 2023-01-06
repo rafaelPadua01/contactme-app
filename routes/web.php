@@ -19,6 +19,7 @@ use App\Http\Controllers\Message\ChatsController;
 use App\Http\Controllers\Message\MessagesController;
 use App\Http\Controllers\AppointmentBook\AppointmentBookController;
 use App\Http\Controllers\Service\ServicesController;
+use App\Http\Controllers\Enterprise\Auth\RegisterEnterpriseController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -43,6 +44,10 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/dashboardEnt', function () {
+    return Inertia::render('./Enterprise/dashboardEnt');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
 require __DIR__.'/auth.php';
 
 //Rotas de login logoff
@@ -54,6 +59,7 @@ Route::get('/user', function(){
    return \Auth::user();
 })->middleware('auth');
 Route::post('/create/{email}/{name}/{password}', [RegisterUser::class, 'insert'])->name('create');
+
 
 //rota insert profile usuario comum
 Route::get('/profile', [ProfileController::class, 'index'])->name('index')->middleware('auth');
@@ -123,4 +129,5 @@ Route::post('/appointments/{id}', [AppointmentBookController::class, 'save'])->n
 Route::post('/appointments/update/{id}', [AppointmentBookController::class, 'update'])->name('update');
 Route::post('/appointments/delete/{id}', [AppointmentBookController::class, 'delete'])->name('delete');
 
-
+//Rotas de empresas
+Route::post('/enterprise/create', [RegisterEnterpriseController::class , 'create'])->name('create');

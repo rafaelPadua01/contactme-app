@@ -26,6 +26,7 @@
             'name' => $name,
             'email' => $email,
             'password' => $password,
+            'type' => 'default',
         ]);
         $response = 'Cadastrado com sucesso';
         event(new Registered($user));

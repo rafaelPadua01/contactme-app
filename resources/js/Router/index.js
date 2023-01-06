@@ -14,6 +14,7 @@ import Followers from '../Pages/Profile/Followers.vue';
 import Chats from '../Pages/Message/Chats.vue';
 import Messages from '../Pages/Message/Messages.vue';
 import AppointmentBook from '../Pages/AppointmentBook/AppointmentBook.vue';
+import DashboardEnt from '../Pages/Enterprise/DashboardEnt.vue';
 
 const routes = [
     {
@@ -85,6 +86,11 @@ const routes = [
         path: '/appointment_book/:id',
         name: 'appointment',
         component: AppointmentBook
+    },
+    {
+        path: '/dashboardEnt',
+        name: 'dashboardEnt',
+        component: DashboardEnt
     },
     {
         path: '/app',

@@ -375,8 +375,8 @@ export default {
                 cidade: this.profile_user.cidade,
                 bairro: this.profile_user.bairro,
                 endereco: this.profile_user.endereco,
-                t_residencial: this.profile_user.residencial,
-                t_celular: this.profile_user.celular,
+                t_residencial: this.profile_user.t_residencial,
+                t_celular: this.profile_user.t_celular,
                 sexo: this.profile_use,
             }
             axios.post('/createProfile/' + this.auth_user.id, data,

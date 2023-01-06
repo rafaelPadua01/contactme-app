@@ -17,7 +17,6 @@ class ProfileController extends Controller
     //    $this->profile = $profile;
     //}
     public function index(){
-       
       $profile_user = ProfileUser::where('user_id', '=', \Auth::id())->first();
       return \Response::json($profile_user);
     }
@@ -51,7 +50,17 @@ class ProfileController extends Controller
                         }
                         else{
                             
-                            $insert_profile = ProfileUser::create($data);
+                            $insert_profile = ProfileUser::create([
+                                'lastname' => $request->lastname, 
+                                'uf' => implode('-', $request->uf),
+                                'cidade' => $request->cidade,
+                                'bairro' => $request->bairro,
+                                'endereco' => $request->endereco,
+                                't_residencial' => $request->t_residencial,
+                                't_celular' => $request->t_celular,
+                                'sexo' => $request->sexo,
+                                'user_id' => \Auth::id(),
+                            ]);
                             return \Response::json($data);
                         }
                     }

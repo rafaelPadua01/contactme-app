@@ -1,6 +1,5 @@
 <template>
     <v-app style="margin-top: -1%" max-height="1500">
-        
         <v-main>
              <v-container class="py-8" fluid>
                 <v-row>
@@ -45,6 +44,7 @@ import axios from 'axios';
 export default {
     
     data: () => ({
+        drawer: true,
         cards: ['Today', 'Yesterday'],
         auth_user: '',
         profile_user: [],
@@ -61,18 +61,40 @@ export default {
                 })
         },
         profile() {
-            axios.get('/profile')
+            axios.get(`/profile`)
             .then((response) => {
                 return this.profile_user = response.data;
             })
             .catch((response) => {
                 return response;
             });
+        },
+         ProfileImg() {
+            axios.get('/profileImg')
+                .then((response) => {
+                    this.profile_img = response.data;
+                    return this.profile_img;
+                })
+                .catch((response) => {
+                    return alert(response);
+                })
+        },
+        logout() {
+            axios.post('/logout')
+                .then((response) => {
+                    window.location = '/login';
+                    return true;
+                })
+                .catch((response) => {
+                    alert('Erro' + response);
+                    return false;
+                });
         }
     },
     created() {
         this.user();
         this.profile();
+        this.ProfileImg();
     }
 
 }

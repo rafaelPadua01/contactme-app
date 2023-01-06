@@ -32,6 +32,15 @@
                                     <v-card flat>
                                         <v-card-text>
                                             <v-form ref="form" v-model="valid">
+                                                <div>
+                                                    <v-alert type="error" v-if="this.error">
+                                                        {{ error }}
+                                                    </v-alert>
+                                                    <v-alert type="success" v-if="this.success"
+                                                        @click="this.redirect()">
+                                                        Cadastrado com sucesso
+                                                    </v-alert>
+                                                </div>
                                                 <v-container>
                                                     <v-row>
                                                         <v-col cols="12" md="6">
@@ -39,10 +48,6 @@
                                                                 :counter="100" label="Seu nome:" required>
                                                             </v-text-field>
                                                         </v-col>
-                                                        <!--  <v-col cols="12" md="4">
-                                                            <v-text-field v-model="lastname" :rules="lastnameRules"
-                                                                :counter="10" label="last name" required></v-text-field>
-                                                        </v-col> -->
                                                         <v-col cols="12" md="6">
                                                             <v-text-field v-model="email" :rules="emailRules"
                                                                 :counter="10" label="Seu E-mail"
@@ -63,6 +68,23 @@
                                                             </v-text-field>
                                                         </v-col>
                                                     </v-row>
+                                                    <v-row>
+                                                        <v-col class="text-center">
+                                                            <v-btn-group>
+                                                                <v-btn color="pink-accent-4" @click="validate" link>
+                                                                    <v-icon>mdi-content-save-plus</v-icon>
+                                                                </v-btn>
+                                                                <v-btn color="pink-accent-4" @click='reset' link>
+                                                                    <v-icon>mdi-backspace</v-icon>
+                                                                </v-btn>
+                                                                <v-btn color="pink-accent-4" link
+                                                                    @click="isActive.value = false">
+                                                                    <v-icon>mdi-close</v-icon>
+
+                                                                </v-btn>
+                                                            </v-btn-group>
+                                                        </v-col>
+                                                    </v-row>
                                                 </v-container>
                                             </v-form>
                                         </v-card-text>
@@ -71,27 +93,62 @@
                                 <v-window v-model="tabEmpresa" v-if="tabEmpresa && tabCliente == false">
                                     <v-card flat>
                                         <v-card-text>
-                                            Formulário de Cadastro de empresa
+                                            <v-form ref="formEmp" v-model="valid">
+                                                <div>
+                                                    <v-alert type="error" v-if="this.error">
+                                                        {{ error }}
+                                                    </v-alert>
+                                                    <v-alert type="success" v-if="this.success"
+                                                        @click="this.redirect()">
+                                                        Cadastrado com sucesso
+                                                    </v-alert>
+                                                </div>
+                                                <v-row>
+                                                    <v-col>
+                                                        <v-text-field v-model="nameEmp" label="Nome da Empresa"
+                                                            :rules="ruleNameEmp" type="text"></v-text-field>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <v-text-field v-model="emailEmp" label="Email da Empresa"
+                                                            :rules="ruleEmailEmp" type="email"></v-text-field>
+                                                    </v-col>
+                                                </v-row>
+
+                                                <v-row>
+                                                    <v-col class="d-flex">
+                                                        <v-text-field v-model="passwordEmp" label="password"
+                                                            :rules="rulePasswordEmp" type="password"></v-text-field>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <v-text-field v-model="confirmPasswordEmp"
+                                                            label="confirmPassword" :rules="ruleConfirmPassEmp"
+                                                            type="password"></v-text-field>
+                                                    </v-col>
+                                                </v-row>
+
+                                                <v-row>
+                                                    <v-col class="text-center">
+                                                        <v-btn-group>
+                                                            <v-btn class="bg-pink-accent-4" link @click="validateEmp">
+                                                                <v-icon>mdi-content-save-plus</v-icon>
+                                                            </v-btn>
+                                                            <v-btn class="bg-pink-accent-4" link
+                                                                @click="this.$refs.formEmp.reset()">
+                                                                <v-icon>mdi-backspace</v-icon>
+                                                            </v-btn>
+                                                            <v-btn class="bg-pink-accent-4" link
+                                                                @click="isActive.value = false">
+                                                                <v-icon>mdi-close</v-icon>
+                                                            </v-btn>
+                                                        </v-btn-group>
+                                                    </v-col>
+                                                </v-row>
+                                            </v-form>
                                         </v-card-text>
                                     </v-card>
                                 </v-window>
                             </div>
                         </v-card-text>
-                        <v-card-actions class="justify-end">
-                            <v-btn-group>
-                                <v-btn color="pink-accent-4" class="mr-4" @click="validate" link>
-                                    <v-icon>mdi-content-save-plus</v-icon> Cadastrar
-                                </v-btn>
-                                <v-btn color="pink-accent-4" @click='reset' link>
-                                    <v-icon>mdi-backspace-outline</v-icon> Limpar
-                                </v-btn>
-                                <v-btn color="pink-accent-4" link @click="isActive.value = false">
-                                    <v-icon>mdi-close</v-icon>
-                                    Close
-                                </v-btn>
-                            </v-btn-group>
-
-                        </v-card-actions>
                     </v-card>
                 </template>
             </v-dialog>
@@ -108,6 +165,8 @@ export default {
         tabCliente: true,
         tabEmpresa: false,
         name: '',
+        error: false,
+        success: false,
         nameRules: [
             v => !!v || 'Name is required',
             v => (v && v.length <= 50) || 'Name must be less than 10 characters',
@@ -127,7 +186,27 @@ export default {
             v => !!v || 'Confirm password is required',
             v => (v && v.length <= 10) || 'Confirm password must be like password',
 
-        ]
+        ],
+        nameEmp: '',
+        ruleNameEmp: [
+            v => !!v || 'Name enterprise is required',
+            v => (v && v.length <= 50) || 'Name must be last than 10 characters',
+        ],
+        emailEmp: '',
+        ruleEmailEmp: [
+            v => !!v || 'E-mail enterprise is required',
+            v => /.+@.+\..+/.test(v) || 'E-mail enterprise is required',
+        ],
+        passwordEmp: '',
+        rulePasswordEmp: [
+            v => !!v || 'Password enterprise is required',
+            v => (v && v.length <= 10) || 'Password must be less than 8 characters',
+        ],
+        confirmPasswordEmp: '',
+        ruleConfirmPassEmp: [
+            v => !!v || 'Confirm password is required',
+            v => (v && v.length <= 10) || 'Confirm password enterprise is required',
+        ],
     }),
     methods: {
         async validate() {
@@ -145,21 +224,61 @@ export default {
 
             else return this.save();
         },
+        async validateEmp() {
+            const { valid } = await this.$refs.formEmp.validate();
+
+            if (this.passwordEmp != this.confirmPasswordEmp) {
+                alert('Os Campos senha e confirmação de senha devem ser iguais');
+                return false;
+            }
+            if (!valid) {
+                alert('Os campos devem ser preenchidos corretamente');
+                return false;
+            }
+            else return this.saveEmp();
+        },
         reset() {
             this.$refs.form.reset();
         },
         save() {
             axios.post('/create/' + this.email + '/' + this.name + '/' + this.password)
                 .then((response) => {
-                    alert(response.data);
-                    window.location = '/dashboard';
-                    this.dialogForm = false;
+                    //  window.location = '/dashboard';
+                    //  this.dialogForm = false;
+                    this.success = response.data;
+
+                    return setTimeout(() => {
+                        window.location = '/dashboard';
+                        this.dialogForm = false;
+                    }, 1000)
+                })
+                .catch((response) => {
+                    this.error = response;
+                    return false;
+                });
+        },
+        saveEmp() {
+            let data = {
+                nameEmp: this.nameEmp,
+                emailEmp: this.emailEmp,
+                passwordEmp: this.passwordEmp,
+                confirmPasswordEmp: this.confirmPasswordEmp,
+            }
+            axios.post('/enterprise/create', data)
+                .then((response) => {
+                    this.success = response.data;
                     return true;
                 })
                 .catch((response) => {
-                    alert('Error:' + response);
-                    return false;
+                    return this.error = response;
                 });
+            return this.redirect();
+        },
+        redirect() {
+            return setTimeout(() => {
+                window.location = '/dashboardEnt';
+                this.dialogForm = false;
+            }, 1000)
         }
     }
 }
