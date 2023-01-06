@@ -18,7 +18,7 @@ class ProfileProfController extends Controller{
     }
     public function save(Request $request, $id){
         $data = $request->all();
-        $profile_prof_user = ProfileProfs::find($id);
+        $profile_prof_user = ProfileProfs::where('user_id', '=', $id)->first();
         $prof = $request->profissao;
         $t_experiencia = $request->tempo_experiencia;
         $lastjob = $request->lastjob;
@@ -48,7 +48,7 @@ class ProfileProfController extends Controller{
             try{
                 $update_profile_prof = ProfileProfs::where('user_id', '=', $id)->update($data);
                 if($update_profile_prof){
-                   return \Response::json([$data]); 
+                   return \Response::json($data); 
                 }
             }       
             catch(Exception $e){

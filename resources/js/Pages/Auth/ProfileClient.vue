@@ -2,28 +2,56 @@
     <v-app style="margin-top: -1%">
         <v-main>
             <v-card>
+                <div class="text-center">
+                    <v-alert type="error" v-if="this.error">
+                        {{ error }}
+                    </v-alert>
+
+                    <v-alert type="success" v-if="this.success" @click="this.success = false">
+                        Perfil atualizado com sucesso
+                    </v-alert>
+                    <v-spacer></v-spacer>
+                    <v-divider></v-divider>
+
+                </div>
                 <v-container class="py-8" fluid>
                     <p><strong>Informações Pessoais:</strong></p>
+
                     <v-form ref="form" enctype="multipart/form-data">
                         <v-expansion-panels>
                             <v-expansion-panel>
+
                                 <v-expansion-panel-title>Pessoal</v-expansion-panel-title>
+
                                 <v-expansion-panel-text>
                                     <v-row>
-                                        <v-col class="d-flex" cols="12" sm="6">
+                                        <v-col>
+
                                             <v-card>
-                                                <v-avatar color="grey" size="150" rounded="0">
-                                                    <v-img cover :src="'storage/avatars/' + profile_img.image_name">
 
-                                                    </v-img>
-                                                    <v-file-input v-model="file" accept="image/*"
-                                                        prepend-icon="mdi-paperclip" v-on:change="handleFileUpload()">
-                                                    </v-file-input>
+
+                                                <v-avatar v-if="profile_img" style="width: 25%;" color="grey" size="200"
+                                                    rounded="0">
+
+                                                    <v-hover v-slot="{ isHovering, props }">
+                                                        <v-img cover :src="'storage/avatars/' + profile_img.image_name"
+                                                            v-bind="props">
+
+                                                            <v-file-input v-model="file" accept="image/*"
+                                                                prepend-icon="mdi-paperclip"
+                                                                v-on:change="handleFileUpload()"
+                                                                label="Upload profile image">
+                                                            </v-file-input>
+                                                            <v-overlay :model-value="isHovering" contained scrim="grey"
+                                                                class="align-center justify-center">
+                                                                <v-btn link color="primary">
+                                                                    Remover
+                                                                </v-btn>
+                                                            </v-overlay>
+
+                                                        </v-img>
+                                                    </v-hover>
                                                 </v-avatar>
-
-                                                <v-card-actions>
-                                                    <v-btn color="secondary" @click="uploadImg()">upload</v-btn>
-                                                </v-card-actions>
                                             </v-card>
                                         </v-col>
                                     </v-row>
@@ -71,9 +99,9 @@
                             </v-expansion-panel>
                         </v-expansion-panels>
                         <v-expansion-panels>
-                           
+
                             <v-expansion-panel>
-                                <v-expansion-panel-title> 
+                                <v-expansion-panel-title>
                                     Endereço
                                 </v-expansion-panel-title>
                                 <v-expansion-panel-text>
@@ -156,7 +184,8 @@
                                 <v-expansion-panel-text>
                                     <v-row>
                                         <v-col class="d-flex" cols="12" sm="6">
-                                            <v-select v-model="professional_profile.profissao" label="Profissão"
+                                            <v-select v-model="professional_profile.profissao"
+                                                :label="'Profissão:' + professional_profile.profissao"
                                                 :items="['Trancista', 'Manicure', 'Cabeleleira']" color="pink-accent-4">
                                             </v-select>
                                         </v-col>
@@ -169,7 +198,8 @@
                                     </v-row>
                                     <v-row>
                                         <v-col class="d-flex" cols="12" sm="6">
-                                            <v-text-field v-model="professional_profile.lastjob" type="text" label="Ultimo emprego"
+                                            <v-text-field v-model="professional_profile.lastjob" type="text"
+                                                label="Ultimo emprego"
                                                 placeholder="Entre com o nome da ultima empresa em que trabalhou"
                                                 color="pink-accent-4">
 
@@ -185,41 +215,31 @@
                                         <v-expansion-panel-text>
                                             <v-row>
                                                 <v-col class="d-flex" cols="12" sm="6">
-                                                    <v-select  v-model="professional_profile.especialidades"
+                                                    <v-select v-model="professional_profile.especialidades"
                                                         :items="['Tranças Nagô', 'Box-Braids', 'Twister-Braids', 'Pintura e decoração de unhas', 'Cortes']"
                                                         label="especialidades" color="pink-accent-4" multiple
                                                         hint="Escolha suas especialidades" persistent-hint></v-select>
                                                 </v-col>
                                             </v-row>
                                             <v-row>
-                                                <v-col
-                                                    class="d-flex"
-                                                    cols="12"
-                                                    sm="6"
-                                                >
-                                                    <v-chip
-                                                        class="ma-2"
-                                                        color="pink-accent-4"
-                                                        outlined
+                                                <v-col class="d-flex" cols="12" sm="6">
+                                                    <v-chip class="ma-2" color="pink-accent-4" outlined
                                                         v-for="(p_pr_especialidade, index) in professional_profile.especialidades"
-                                                        close
-                                                        @click="removeChip(p_pr_especialidade, index)"
-                                                       
-                                                    >   
+                                                        close @click="removeChip(p_pr_especialidade, index)">
                                                         <v-icon left>
                                                             mdi-fire
                                                         </v-icon>
-                                                        {{p_pr_especialidade}}
+                                                        {{ p_pr_especialidade }}
                                                     </v-chip>
-                                                    
-                                                   
+
+
                                                 </v-col>
                                             </v-row>
 
                                             <v-row>
                                                 <v-col class="d-flex" cols="12" sm="6">
-                                                    <v-textarea v-model="professional_profile.descricao" label="descricao"
-                                                        color="pink-accent-4"
+                                                    <v-textarea v-model="professional_profile.descricao"
+                                                        label="descricao" color="pink-accent-4"
                                                         placeholder="Descreva sobre suas experiencias..."></v-textarea>
                                                 </v-col>
                                             </v-row>
@@ -227,14 +247,15 @@
                                     </v-col>
                                 </v-row>
                             </v-expansion-panel>
-                           
+
                         </v-expansion-panels>
                         <v-row>
                             <v-col>
                                 <div>
                                     <v-btn class="mb-4" color="primary" link @click="professionalProfile()">Salvar
                                     </v-btn>
-                                    <v-btn class="mb-4" color="error" link @click="resetProf">Limpar</v-btn>
+                                    <v-btn class="mb-4" color="error" link
+                                        @click="this.$refs.formProf.reset()">Limpar</v-btn>
                                 </div>
                             </v-col>
                         </v-row>
@@ -253,7 +274,9 @@ import axios from 'axios';
 
 export default {
     data: () => ({
-
+        error: false,
+        success: false,
+        overlay: false,
         auth_user: '',
         profile_user: [],
         profile_img: [],
@@ -337,7 +360,8 @@ export default {
                     return this.professional_profile;
                 })
                 .catch((response) => {
-                    return alert('Error: ' + response);
+                    this.error = response;
+                    return this.error;
                 });
         },
         beforeMounted() {
@@ -345,10 +369,11 @@ export default {
         },
         handleFileUpload() {
             this.$refs.file;
+            this.uploadImg();
         },
         uploadImg() {
             let data = { image_profile: this.file, }
-            axios.post('/profileImg/upload/' + this.auth_user.id, data,
+            axios.post(`/profileImg/upload/${this.auth_user.id}`, data,
                 {
                     headers: {
                         'Content-Type': 'multipart/form-data'
@@ -357,12 +382,12 @@ export default {
             )
                 .then((response) => {
                     this.profile_img = response.data;
-                    alert('Clique "OK" para atualizar a imagem');
-                    window.location = '/dashboard';
+                    window.scrollTo({ top: 0, beahavior: 'smooth' });
                     return this.profile_img;
                 })
                 .catch((response) => {
-                    alert('Error : ' + response.error);
+                    this.error = response;
+                    return this.error;
                 });
         },
         update() {
@@ -377,7 +402,7 @@ export default {
                 endereco: this.profile_user.endereco,
                 t_residencial: this.profile_user.t_residencial,
                 t_celular: this.profile_user.t_celular,
-                sexo: this.profile_use,
+                sexo: this.profile_user.sexo,
             }
             axios.post('/createProfile/' + this.auth_user.id, data,
                 {
@@ -386,11 +411,12 @@ export default {
                     }
                 })
                 .then((response) => {
-                    window.location = '/dashboard';
+                    this.success = response.data;
+                    window.scrollTo({ top: 0, beahavior: 'smooth' });
                     return this.profile_user = response.data;
-
                 })
                 .catch((response) => {
+                    this.error = response.data;
                     alert('error: ' + response);
                 })
         },
@@ -405,10 +431,13 @@ export default {
 
             axios.post('/professionalProfile/' + this.auth_user.id, data)
                 .then((response) => {
-                    //window.location = '/dashboard';
+                    this.success = true;
+                    window.scrollTo({ top: 0, beahavior: 'smooth' });
                     return this.professinonal_profile = response.data;
                 })
                 .catch((response) => {
+                    this.error = response;
+                    return this.error;
                     alert('Error: ' + response);
                 });
         },
@@ -418,9 +447,9 @@ export default {
         resetProf() {
             this.$refs.formProf.reset();
         },
-        removeChip(p_pr_especialidade, index){
+        removeChip(p_pr_especialidade, index) {
             this.professional_profile.especialidades.splice(index, 1);
-            
+
         },
         logout() {
             axios.post('/logout')

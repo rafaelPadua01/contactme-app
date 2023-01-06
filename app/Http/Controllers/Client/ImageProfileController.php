@@ -40,10 +40,7 @@ class ImageProfileController extends Controller
                     ]);
 
                     $path = Storage::putFileAs('public/avatars', $img, $name);
-                    $response = 'Perfil atualizado';
-                    return \Response::json($response);
-                   
-                    
+                    return \Response::json($insert_image);
                 }
                 else {
                     $remove_old = Storage::delete('public/avatars/' . $profile_img->image_name);
