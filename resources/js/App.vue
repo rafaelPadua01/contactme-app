@@ -24,6 +24,13 @@
 
                         <v-list-item-title>Dashboard</v-list-item-title>
                     </v-list-item>
+                    <v-list-item link to="/profileClient">
+                        <template v-slot:prepend>
+                            <v-icon>mdi-account</v-icon>
+                        </template>
+
+                        <v-list-item-title>Profile</v-list-item-title>
+                    </v-list-item>
                     <v-list-item link to="/profileProf">
                         <template v-slot:prepend>
                             <v-icon>mdi-inbox-arrow-down</v-icon>
@@ -62,13 +69,7 @@
                         </template>
                     </v-list-item>
                     
-                    <v-list-item link to="/profileClient">
-                        <template v-slot:prepend>
-                            <v-icon>mdi-account</v-icon>
-                        </template>
-
-                        <v-list-item-title>Profile</v-list-item-title>
-                    </v-list-item>
+                    
                     <v-list-item link>
                         <template v-slot:prepend>
                             <v-icon>mdi-logout</v-icon>
@@ -100,6 +101,13 @@
                         </template>
 
                         <v-list-item-title>Dashboard</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item link to="/profileClient">
+                        <template v-slot:prepend>
+                            <v-icon>mdi-account</v-icon>
+                            Profile
+                        </template>
+
                     </v-list-item>
                     <v-list-item link to="/profileProf">
                         <template v-slot:prepend>
@@ -146,13 +154,7 @@
                         </template>
 
                     </v-list-item>
-                    <v-list-item link to="/profileClient">
-                        <template v-slot:prepend>
-                            <v-icon>mdi-account</v-icon>
-                            Profile
-                        </template>
-
-                    </v-list-item>
+                    
                     <v-list-item link>
                         <template v-slot:prepend>
                             <v-icon>mdi-logout</v-icon>
@@ -203,23 +205,7 @@
                         {{ auth_user.name }} {{ profile_user.lastname }}
                     </v-btn>
                 </div>
-                <!-- <v-col class="d-flex" cols="auto" sm="8">
-
-                    <v-autocomplete v-model="values" :items="sugest_search" label="Search a Services"
-                        placeholder="Start typing to Search" append-icon="mdi-database-search" hide-no-data
-                        hide-selected @change="searchService(values, index)"
-                        @click:append="searchService(values, index)" chips small-chips outlined :loading="loading"
-                        desinty="compact" variant="solo" v-if="(auth_user.length != 0)" return-object>
-
-
-                    </v-autocomplete>
-                    <v-btn to="/profileRequired">buscar</v-btn>
-                    <template v-slot:prepend>
-                        <v-btn to="/profileRequired">buscar</v-btn>
-                    </template>
-                </v-col>-->
                 
-
                 <v-btn icon>
                     <v-icon>mdi-dots-vertical</v-icon>
                 </v-btn>
