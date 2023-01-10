@@ -111,6 +111,7 @@ Route::post('galery/delete/{id}', [GaleryController::class, 'delete'])->name('de
 //Rotas Image Galery
 Route::get('/imageGalery/selected/{id}', [ImageGaleryController::class, 'selected'])->name('selected');
 Route::get('/imageGalery/selectedAll/{id}', [ImageGaleryController::class, 'selectedAll'])->name('selectedAll');
+Route::get('/imageGalery/all/{id}', [ImageGaleryController::class, 'all'])->name('all');
 Route::post('/imageGalery/delete/{id}', [ImageGaleryController::class, 'delete'])->name('delete');
 //Route chats
 Route::get('/chats/{id}', [ChatsController::class, 'index'])->name('index');

@@ -19,20 +19,23 @@ class FollowerController extends Controller {
         return \Response::json($followers);
     }
     public function follow($id){
-        $follower_user = User::findOrFail($id)
-            ->join('profile_users', 'user_id', '=', 'users.id')
+        $follower_user = User::where('users.id', '=', $id)
+            ->join('profile_users', 'profile_users.user_id', '=', 'users.id')
             ->first([
-                'users.id',
-                'users.name',
+                'users.*',
                 'profile_users.lastname',
             ]);
+          
         try{
+            $user = \Auth::id();
             $insert_follower = Follower::create([
-                'user_id' => $id,
+                'user_id' => $user,
                 'follower_name' => $follower_user->name,
                 'follower_lastname' => $follower_user->lastname,
-                //'status' => true
+                'follower_id' => $id,
+                'status' => true
             ]);
+            
             if($insert_follower){
                 return \Response::json($insert_follower);
             }
@@ -88,15 +91,14 @@ class FollowerController extends Controller {
     }
     public function followers($id){
         try{
-            $followers = User::findOrFail($id)
-            ->join('profile_users', 'profile_users.user_id', '=', 'users.id')
-            ->join('profile_profs', 'profile_profs.user_id', '=', 'users.id')
+            //$followers = Follower::where('followers.user_id', '=', $id)->get();
+
+            $followers = Follower::where('followers.user_id', '=', $id)
+            ->join('profile_users', 'profile_users.user_id', '=', 'followers.user_id')
+            ->join('profile_profs', 'profile_profs.user_id', '=', 'profile_users.user_id')
             ->join('profile_images', 'profile_images.profile_id', '=', 'profile_users.id')
-            ->join('followers', 'followers.user_id', '=', 'profile_images.user_id')
             ->get([
-                'users.id',
-                'users.name',
-                'users.email',
+                
                 'profile_users.lastname as lastname',
                 'profile_profs.profissao as profissao',
                 'profile_profs.especialidades as especialidades',

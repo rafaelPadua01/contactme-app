@@ -1,18 +1,18 @@
 <template>
         <v-container>
                 <v-card>
-                        <v-card-title>
+                        <v-card-title class="bg-pink-accent-4">
                                 Buscador de Serviços
                         </v-card-title>
                         <v-divider></v-divider>
                         <v-spacer></v-spacer>
                         <v-card-text>
+                                Faça uma busca por um usuario, serviço ou cidade.
                                 <v-form ref="form">
-                                        <v-text-field v-model="search" :items="sugest_search"
-                                                label="Search a Services" placeholder="Start typing to Search"
-                                                append-icon="mdi-database-search" hide-no-data hide-selected
-                                                v-on:change="searchService(values, index)" chips small-chips outlined
-                                                :loading="loading" desinty="compact" variant="solo"
+                                        <v-text-field v-model="search" :items="sugest_search" label="Search a Services"
+                                                placeholder="Start typing to Search" append-icon="mdi-database-search"
+                                                hide-no-data hide-selected v-on:change="searchService(values, index)"
+                                                outlined :loading="loading" desinty="compact" variant="solo"
                                                 v-if="(auth_user.length != 0)" return-object>
                                         </v-text-field>
                                 </v-form>
@@ -22,33 +22,19 @@
 
                         <v-card-text>
                                 <v-list v-if="profile_prof">
-                                        <v-list-item v-for="prof in profile_prof" :key="prof.id">
+                                        <v-list-item>
                                                 <v-list-item-title>Found Users
                                                         ({{ profile_prof.length }})
+
                                                 </v-list-item-title>
 
-                                                <v-list-item-text>
+                                                <v-list-item-text v-for="prof in profile_prof" :key="prof.id">
+
                                                         <v-card>
-                                                                <v-img v-if="cloaks == 0"
-                                                                        src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-                                                                        height="250px" cover>
-                                                                        <v-avatar cover size="200" rounded="10">
-                                                                                <v-img :lazy-src="('/storage/avatars/' + prof.image_name)"
-                                                                                        :src="('/storage/avatars/' + prof.image_name)">
-
-                                                                                </v-img>
-
-                                                                        </v-avatar>
-                                                                        <b class="text-white"> {{ prof.name }} {{
-                                                                                        prof.lastname
-                                                                        }}</b>
-
-
-                                                                </v-img>
-                                                                <v-row>
-                                                                        <v-col v-for="cloak in cloaks" :key="cloak.id">
-                                                                                <v-img v-if="cloak.selected == true"
-                                                                                        :lazy-src="`storage/cloak/${cloak.image_name}`"
+                                                                <v-row v-for="cloak in cloaks" :key="cloak.id">
+                                                                        <v-col
+                                                                                v-if="cloak.user_id === prof.id && cloak.selected == true">
+                                                                                <v-img :lazy-src="`storage/cloak/${cloak.image_name}`"
                                                                                         :src="`storage/cloak/${cloak.image_name}`"
                                                                                         height="250px" cover>
                                                                                         <v-avatar cover size="200"
@@ -60,13 +46,33 @@
 
                                                                                         </v-avatar>
                                                                                         <b class="text-white"> {{
-                                                                                                        prof.name
+                                                                                                prof.name
                                                                                         }} {{
-                prof.lastname
+        prof.lastname
 }}</b>
                                                                                 </v-img>
-
                                                                         </v-col>
+                                                                        <v-col v-else>
+                                                                                <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+                                                                                        height="250px" cover>
+                                                                                        <v-avatar cover size="200"
+                                                                                                rounded="10">
+                                                                                                <v-img :lazy-src="('/storage/avatars/' + prof.image_name)"
+                                                                                                        :src="('/storage/avatars/' + prof.image_name)">
+
+                                                                                                </v-img>
+
+                                                                                        </v-avatar>
+                                                                                        <b class="text-white"> {{
+                                                                                                prof.name
+                                                                                        }} {{
+        prof.lastname
+}}</b>
+
+
+                                                                                </v-img>
+                                                                        </v-col>
+
                                                                 </v-row>
                                                                 <v-card-subtitle>
                                                                         <p>
@@ -86,11 +92,13 @@
 
                                                                         </p>
                                                                         <p>
-                                                                                <b> Seguidores</b> ({{ count_followers
+                                                                                <b> Seguidores</b> ({{
+                                                                                        count_followers
                                                                                 }})
 
                                                                         </p>
-                                                                 </v-card-text>
+                                                                </v-card-text>
+                                                               
                                                                 <v-card-actions>
                                                                         <v-btn :to="'/searchProfile/' + prof.id"
                                                                                 color="pink-accent-4" class="mb-4">
@@ -103,12 +111,18 @@
                                                                                 send message
                                                                         </v-btn>
                                                                         <v-btn class="mb-4" color="pink-accent-4"
-                                                                                @click="follow()">
+                                                                                @click="follow(prof)">
                                                                                 <v-icon>mdi-plus</v-icon>
                                                                                 Follow
                                                                         </v-btn>
+                                                                        <v-spacer></v-spacer>
+                                                                        <v-spacer></v-spacer>
+                                                                        <v-divider></v-divider> 
+                                                                        <v-spacer></v-spacer>
                                                                 </v-card-actions>
+                                                                
                                                         </v-card>
+                                                        
                                                 </v-list-item-text>
                                         </v-list-item>
                                 </v-list>
@@ -170,19 +184,15 @@ export default {
                 onClick() {
                         this.loading = true
                         return this.searchService();
-                        // setTimeout(() => {
-                        //         this.loading = false;
-                        //         this.loaded = true;
-                        // }, 2000)
                 },
                 searchService() {
                         this.loading = true;
-                        var search = { search: this.search.charAt(0).toUpperCase() + this.search.slice(1)};
-                      
+                        var search = { search: this.search.charAt(0).toUpperCase() + this.search.slice(1) };
+
                         axios.post('/searchService/' + this.auth_user.id, search)
                                 .then((response) => {
                                         this.profile_prof = response.data;
-
+                                        console.log(this.profile_prof);
                                         if (this.profile_prof == false) {
                                                 this.error = 'Não temos nenhum usuário ofertando este serviço no momento...'
                                         }
@@ -210,14 +220,13 @@ export default {
                 sendMessage() {
                         alert('Trabalhando aqui');
                 },
-                follow() {
-                        axios.post(`/Follower/create/${this.auth_user.id}`)
+                follow(prof) {
+                        axios.post(`/Follower/create/${prof.id}`)
                                 .then((response) => {
                                         this.follower = response.data;
                                         return this.follower;
                                 })
                                 .catch((response) => {
-                                        console.log(response.request.status);
                                         if (response.request.status == 500) {
                                                 alert('Você Já segue está pessoa...');
                                         }

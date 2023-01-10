@@ -11,7 +11,7 @@
                         :subtitle="auth_user.email"
                         v-on:click="this.dialog = true" 
                         nav
-                    >
+                    > 
 
                     </v-list-item>
 
@@ -80,8 +80,13 @@
                 </v-list>
             </v-navigation-drawer>
 
-            <v-navigation-drawer v-if="auth_user != 0 && auth_user.type == 'enterprise'" permanent v-model="drawer" rail expand-on-hover
-                gradient="to top right, rgba(19, 84, 122, .8), rgba(128, 208, 199, .8) "
+            <v-navigation-drawer 
+                v-if="auth_user != 0 && auth_user.type == 'enterprise'"
+                permanent
+                v-model="drawer"
+                rail
+                expand-on-hover
+                image="https://picsum.photos/1920/1080?random"
                 >
                 <v-list>
                     <v-list-item :prepend-avatar="'storage/avatars/' + this.profile_img.image_name"
@@ -212,7 +217,12 @@
 
             </v-app-bar>
             
-            <v-app-bar v-if="auth_user.type == 'enterprise'" color="grey-lighten-2 text-white" name="app-bar" class="justify-center"
+            <v-app-bar 
+                v-if="auth_user.type == 'enterprise'"
+                color="grey-lighten-2 text-white"
+                name="app-bar"
+                class="justify-center"
+                image="https://picsum.photos/1920/1080?random"
             >
                 <template v-slot:image>
                     <v-img>
@@ -265,7 +275,7 @@
                     <v-row v-for="prof in profile_prof" :key="prof.id">
                         <v-col class="d-flex" cols="auto" sm="6">
                             
-                            <v-avatar rounder="10" size="250">
+                            <v-avatar rounder="10" size="250" cover>
                                 <v-img :src="('/storage/avatars/' + prof.image_name)" :alt=prof.image_name></v-img>
                             </v-avatar>
 
@@ -343,12 +353,20 @@
     <!-- Dialog upload file-->
     <div class="text-center">
         <v-dialog v-model="dialog">
-            <v-card>
-                <v-card-title>Editar imagem de perfil</v-card-title>
-                <v-card-text>
+            <v-sheet>
+                <v-card>
+                    <v-toolbar class="bg-pink-accent-4">
+                        <v-card-title>Editar imagem de perfil</v-card-title>
+                        <template v-slot:append>
+                            <v-btn @click="dialog = false">
+                                <v-icon>mdi-close</v-icon>
+                            </v-btn>
+                        </template>
+                    </v-toolbar>
+             
+                <v-card-text >
                     <v-form ref="form" enctype="multipart/form-data">
-                        <v-file-input small-chips label="file input" v-model="file" accept="image/*"
-                            v-on:change="handleFileUpload()">
+                        <v-file-input small-chips label="file input" v-model="file" accept="image/*">
                         </v-file-input>
 
                     </v-form>
@@ -366,6 +384,8 @@
                     </v-btn>
                 </v-card-actions>
             </v-card>
+            </v-sheet>
+            
         </v-dialog>
     </div>
 
@@ -437,6 +457,8 @@ export default {
                 })
                 .then((response) => {
                     this.close();
+                    this.profile_img = response.data;
+                    //this.ProfileImg();
                     window.location.reload();
                     // return this.profile_img.push(response.data);
                 })
