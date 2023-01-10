@@ -382,6 +382,7 @@ export default {
                 .then((response) => {
                     this.profile_img = response.data;
                     window.scrollTo({ top: 0, beahavior: 'smooth' });
+                    this.success = true;
                     return this.profile_img;
                 })
                 .catch((response) => {

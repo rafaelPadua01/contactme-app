@@ -53,7 +53,7 @@ class ImageProfileController extends Controller
                     ]);
                     if($update_img){
                         $path = Storage::putFileAs('public/avatars', $img, $name);
-                        $response = $response = ProfileImages::where('user_id', '=' , \Auth::id())->first();;
+                        $response = ProfileImages::where('user_id', '=' , \Auth::id())->first();;
                         
                         return \Response::json($response);
                     }
@@ -84,9 +84,9 @@ class ImageProfileController extends Controller
                         'image_extension' => $ext,
                     ]);
                     if($update_img){
-                    $path = Storage::putFileAs('public/avatars', $img, $name);
+                        $path = Storage::putFileAs('public/avatars', $img, $name);
                         $response = $path;
-                        return \Response::json($response);
+                        return \Response::json($profile_image);
                     }
                     
                 }

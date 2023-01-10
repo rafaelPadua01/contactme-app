@@ -43,8 +43,9 @@ class ImageGaleryController extends Controller {
     }
     public function selected($id){
         try{
-            $images = ImageGalery::where('galery_id', '=', $id)
+            $images = ImageGalery::where('image_galeries.user_id', '=', $id)
             ->join('galeries', 'galeries.id', '=', 'image_galeries.galery_id')
+            ->limit(4)
             ->get([
                 'image_galeries.*',
                 'galeries.name_galery'
@@ -56,14 +57,25 @@ class ImageGaleryController extends Controller {
         }
     }
     public function selectedAll($id){
-        $select_images = ImageGalery::where('galeries.user_id', '=', $id)
-        ->join('galeries', 'galeries.id', '=', 'image_galeries.galery_id')
-        ->get([
-            'image_galeries.*',
-            'galeries.name_galery'
-        ]);
+        $select_images = ImageGalery::where('image_galeries.galery_id', '=', $id)
+            ->join('galeries', 'galeries.id', '=', 'image_galeries.galery_id')
+            ->get([
+                'galeries.name_galery',
+                'galeries.description',
+                'image_galeries.*',
+            ]);
+           
         
         return \Response::json($select_images);
+    }
+    public function all($id){
+        $per_galery = ImageGAlery::where('image_galeries.user_id', '=', $id)
+        ->join('galeries', 'galeries.id', '=', 'image_galeries.galery_id')
+        ->get([
+                'image_galeries.*',
+                'galeries.name_galery'
+            ]);
+        return \Response::json($per_galery);
     }
     public static function delete($id){
         $name_galery = ImageGalery::select('name_image')->where('id', '=', $id)->get();

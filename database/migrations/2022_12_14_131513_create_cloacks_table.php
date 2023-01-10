@@ -21,6 +21,8 @@ return new class extends Migration
             $table->boolean('selected');
             $table->unsignedBigInteger('user_id');
             $table->unsignedbigInteger('profile_id');
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('profile_id')->references('id')->on('profile_users');
             $table->timestamps();
         });
     }

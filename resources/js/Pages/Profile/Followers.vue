@@ -16,13 +16,14 @@
 
                 <v-list lines="three">
 
-                    <v-list-item v-for="follower in searchFollower" :key="follower.id" :title="follower.name"
-                        :subtitle="follower.lastname" :search="search">
-                        <template v-slot:prepend>
+                    <v-list-item v-for="follower, index in searchFollower" :key="follower.id" :title="follower.follower_name"
+                        :subtitle="follower.follower_lastname" :search="search">
+                        <template v-slot:prepend v-if="follower.image_name.length >= 1 && index >= 1">
                             <v-avatar color="pinki-accent-4">
                                 <v-img :lazy-src="`/storage/avatars/${follower.image_name}`"
                                     :src="`/storage/avatars/${follower.image_name}`" alt="profile_image"></v-img>
                             </v-avatar>
+                            
                         </template>
                         <div v-if="follower.status == false">Você não segue essa pessoa</div>
                         <div v-else>Seguindo</div>
@@ -91,11 +92,12 @@ export default {
                 });
         },
         unconfirm(follower) {
+            console.log(follower);
             axios.post(`/Follower/unconfirm/${follower.id}`)
                 .then((response) => {
                     return follower.status = response.data;
                 }).catch((response) => {
-                    return alert('Error:'. response);
+                    return alert('Error:' + response);
                 });
         },
         remove() {

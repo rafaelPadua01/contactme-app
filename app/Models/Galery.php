@@ -9,5 +9,5 @@ class Galery extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'name_galery'];
+    protected $fillable = ['user_id', 'name_galery', 'description'];
 }

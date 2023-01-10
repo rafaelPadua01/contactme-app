@@ -51,7 +51,7 @@ export default {
     }),
     methods: {
         getImages() {
-            axios.get(`/imageGalery/selected/${this.$route.params.id}`)
+            axios.get(`/imageGalery/selectedAll/${this.$route.params.id}`)
                 .then((response) => {
                     this.images = response.data;
                 })

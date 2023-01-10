@@ -24,9 +24,9 @@ class GaleryController extends Controller {
         $auth_user = User::findOrFail($id);
         $files = $request->file('files');
         try{
-            
             $create_galery = Galery::create([
                 'name_galery' => $request->galery_name,
+                'description' => $request->description,
                 'user_id' => $auth_user->id,
             ]);
             $galery_name = $request->galery_name;

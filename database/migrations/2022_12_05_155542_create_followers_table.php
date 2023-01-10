@@ -17,7 +17,9 @@ return new class extends Migration
             $table->id();
             $table->string('follower_name');
             $table->string('follower_lastname');
-            $table->unsignedBigInteger('user_id')->unique();
+            $table->unsignedBigInteger('follower_id')->unique();
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('follower_id')->references('id')->on('users');
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
         });
