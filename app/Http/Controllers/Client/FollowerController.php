@@ -19,21 +19,23 @@ class FollowerController extends Controller {
         return \Response::json($followers);
     }
     public function follow($id){
-        $follower_user = User::where('users.id', '=', $id)
-            ->join('profile_users', 'profile_users.user_id', '=', 'users.id')
+        $follow_user = User::where('users.id', '=', $id)
+            ->join('profile_users', 'profile_users.user_id' , '=', 'users.id')
             ->first([
                 'users.*',
-                'profile_users.lastname',
+                'profile_users.lastname as lastname'
             ]);
+        
           
         try{
-            $user = \Auth::id();
+            $user = \Auth::user();
+           
             $insert_follower = Follower::create([
-                'user_id' => $user,
-                'follower_name' => $follower_user->name,
-                'follower_lastname' => $follower_user->lastname,
-                'follower_id' => $id,
-                'status' => true
+                'user_id' => $user->id,
+                'follower_name' => $follow_user->name,
+                'follower_lastname' => $follow_user->lastname,
+                'follower_id' => $follow_user->id,
+                'status' => false
             ]);
             
             if($insert_follower){
@@ -49,13 +51,35 @@ class FollowerController extends Controller {
     }
     public function followConfirm($id){
         try{
-            $follower = Follower::where('id', '=', $id)->update(['status' => true]);
-            return \Response::json($follower);
+            
+            $create_new_follower = Follower::where('followers.id', '=', $id)
+            ->join('users', 'users.id', '=', 'followers.user_id')
+            ->join('profile_users', 'profile_users.user_id' , '=', 'users.id')
+            ->first([
+                'users.name',
+                'profile_users.lastname as lastname',
+                'followers.*'
+            ]);
+           
+            $insert_follower = Follower::create([
+                'user_id' => \Auth::id(),
+                'follower_name' => $create_new_follower->name,
+                'follower_lastname' => $create_new_follower->lastname,
+                'follower_id' => $create_new_follower->user_id,
+                'status' => false
+            ]);
+           
+            //dd($create_new_follower);
+            return \Response::json($insert_follower);
         }
         catch(Exception $e){
             return \Response::json($e);
         }
         
+    }
+    public function alterStatus($id){
+        $follower = Follower::where('id', '=', $id)->update(['status' => true]);
+                return \Response::json($follower);
     }
     public function unconfirm($id){
         try{
@@ -79,7 +103,7 @@ class FollowerController extends Controller {
         }
     }
     public function unfollow($id){
-        $follower = Follower::where('user_id', '=', $id)->first();
+        $follower = Follower::where('follower_id', '=', $id)->first();
         try{
             $follower->delete();
             $response = 'Você deixou de seguir essa pessoa';
@@ -91,28 +115,26 @@ class FollowerController extends Controller {
     }
     public function followers($id){
         try{
-            //$followers = Follower::where('followers.user_id', '=', $id)->get();
-
-            $followers = Follower::where('followers.user_id', '=', $id)
-            ->join('profile_users', 'profile_users.user_id', '=', 'followers.user_id')
-            ->join('profile_profs', 'profile_profs.user_id', '=', 'profile_users.user_id')
-            ->join('profile_images', 'profile_images.profile_id', '=', 'profile_users.id')
+            $followers = Follower::where('followers.follower_id', '=', $id)
+            ->join('users', 'users.id', '=', 'followers.user_id')
+            ->join('profile_users', 'profile_users.user_id', '=', 'users.id')
+            ->join('profile_images', 'profile_images.user_id', '=', 'profile_users.user_id')
+            ->join('profile_profs', 'profile_profs.user_id', '=', 'profile_images.user_id')
             ->get([
-                
+                'users.name',
                 'profile_users.lastname as lastname',
                 'profile_profs.profissao as profissao',
                 'profile_profs.especialidades as especialidades',
                 'profile_images.image_name as image_name',
                 'followers.*'
-                
-            ]);
-           
+             ]);
+         
             return \Response::json($followers);
         }catch(Exception $e){
             return \Response::json($e);
         }
         
-        dd($followers);
+        
     }
 
 }

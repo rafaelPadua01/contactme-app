@@ -98,6 +98,7 @@ Route::post('/service/marked/remove/{id}', [ServicesController::class, 'remove']
 Route::get('/Follower', [FollowerController::class, 'index'])->name('index');
 Route::post('/Follower/create/{id}', [FollowerController::class, 'follow'])->name('follow');
 Route::post('/Follower/confirm/{id}', [FollowerController::class, 'followConfirm'])->name('followConfirm');
+Route::post('/Follower/alterStatus/{id}', [FollowerController::class, 'alterStatus'])->name('alterStatus');
 Route::post('/Follower/unconfirm/{id}', [FollowerController::class, 'unconfirm'])->name('unconfirm');
 Route::get('/Follower/followers/{id}', [FollowerController::class, 'followers'])->name('followers');
 Route::post('/Follower/unfollow/{id}', [FollowerController::class, 'unfollow'])->name('unfollow');
