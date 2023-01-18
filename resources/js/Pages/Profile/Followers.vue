@@ -7,7 +7,7 @@
                 </v-toolbar>
                 <v-form ref="form">
                     <v-text-field v-model="search" type="search" label="Search Follower" density="compact"
-                        variant="solo" append-inner-icon="mdi-magnify" single-line hide-details v-on:change="searchFollower">
+                        variant="solo" append-inner-icon="mdi-magnify" single-line hide-details>
                     </v-text-field>
                 </v-form>
 
@@ -23,9 +23,9 @@
                             <v-avatar color="pink-accent-4" v-if="follower.image_name.length == 0">
                               <v-icon dark>mdi-account-circle</v-icon>
                             </v-avatar>
-                            <v-avatar color="pinki-accent-4" v-else>
+                            <v-avatar color="pink-accent-4" v-else>
                                 <v-img :lazy-src="`/storage/avatars/${follower.image_name}`"
-                                    :src="`/storage/avatars/${follower.image_name}`" alt="profile_image"></v-img>
+                                    :src="`/storage/avatars/${follower.image_name}`" alt="profile_image" cover></v-img>
                             </v-avatar>
                            
                             
@@ -65,13 +65,13 @@ export default {
     computed: {
         searchFollower() { 
             this.followers.map((follower) => {
-                if (this.search && (follower.follower_name === this.search) || (follower.follower_lastname == this.search)) {
+                if (this.search && (follower.follower_name == this.search) || (follower.follower_lastname == this.search)) {
                     this.followers.indexOf(follower) > -1;
-                    console.log(this.followers);
-                    return this.followers;
+                   return this.followers;
                 }
-            });
-             return this.followers;
+                
+             });
+            return this.followers;
         }
     },
     methods: {
@@ -87,7 +87,7 @@ export default {
         alterStatus(follower) {
             axios.post(`/Follower/alterStatus/${follower.id}`)
                 .then((response) => {
-                return follower.status = response.data;
+                 return follower.status = response.data;
                 })
                 .catch((response) => {
                     if (response.request.status == 500) {

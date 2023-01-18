@@ -123,6 +123,7 @@ Route::post('chats/changeColor/{id}', [ChatsController::class, 'changeColor'])->
 //Rotas Messages 
 Route::get('/messages/{id}', [MessagesController::class, 'index'])->name('index');
 Route::post('/messages/send/{id}', [MessagesController::class, 'send'])->name('send');
+Route::get('/messages/show/{id}', [MessagesController::class, 'show'])->name('show');
 Route::post('/messages/remove/{id}', [MessagesController::class, 'remove'])->name('remove');
 
 //Routes to Appointments (agenda, compromissos)

@@ -1,16 +1,21 @@
 <template>
     <v-container>
         <v-row fluid>
-            <v-col v-if="chats.length == 0">
-                <v-card>
+            <v-col v-if="!chats">
+                <v-sheet>
+                    <v-card>
                     <v-card-text>
-                        Não existem conversas aqui...   
+                        <p class="text-h6 text-center">Não existem conversas aqui...</p>   
+                        <hr>
                     </v-card-text>
-                </v-card>
+
+                    </v-card>
                 
+                </v-sheet>
+             
             </v-col>
         <v-col class="d-flex" cols="12" sm="6" v-for="chat in chats" :key="chat.id">
-            <v-card>
+            <v-card v-if="chat">
                 <v-toolbar color="pink-accent-4">
                     <v-toolbar-title>
                         <v-avatar rounded="10" size="40">
@@ -30,7 +35,10 @@
                     <p>Nenhuma conversa encontrada</p>
                 </v-card-text>
                 <v-card-text v-else>
-                    {{ chat.message }} ...
+                    <v-chip class="bg-pink-accent-4">
+                        {{ messages.message }}
+                    </v-chip>
+                    
                 </v-card-text>
                 <v-card-subtitle>
                     <b>Criado em: {{ chat.created_at  }}</b> 
@@ -46,6 +54,10 @@
                     </v-btn>
                 </v-card-actions>
             </v-card>
+            <div>
+                <v-dialog v-if="error">{{ error }}</v-dialog>
+            </div>
+           
         </v-col>
       </v-row>
     </v-container>
@@ -59,6 +71,8 @@ import axios from 'axios';
     export default {
         data: () => ({
             chats: [],
+            messages: [],
+            error: false,
         }),
         methods: {
             getChats(){
@@ -67,12 +81,22 @@ import axios from 'axios';
                     this.chats = response.data;
                 })
                 .catch((response) => {
-                    return alert('Error: ' + response)
+                    return alert('Error: ' + response);
                 })
+            },
+            getMessages(){
+                axios.get(`/messages/${this.$route.params.id}`)
+                .then((response) => {
+                    this.messages = response.data;
+                })
+                .catch((response) => {
+                    this.error = response;
+                });
             }
         },
         created() {
             this.getChats();
+            this.getMessages();
         },
     }
 </script>

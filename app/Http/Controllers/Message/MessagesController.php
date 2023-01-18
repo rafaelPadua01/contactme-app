@@ -19,7 +19,7 @@ class MessagesController extends Controller
     }
     public function index($id){
         try{
-            $messages = Message::where('chat_id', '=', $id)->get();
+            $messages = Message::where('user_id', '!=', \Auth::id())->orderBy('messages.created_at', 'asc')->first();
 
             return \Response::json($messages);
         }
@@ -29,7 +29,7 @@ class MessagesController extends Controller
         
     }
 
-    public static function send($request, $user){
+    public static function send(Request $request, $user){
        $message = $request->messages;
        $status  = false;
        $receiver =  ProfileUser::where('user_id', '=', $user)->first(); //remetente
@@ -51,6 +51,15 @@ class MessagesController extends Controller
        {
         return \Response::json($e);
        }
+    }
+    public function show($id){
+        try{
+            $messages = Message::where('chat_id', '=', $id)->get();
+            return \Response::json($messages);
+        }
+        catch(Exception $e){
+            return \Response::json($e);
+        }
     }
     public function remove($id)
     {

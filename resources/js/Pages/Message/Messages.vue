@@ -11,32 +11,27 @@
                                 </v-img>
                             </v-avatar>
                             {{ chat.name }} {{ chat.lastname }}
-                            
+
                         </v-toolbar-title>
                         <template v-slot:append>
                             <v-menu top>
                                 <template v-slot:activator="{ props }">
-                                    <v-btn class="mb-4 text-white" icon color="default" @click="chatOptions = true" v-bind="props">
+                                    <v-btn class="mb-4 text-white" icon color="default" @click="chatOptions = true"
+                                        v-bind="props">
                                         <v-icon>mdi-dots-vertical</v-icon>
                                     </v-btn>
                                 </template>
-                             
-                                    <v-color-picker
-                                        class="ma-2"
-                                        show-swatches
-                                        swatches-max-height="400px"
-                                        v-model="colorPicker"
-                                        :modes="['hexa']"
-                                        v-on:update:model-value="getColor(colorPicker, chat)"
-                                        
-                                    >
-                                    
-                                    </v-color-picker>
-                               
+
+                                <v-color-picker class="ma-2" show-swatches swatches-max-height="400px"
+                                    v-model="colorPicker" :modes="['hexa']"
+                                    v-on:update:model-value="getColor(colorPicker, chat)">
+
+                                </v-color-picker>
+
                             </v-menu>
-                            
+
                         </template>
-                      
+
                     </v-toolbar>
 
                     <v-divider></v-divider>
@@ -49,9 +44,9 @@
                             <v-row>
                                 <v-col>
                                     <v-menu top>
-                                        <template v-slot:activator="{props}">
+                                        <template v-slot:activator="{ props }">
                                             <v-chip class="ma-2 bg-pink-accent-2" dark color="pink-accent">
-                                               Inicie uma conversa com este usuário.
+                                                Inicie uma conversa com este usuário.
                                             </v-chip>
                                         </template>
                                     </v-menu>
@@ -65,8 +60,8 @@
                                         <v-menu top>
                                             <template v-slot:activator="{ props }">
                                                 <v-chip class="ma-2 bg-pink-accent-2" dark color="pink-accent"
-                                                    @click="listItem = true" v-bind="props"  v-if="messages">
-                                                        
+                                                    @click="listItem = true" v-bind="props" v-if="messages">
+
                                                     <b>{{ chat.name }}: </b> {{ message.message }}
                                                     <template v-slot:append>
                                                         <p class="ma-2 text-right text-blue-accent-3"
@@ -80,8 +75,55 @@
                                                     </template>
                                                 </v-chip>
                                                 <v-chip class="ma-2 bg-pink-accent-2" dark color="pink-accent"
-                                                    @click="listItem = true" v-bind="props"  v-if="!messages">
-                                                    Inicie uma conversa 
+                                                    @click="listItem = true" v-bind="props" v-if="!messages">
+                                                    Inicie uma conversa
+                                                    <template v-slot:append>
+                                                        <p class="ma-2 text-right text-blue-accent-3"
+                                                            v-if="message.status == false">
+                                                            <v-icon>mdi-check</v-icon>
+                                                        </p>
+                                                        <p class="ma-2 text-right text-green"
+                                                            v-if="message.status == true">
+                                                            <v-icon>mdi-check-all</v-icon>
+                                                        </p>
+                                                    </template>
+                                                </v-chip>
+                                            </template>
+                                            <v-list v-model="listItem">
+                                                <v-list-item>
+                                                    <v-list-item-title @click="removeMessage(message)">
+                                                        <v-icon>
+                                                            mdi-delete
+                                                        </v-icon>
+                                                        Remove
+                                                    </v-list-item-title>
+                                                </v-list-item>
+                                            </v-list>
+
+                                        </v-menu>
+
+                                    </v-col>
+                                    <v-col v-if="message.user_id == chat.receiver_id" class="text-right">
+                                        <v-menu top>
+                                            <template v-slot:activator="{ props }">
+                                                <v-chip class="ma-2 bg-pink-accent-3" dark color="pink-accent"
+                                                    @click="listItem = true" v-bind="props" v-if="messages">
+
+                                                    <b>You say: </b> {{ message.message }}
+                                                    <template v-slot:append>
+                                                        <p class="ma-2 text-right text-blue-accent-3"
+                                                            v-if="message.status == false">
+                                                            <v-icon>mdi-check</v-icon>
+                                                        </p>
+                                                        <p class="ma-2 text-right text-green"
+                                                            v-if="message.status == true">
+                                                            <v-icon>mdi-check-all</v-icon>
+                                                        </p>
+                                                    </template>
+                                                </v-chip>
+                                                <v-chip class="ma-2 bg-pink-accent-2" dark color="pink-accent"
+                                                    @click="listItem = true" v-bind="props" v-if="!messages">
+                                                    Inicie uma conversa
                                                     <template v-slot:append>
                                                         <p class="ma-2 text-right text-blue-accent-3"
                                                             v-if="message.status == false">
@@ -109,8 +151,6 @@
 
                                     </v-col>
                                 </v-row>
-
-
                             </div>
 
                             <v-spacer></v-spacer>
@@ -145,7 +185,8 @@
                                     <v-btn icon :color="chat.color" class="mb-4 text-white" @click="sendMessage(chat)">
                                         <v-icon>mdi-send</v-icon>
                                     </v-btn>
-                                    <v-btn icon :color="chat.color" class="mb-4 text-white" @click="backspace(textMessage)">
+                                    <v-btn icon :color="chat.color" class="mb-4 text-white"
+                                        @click="backspace(textMessage)">
                                         <v-icon>mdi-backspace</v-icon>
                                     </v-btn>
 
@@ -186,7 +227,7 @@ export default {
         chatOptions: false,
         colorPicker: '#fff',
     }),
-    
+
     methods: {
         getChats() {
             axios.get(`/selectChat/${this.$route.params.id}`)
@@ -199,23 +240,23 @@ export default {
                 })
         },
         getMessages() {
-            axios.get(`/messages/${this.$route.params.id}`)
+            axios.get(`/messages/show/${this.$route.params.id}`)
                 .then((response) => {
                     this.messages = response.data;
                 })
                 .catch((response) => {
-                    return alert('Error :'.response);
+                    return alert('Error :' + response);
                 });
         },
-        getColor(colorPicker, chat){
-            let color = {colorPicker: this.colorPicker};
+        getColor(colorPicker, chat) {
+            let color = { colorPicker: this.colorPicker };
             axios.post(`/chats/changeColor/${chat.id}`, color)
-            .then((response) => {
-                return chat.color = response.data;
-            })
-            .catch((response) => {
-                return alert('Error:' + response);
-            });
+                .then((response) => {
+                    return chat.color = response.data;
+                })
+                .catch((response) => {
+                    return alert('Error:' + response);
+                });
         },
         sendMessage(chat) {
             console.log(chat.id);
