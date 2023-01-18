@@ -8,6 +8,7 @@ use App\Models\Chat;
 use App\Models\User;
 use App\Models\ProfileUser;
 
+use function PHPUnit\Framework\isNull;
 
 class ChatsController extends Controller {
     private $chats;
@@ -15,11 +16,11 @@ class ChatsController extends Controller {
 public function __construct(Chat $chats)
     {
         $this->chats  = $chats;
-    }
+    } 
     public function index($id){
         try{
             $talk = Chat::where('receiver_id', '=', $id)
-            ->join('users', 'users.id', '=', 'chats.receiver_id')
+            ->join('users', 'users.id', '=', 'chats.sender_id')
             ->join('profile_users', 'profile_users.user_id', '=', 'users.id')
             ->join('profile_images', 'profile_images.user_id', '=', 'profile_users.user_id')
             ->get([
@@ -28,7 +29,21 @@ public function __construct(Chat $chats)
                 'profile_users.lastname',
                 'profile_images.image_name',
             ]);
-           
+           // dd(sizeof($talk));
+            if(sizeof($talk) == 0){
+                $talk = Chat::where('sender_id', '=', $id)
+                ->join('users', 'users.id', '=', 'chats.receiver_id')
+                ->join('profile_users', 'profile_users.user_id', '=', 'users.id')
+                ->join('profile_images', 'profile_images.user_id', '=', 'profile_users.user_id')
+                ->get([
+                    'chats.*',
+                    'users.name',
+                    'profile_users.lastname',
+                    'profile_images.image_name',
+                ]);
+                return $talk;
+            }
+            
            
             return \Response::json($talk);
         }
