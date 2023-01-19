@@ -54,7 +54,13 @@ class MessagesController extends Controller
     }
     public function show($id){
         try{
-            $messages = Message::where('chat_id', '=', $id)->get();
+            $messages = Message::where('messages.chat_id', '=', $id)
+            ->join('chats', 'chats.id', '=', 'messages.chat_id')
+            ->get([
+                'messages.*',
+                'chats.*'
+            //    'users.name'
+            ]);
             return \Response::json($messages);
         }
         catch(Exception $e){

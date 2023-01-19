@@ -80,8 +80,9 @@ public function __construct(Chat $chats)
 
     public function selectChat($id){
         try{
-            $chat = Chat::findOrFail($id)
-            ->join('users', 'users.id', '=', 'receiver_id')
+            $chat = Chat::where('chats.id', '=', $id)
+            ->join('messages', 'messages.')
+            ->join('users', 'users.id', '=', 'chats.receiver_id')
             ->join('profile_users', 'profile_users.user_id', '=', 'users.id')
             ->join('profile_images', 'profile_images.user_id', '=', 'profile_users.user_id')
             ->get([
@@ -91,6 +92,7 @@ public function __construct(Chat $chats)
                 'profile_images.image_name',
                
             ]);
+            
             return \Response::json($chat);
         }
         catch(Exception $e){

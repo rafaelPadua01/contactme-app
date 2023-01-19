@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <v-row fluid>
-            <v-col class="d-flex" cols="12" sm="6" v-for="chat in chats" :key="chat.id">
+            <v-col v-for="chat in chats" :key="chat.id">
                 <v-card v-scoll.self="onScroll" class="overflow-y-auto" max-height="500">
                     <v-toolbar :color="chat.color" dark>
                         <v-toolbar-title class="text-white">
@@ -45,7 +45,7 @@
                                 <v-col>
                                     <v-menu top>
                                         <template v-slot:activator="{ props }">
-                                            <v-chip class="ma-2 bg-pink-accent-2" dark color="pink-accent">
+                                            <v-chip class="ma-2" dark :color="chat.color">
                                                 Inicie uma conversa com este usuário.
                                             </v-chip>
                                         </template>
@@ -54,12 +54,14 @@
                             </v-row>
                         </v-card-text>
                         <v-card-text v-else>
+                            
                             <div>
                                 <v-row v-for="(message, index) in messages" :key="index">
-                                    <v-col v-if="message.user_id == chat.sender_id">
+                                    <v-col v-if="message.user_id == chat.sender_id" :color="chat.color">
                                         <v-menu top>
                                             <template v-slot:activator="{ props }">
-                                                <v-chip class="ma-2 bg-pink-accent-2" dark color="pink-accent"
+                                                
+                                                <v-chip class="ma-2" dark :color="chat.color"
                                                     @click="listItem = true" v-bind="props" v-if="messages">
 
                                                     <b>{{ chat.name }}: </b> {{ message.message }}
@@ -106,7 +108,7 @@
                                     <v-col v-if="message.user_id == chat.receiver_id" class="text-right">
                                         <v-menu top>
                                             <template v-slot:activator="{ props }">
-                                                <v-chip class="ma-2 bg-pink-accent-3" dark color="pink-accent"
+                                                <v-chip class="ma-2" dark :color="chat.color"
                                                     @click="listItem = true" v-bind="props" v-if="messages">
 
                                                     <b>You say: </b> {{ message.message }}
@@ -121,7 +123,7 @@
                                                         </p>
                                                     </template>
                                                 </v-chip>
-                                                <v-chip class="ma-2 bg-pink-accent-2" dark color="pink-accent"
+                                                <v-chip class="ma-2" dark :color="chat.color"
                                                     @click="listItem = true" v-bind="props" v-if="!messages">
                                                     Inicie uma conversa
                                                     <template v-slot:append>

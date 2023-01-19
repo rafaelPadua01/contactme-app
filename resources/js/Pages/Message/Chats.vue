@@ -16,12 +16,12 @@
             </v-col>
         <v-col class="d-flex" cols="12" sm="6" v-for="chat in chats" :key="chat.id">
             <v-card v-if="chat">
-                <v-toolbar color="pink-accent-4">
-                    <v-toolbar-title>
+                <v-toolbar :color="chat.color">
+                    <v-toolbar-title :color="chat.color">
                         <v-avatar rounded="10" size="40">
                             <v-img :src="`/storage/avatars/${chat.image_name}`" cover>
                             </v-img>
-                        </v-avatar>
+                      </v-avatar>
                         {{ chat.name }} {{ chat.lastname }}
                     </v-toolbar-title>
                     <template v-slot:append>
@@ -31,11 +31,11 @@
                     </template>
                 </v-toolbar>
 
-                <v-card-text v-if="!chats">
+                <v-card-text v-if="!chats" >
                     <p>Nenhuma conversa encontrada</p>
                 </v-card-text>
                 <v-card-text v-else>
-                    <v-chip class="bg-pink-accent-4">
+                    <v-chip :color="chat.color">
                         {{ messages.message }}
                     </v-chip>
                     
