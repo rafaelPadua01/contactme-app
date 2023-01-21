@@ -53,7 +53,7 @@ class FollowerController extends Controller
     }
     public function followConfirm($id)
     {
-        dd('teste');
+      
         try {
             $create_new_follower = Follower::where('followers.id', '=', $id)
                 ->join('users', 'users.id', '=', 'followers.user_id')
