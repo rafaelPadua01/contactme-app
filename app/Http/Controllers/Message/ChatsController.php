@@ -54,13 +54,10 @@ public function __construct(Chat $chats)
     public function create(Request $request, $id){
         $profile_user = ProfileUser::where('user_id', '=', $id)->first();
         $chat = chat::where('receiver_id', '=', $profile_user->user_id)->first();
-        
         $user = \Auth::user();
         if($chat){
-            
-                return MessagesController::send($request, $id);
+             return MessagesController::send($request, $id);
                 //echo "enviando mensangem...";
-                
         }
         else{
             $insert_chat = Chat::create([
@@ -80,18 +77,38 @@ public function __construct(Chat $chats)
 
     public function selectChat($id){
         try{
-            $chat = Chat::where('chats.id', '=', $id)
-            ->join('messages', 'messages.')
-            ->join('users', 'users.id', '=', 'chats.receiver_id')
-            ->join('profile_users', 'profile_users.user_id', '=', 'users.id')
-            ->join('profile_images', 'profile_images.user_id', '=', 'profile_users.user_id')
-            ->get([
-                'chats.*',
-                'users.name',
-                'profile_users.lastname',
-                'profile_images.image_name',
-               
-            ]);
+            $chat = Chat::where('chats.id', '=', $id)->get();
+            foreach($chat as $user_chat){
+                if($user_chat->sender_id != \Auth::id()){
+                    $chat = $user_chat
+                    ->join('users', 'users.id', '=', 'chats.sender_id')
+                    ->join('profile_users', 'profile_users.user_id', '=', 'users.id')
+                    ->join('profile_images', 'profile_images.user_id', '=', 'profile_users.user_id')
+                    ->get([
+                        'chats.*',
+                        'users.name',
+                        'profile_users.lastname',
+                        'profile_images.image_name'
+                    ]);
+
+                    return $chat;
+                }
+                else if($user_chat->sender_id == \Auth::id()){
+                    $chat = $user_chat
+                        ->join('users', 'users.id', '=', 'chats.receiver_id')
+                        ->join('profile_users', 'profile_users.user_id', '=', 'users.id')
+                        ->join('profile_images', 'profile_images.user_id', '=', 'profile_users.user_id')
+                        ->get([
+                                'chats.*',
+                                'users.name',
+                                'profile_users.lastname',
+                                'profile_images.image_name',
+                            ]);
+                   
+                   return $chat;
+                }
+                return $chat;
+            }
             
             return \Response::json($chat);
         }

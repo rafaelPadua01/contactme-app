@@ -1,16 +1,17 @@
 <template>
     <v-container>
         <v-row fluid>
-            <v-col v-for="chat in chats" :key="chat.id">
-                <v-card v-scoll.self="onScroll" class="overflow-y-auto" max-height="500">
-                    <v-toolbar :color="chat.color" dark>
-                        <v-toolbar-title class="text-white">
+          <v-col v-for="chat in chats" :key="chat.id">
+            <v-sheet>
+                <v-card v-scoll.self="onScroll" class="overflow-y-auto" max-height="600">
+                    <v-toolbar dark :color="chat.color">
+                        <v-toolbar-title class="text-white" dark>
                             <v-avatar rounded="2" size="30px">
-                                <v-img :lazy-src="`/storage/avatars/${chat.image_name}`"
+                               <v-img :lazy-src="`/storage/avatars/${chat.image_name}`"
                                     :src="`/storage/avatars/${chat.image_name}`" cover>
-                                </v-img>
+                                </v-img>  
                             </v-avatar>
-                            {{ chat.name }} {{ chat.lastname }}
+                            {{  chat.name }} {{ chat.lastname }}
 
                         </v-toolbar-title>
                         <template v-slot:append>
@@ -38,7 +39,6 @@
                     <v-spacer></v-spacer>
                     <v-divider></v-divider>
                     <v-spacer></v-spacer>
-
                     <v-sheet>
                         <v-card-text v-if="messages == 0">
                             <v-row>
@@ -54,7 +54,7 @@
                             </v-row>
                         </v-card-text>
                         <v-card-text v-else>
-                            
+                           
                             <div>
                                 <v-row v-for="(message, index) in messages" :key="index">
                                     <v-col v-if="message.user_id == chat.sender_id" :color="chat.color">
@@ -167,15 +167,15 @@
                         <v-chip class="ma-2 bg-pink-accent-4" v-for="resp in message"
                             v-if="chat.reveiver_id !== chat.sender_id"><b>Your answered: </b> {{ textMessage }}
                         </v-chip>
-                        <!--    <p class="ma-2 text-right text-pink-accent-4" v-if="textMesage">
+                         <p class="ma-2 text-right text-pink-accent-4" v-if="textMesage">
 
                             <v-icon v-if="textMessage">mdi-check</v-icon>
                         </p>
-                        <p class="ma-2 text-right text-green" v-else>
+                    <!--    <p class="ma-2 text-right text-green" v-else>
                                 <v-icon>mdi-check-all</v-icon> 
                             </p>
-                    -->
-                    </div>
+                   -->
+                    </div> 
                     <v-divider></v-divider>
                     <v-spacer></v-spacer>
 
@@ -197,12 +197,14 @@
                                     </v-btn>
                                 </v-btn-group>
 
-                            </template>
+                            </template> 
                         </v-text-field>
 
 
                     </v-card-actions>
                 </v-card>
+            </v-sheet>
+                
             </v-col>
         </v-row>
     </v-container>
@@ -231,6 +233,15 @@ export default {
     }),
 
     methods: {
+        getUser(){
+            axios.get(`/user`)
+            .then((response) => {
+                this.user = response.data;
+            })
+            .catch((response) => {
+                alert('Error: ' + response);
+            });
+        },
         getChats() {
             axios.get(`/selectChat/${this.$route.params.id}`)
                 .then((response) => {
@@ -289,6 +300,7 @@ export default {
 
     },
     created() {
+        this.getUser();
         this.getChats();
         this.getMessages();
     }

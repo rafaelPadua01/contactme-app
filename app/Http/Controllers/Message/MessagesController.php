@@ -29,20 +29,28 @@ class MessagesController extends Controller
         
     }
 
-    public static function send(Request $request, $user){
+    public static function send(Request $request, $id){
        $message = $request->messages;
        $status  = false;
-       $receiver =  ProfileUser::where('user_id', '=', $user)->first(); //remetente
+       $receiver = User::where('users.id', '=', $id)
+       ->join('profile_users', 'profile_users.user_id', '=','users.id')
+       ->first([
+            'users.name',
+            'profile_users.lastname'
+       ]); //remetente
       
-       $chat = Chat::where('receiver_id', '=', $receiver->user_id)->first();
-       $user = \Auth::id();
+       $chat = Chat::where('receiver_id', '=', $id)->first();
+       $user_id = \Auth::id();
      
        try{
         $insert_message = Message::create([
             'message' => $message,
             'status' => $status,
-            'user_id' => $user,
+            'user_name' => $receiver->name,
+            'user_lastname' => $receiver->lastname,
+            'user_id' => $user_id,
             'chat_id' => $chat->id,
+            'receiver_id' => $chat->receiver_id
         ]);
         
         return \Response::json($insert_message);
@@ -54,13 +62,13 @@ class MessagesController extends Controller
     }
     public function show($id){
         try{
-            $messages = Message::where('messages.chat_id', '=', $id)
-            ->join('chats', 'chats.id', '=', 'messages.chat_id')
+            $messages = Chat::where('chats.id', '=', $id)
+            ->join('messages', 'messages.chat_id', '=', 'chats.id')
             ->get([
                 'messages.*',
-                'chats.*'
-            //    'users.name'
+                'chats.id'
             ]);
+            
             return \Response::json($messages);
         }
         catch(Exception $e){
