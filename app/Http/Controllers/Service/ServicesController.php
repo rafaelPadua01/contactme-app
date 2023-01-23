@@ -28,23 +28,24 @@ class ServicesController extends Controller {
        
     }
     public function create(Request $request, $id){
-        $user_id = User::findOrFail($id);
-        $appoint_book = AppointmentBook::where('user_id', "=", $request->appointment_id);
+        $appointment_book = AppointmentBook::where('id', "=", $request->appointment_id)->first();
+        $marked_hour = $request->marked_hour;
         $client_id = \Auth::id();
-        $datas = $request->all();
-       
         try{
-            $insert_db = Service::create([
-                'client_name' => $request->client_name,
-                'marked_day' => $request->marked_day,
-                'marked_hour' => $request->marked_hour,
-                'marked_service' => $request->marked_service,
-                'note' => $request->note,
-                'user_id' => $id,
-                'client_id' => $client_id,
-                'appointment_id' => $request->appointment_id
-            ]);
-
+            if($appointment_book->inital_hour <= $marked_hour && $appointment_book->close_hour >= $marked_hour){
+                $insert_db = Service::create([
+                    'client_name' => $request->client_name,
+                    'marked_day' => $request->marked_day,
+                    'marked_hour' => $request->marked_hour,
+                    'marked_service' => $request->marked_service,
+                    'note' => $request->note,
+                    'user_id' => $id,
+                    'client_id' => $client_id,
+                    'appointment_id' => $request->appointment_id
+                ]);
+                return $insert_db;
+            }
+            
             return \Response::json($insert_db);
         }
         catch(Exception $e){

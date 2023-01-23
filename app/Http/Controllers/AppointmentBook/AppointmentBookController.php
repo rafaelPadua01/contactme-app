@@ -24,12 +24,11 @@ class AppointmentBookController extends Controller {
     }
     public function save(Request $request, $id){
         $day_work = $request->day_work;
-       // dd(implode('-', $day_work));
         try{
             $insert_db = AppointmentBook::create([
                 'initial_hour' => $request->initial_hour,
                 'close_hour' => $request->close_hour,
-                'days_work' => implode('-', $day_work),
+                'days_work' => $day_work,
                 'user_id' => $id
             ]);
             return \Response::json($insert_db);
