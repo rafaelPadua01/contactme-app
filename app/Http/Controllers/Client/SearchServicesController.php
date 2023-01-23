@@ -66,14 +66,13 @@ class SearchServicesController extends Controller
             }
         }
     }
-    public function userProfile(Request $request, $id){
+    public function userProfile($id){
         try{
-            $profile_user = User::join('profile_users', 'profile_users.user_id', '=', 'users.id')
+            $profile_user = User::where('users.id', '=', $id)
+            ->join('profile_users', 'profile_users.user_id', '=', 'users.id')
             ->join('profile_images', 'profile_images.user_id', '=', 'profile_users.user_id')
             ->join('profile_profs', 'profile_profs.user_id', '=', 'profile_images.user_id')
             ->join('cloacks', 'cloacks.user_id', '=', 'users.id')
-            ->where('profile_users.user_id', '=', $id)
-           // ->where('profissao', '=', $d)
             ->get([ 'users.id',
                             'users.name',
                             'users.email',
@@ -89,7 +88,8 @@ class SearchServicesController extends Controller
                             'profile_profs.descricao',
                            'cloacks.image_name as c_image',
                            'cloacks.selected as c_image_status'
-                        ]);
+            ]);
+           
 
         return \Response::json($profile_user);
         }
