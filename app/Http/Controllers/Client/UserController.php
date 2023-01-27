@@ -7,15 +7,13 @@
 
 
     class UserController extends Controller {
-        private $user;
+        private $users;
 
         public function __construct(UserController $user){
-            $this->user = $user;
+            $this->users = $users;
         }
         public function index(){
             $auth_user = Auth::user();
             return \Response::json($auth_user);
         }
-
-
-    }
+}

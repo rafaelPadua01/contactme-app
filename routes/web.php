@@ -58,6 +58,7 @@ Route::post('/logout', [LogoutRequest::class, 'logout'])->name('logout')->middle
 Route::get('/user', function(){
    return \Auth::user();
 })->middleware('auth');
+Route::get('/user/getNotifications', [RegisterUser::class, 'getNotifications'])->name('getNotifications');
 Route::post('/create/{email}/{name}/{password}', [RegisterUser::class, 'insert'])->name('create');
 
 
