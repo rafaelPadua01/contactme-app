@@ -485,7 +485,7 @@ export default {
                     //return this.notifications.push(response.data);
                 })
                 .catch((response) => {
-                    alert(response);
+                    return false;
                 });
         },
         ProfileImg() {
