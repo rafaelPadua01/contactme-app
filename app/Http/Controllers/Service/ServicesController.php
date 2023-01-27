@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use App\Models\Service;
 use App\Models\User;
 use App\Models\AppointmentBook;
+use App\Notifications\TimeRequest;
+use Illuminate\Support\Facades\Notification;
+
+
 
 class ServicesController extends Controller {
     private $service;
@@ -43,6 +47,15 @@ class ServicesController extends Controller {
                     'client_id' => $client_id,
                     'appointment_id' => $request->appointment_id
                 ]);
+                //Cria uma notificação de marcalção de horario no banco de dados
+                // pega o services e armazena o valor de insert_db 
+                // retorna esse valor para o objeto da classe TimeRequest
+                //Responsável ṕelo envio da notification
+                if($insert_db){
+                    $services = $insert_db;
+                    $user_notify = User::where('id', '=', $id)->first();
+                    $user_notify->notify(new TimeRequest($services));
+                }
                 return $insert_db;
             }
             
