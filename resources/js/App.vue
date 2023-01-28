@@ -319,12 +319,17 @@
 
             <v-main>
                 <div class="text-center">
-                    <v-alert v-model="success">
-                        <v-card color="success">
-                            <v-card-text>
+                    <v-alert v-model="success" variant="elevated" type="success" closable close-icon="mdi-close" close-label="close alert">
+                        
+                            <!-- <template v-slot:append>
+                                <v-btn link variant="text" @click="success = false">
+                                    <v-icon>mdi-close</v-icon>
+                                </v-btn>
+                            </template>
+                        -->
                                 Horario confirmado
-                            </v-card-text>
-                        </v-card>
+                          
+                        
                 
                     </v-alert>
                 
@@ -526,8 +531,13 @@ export default {
         confirmService(notification, index){
             axios.post(`/service/marked/alterStatus/${notification.data.service_id}`)
             .then((response) => {
+                this.markasread(notification, index);
                 this.success = response.data;
-                return this.markasread(notification, index);
+                return setTimeout(() => {
+                    this.success = false;
+                }, 2000);
+
+               // return this.markasread(notification, index);
             })
             .catch((response) => {
                 alert(response);
@@ -536,9 +546,10 @@ export default {
         removeNotification(notification,index) {
             this.notificationIndex = this.notifications.indexOf(index);
             console.log(this.notificationIndex);
-            axios.post(`/user/notification/remove/${notification.id}`)
+            axios.post(`/service/marked/remove/${notification.data.service_id}`)
                 .then((response) => {
-                    return this.notifications.splice(this.notificationIndex);
+                    return this.markasread(notification,index);
+                    //return this.notifications.splice(this.notificationIndex);
                 })
                 .catch((response) => {
                     alert(response);
