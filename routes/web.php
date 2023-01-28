@@ -20,6 +20,8 @@ use App\Http\Controllers\Message\MessagesController;
 use App\Http\Controllers\AppointmentBook\AppointmentBookController;
 use App\Http\Controllers\Service\ServicesController;
 use App\Http\Controllers\Enterprise\Auth\RegisterEnterpriseController;
+use LDAP\Result;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -58,8 +60,13 @@ Route::post('/logout', [LogoutRequest::class, 'logout'])->name('logout')->middle
 Route::get('/user', function(){
    return \Auth::user();
 })->middleware('auth');
-Route::get('/user/getNotifications', [RegisterUser::class, 'getNotifications'])->name('getNotifications');
 Route::post('/create/{email}/{name}/{password}', [RegisterUser::class, 'insert'])->name('create');
+Route::get('/user/getNotifications', [RegisterUser::class, 'getNotifications'])->name('getNotifications');
+Route::post('/user/markasread/{id}', [RegisterUser::class, 'markasread'])->name('markasread');
+Route::post('/user/markAll', [RegisterUser::class, 'markall'])->name('markall');
+Route::post('/user/notification/remove/{id}', [RegisterUser::class, 'removeNotification'])->name('removeNotification');
+
+
 
 
 //rota insert profile usuario comum

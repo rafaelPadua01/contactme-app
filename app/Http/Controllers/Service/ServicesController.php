@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Service;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Http\Request;
 use App\Models\Service;
 use App\Models\User;
@@ -45,8 +46,9 @@ class ServicesController extends Controller {
                     'note' => $request->note,
                     'user_id' => $id,
                     'client_id' => $client_id,
-                    'appointment_id' => $request->appointment_id
-                ]);
+                    'appointment_id' => $request->appointment_id,
+                    'status' => false
+                 ]);
                 //Cria uma notificação de marcalção de horario no banco de dados
                 // pega o services e armazena o valor de insert_db 
                 // retorna esse valor para o objeto da classe TimeRequest
@@ -69,7 +71,7 @@ class ServicesController extends Controller {
     public function alterStatus($id){
         try{
             $client = Service::where('id', '=', $id)->update(['status' => true]);
-            $response = 'Atendimento Confirmado.';
+            //return RegisterUserController::markasread($id);
             return \Response::json($client);
         }
         catch(Exception $e){
@@ -89,6 +91,9 @@ class ServicesController extends Controller {
     public function remove($id){
         try{
             $client = Service::where('id', '=', $id)->delete();
+            if(!$client){
+                $client = Service::where('appointment_id', '=', $id)->delete();
+            }
             return \Response::json($client);
         }
         catch(Exception $e){
