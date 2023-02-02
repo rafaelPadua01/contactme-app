@@ -53,19 +53,24 @@ public function __construct(Chat $chats)
     }
     public function create(Request $request, $id){
         $profile_user = ProfileUser::where('user_id', '=', $id)->first();
-        $chat = chat::where('receiver_id', '=', $profile_user->user_id)->first();
+        $chat = Chat::where('sender_id', '=', $profile_user->user_id)->first();
         $user = \Auth::user();
         if($chat){
-             return MessagesController::send($request, $id);
-                //echo "enviando mensangem...";
+                $insert_chat = Chat::where('receiver_id', '=', (int) $user->id)->update([
+                    'receiver_id' => (int) $id,
+                    'sender_id' => $user->id,
+                ]);
+         
+                return MessagesController::send($request, (int) $id);
+                
         }
-        else{
-            $insert_chat = Chat::create([
-                    'receiver_id' => $id,
+        else if(!$chat){
+             $insert_chat = Chat::create([
+                    'receiver_id' => (int) $id,
                     'sender_id' => $user->id,
                 ]);
                 if($insert_chat){
-                    return MessagesController::send($request, $user);
+                    return MessagesController::send($request,(int) $id);
                      
                 }
                 else{

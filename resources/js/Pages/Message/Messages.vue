@@ -236,16 +236,31 @@ export default {
         getUser(){
             axios.get(`/user`)
             .then((response) => {
-                this.user = response.data;
+                return this.user = response.data;
             })
             .catch((response) => {
                 alert('Error: ' + response);
             });
         },
+        listenMessageEvent(){
+            axios.get('/user')
+            .then((response) => {
+                this.user = response.data;
+               window.Echo.private(`message-event.${this.user.id}`)
+                .listen('MessageEvent', (e) => this.messages.push(e.message));
+                return this.getMessages();
+             
+            })
+            .catch((response) => {
+                return alert(response);
+            });
+            console.log();
+           
+        },
         getChats() {
             axios.get(`/selectChat/${this.$route.params.id}`)
                 .then((response) => {
-                    console.log(response.data);
+                    
                     this.chats = response.data;
                 })
                 .catch((response) => {
@@ -256,6 +271,7 @@ export default {
             axios.get(`/messages/show/${this.$route.params.id}`)
                 .then((response) => {
                     this.messages = response.data;
+                    return this.sendMessage(this.messages.user_id);
                 })
                 .catch((response) => {
                     return alert('Error :' + response);
@@ -272,9 +288,8 @@ export default {
                 });
         },
         sendMessage(chat) {
-            console.log(chat.id);
             let messages = { messages: this.textMessage }
-            axios.post(`/chats/create/${chat.receiver_id}`, messages)
+            axios.post(`/chats/create/${chat.sender_id}`, messages)
                 .then((response) => {
                     this.dialogMessage = false;
                     this.textMessage = '';
@@ -303,6 +318,7 @@ export default {
         this.getUser();
         this.getChats();
         this.getMessages();
+        this.listenMessageEvent();
     }
 }
 </script>
