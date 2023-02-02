@@ -610,7 +610,9 @@ export default {
         this.ProfileImg();
         this.listenMessageEvent();
     },
-    
+    mounted() {
+        this.getNotifications();
+    },
 }
 
 </script>
