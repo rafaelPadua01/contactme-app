@@ -39,31 +39,31 @@
                     <v-list-item link to="/searchService">
                         <template v-slot:prepend>
                             <v-icon>mdi-magnify</v-icon>
-                            <vilist-item-title>search service</vilist-item-title>
+                            <v-list-item-title>search service</v-list-item-title>
                         </template>
                     </v-list-item>
                     <v-list-item link :to="'/galery/' + auth_user.id">
                         <template v-slot:prepend>
                             <v-icon>mdi-folder-multiple-image</v-icon>
-                            <vilist-item-title>Galery</vilist-item-title>
+                            <v-list-item-title>Galery</v-list-item-title>
                         </template>
                     </v-list-item>
                     <v-list-item link :to="'/followers/' + auth_user.id">
                         <template v-slot:prepend>
                             <v-icon>mdi-account-group</v-icon>
-                            <vilist-item-title>Followers</vilist-item-title>
+                            <v-list-item-title>Followers</v-list-item-title>
                         </template>
                     </v-list-item>
                     <v-list-item link :to="'/chats/' + auth_user.id">
                         <template v-slot:prepend>
                             <v-icon>mdi-send</v-icon>
-                            <vilist-item-title>Messages</vilist-item-title>
+                            <v-list-item-title>Messages</v-list-item-title>
                         </template>
                     </v-list-item>
                     <v-list-item link :to="'/appointment_book/' + auth_user.id">
                         <template v-slot:prepend>
                             <v-icon>mdi-notebook-plus</v-icon>
-                            <vilist-item-title>Agenda</vilist-item-title>
+                            <v-list-item-title>Agenda</v-list-item-title>
                         </template>
                     </v-list-item>
 
@@ -113,31 +113,31 @@
                     <v-list-item link to="/searchService">
                         <template v-slot:prepend>
                             <v-icon>mdi-magnify</v-icon>
-                            <vilist-item-title>search service</vilist-item-title>
+                            <v-list-item-title>search service</v-list-item-title>
                         </template>
                     </v-list-item>
                     <v-list-item link :to="'/galery/' + auth_user.id">
                         <template v-slot:prepend>
                             <v-icon>mdi-folder-multiple-image</v-icon>
-                            <vilist-item-title>Galery</vilist-item-title>
+                            <v-list-item-title>Galery</v-list-item-title>
                         </template>
                     </v-list-item>
                     <v-list-item link :to="'/followers/' + auth_user.id">
                         <template v-slot:prepend>
                             <v-icon>mdi-account-group</v-icon>
-                            <vilist-item-title>Followers</vilist-item-title>
+                            <v-list-item-title>Followers</v-list-item-title>
                         </template>
                     </v-list-item>
                     <v-list-item link :to="'/chats/' + auth_user.id">
                         <template v-slot:prepend>
                             <v-icon>mdi-send</v-icon>
-                            <vilist-item-title>Messages</vilist-item-title>
+                            <v-list-item-title>Messages</v-list-item-title>
                         </template>
                     </v-list-item>
                     <v-list-item link :to="'/appointment_book/' + auth_user.id">
                         <template v-slot:prepend>
                             <v-icon>mdi-notebook-plus</v-icon>
-                            <vilist-item-title>Agenda</vilist-item-title>
+                            <v-list-item-title>Agenda</v-list-item-title>
                         </template>
                     </v-list-item>
 
@@ -217,9 +217,9 @@
                             </v-btn>
                         </template>
                         <v-list v-if="notifications.length >= 1">
-                            <v-list-item v-for="notification, index in notifications" :key="index" :value="index"
-                                width="400">
-                                <v-list-item-title>
+                            <v-list-item v-for="notification, index in notifications" :key="index" :value="index">
+                              
+                                <v-list-item-title @click="markasread(notification, index)">
                                     <div>
                                         <v-avatar>
                                             <v-icon icon="mdi-account-circle" color="primary"></v-icon>
@@ -231,6 +231,7 @@
                                 </v-list-item-title>
                               
                                     <div class="text-center">
+                                        {{notification.data.service_status}}
                                        <b>Hora:</b> {{ notification.data.marked_hour }}
                                         <b>Service:</b> {{ notification.data.marked_service }}
                                     </div>
@@ -239,21 +240,25 @@
                                     </div>
                                     <hr>
                                         <v-btn-group>
-                                            <v-btn color="pink-accent-4" link variant="plain">Ver perfil</v-btn>
-                                            <v-btn color="pink-accent-4" link variant="plain">Confirmar</v-btn>
-                                            <v-btn color="pink-accent-4" link variant="plain">Recusar</v-btn>
+                                            <v-btn color="pink-accent-4" link variant="plain" :to="`/searchProfile/${notification.data.client_id}`">Ver perfil</v-btn>
+                                            <v-btn color="pink-accent-4" link variant="plain" @click="confirmService(notification, index)">Confirmar</v-btn>
+                                            <v-btn color="pink-accent-4" link variant="plain" @click="removeNotification(notification, index)">Recusar</v-btn>
                                            
                                         </v-btn-group>
+                                        
                                   
                             </v-list-item>
 
-
+                            <v-btn block color="pink-accent-4" @click="markedAllRead(notification)">Marcar todas</v-btn>
                         </v-list>
+                        
                         <v-list v-else>
                             <v-list-item>
                                 <v-list-item-title>Nenhuma notificação</v-list-item-title>
                             </v-list-item>
                         </v-list>
+
+                        
                     </v-menu>
                 </div>
                 <v-btn icon>
@@ -313,6 +318,22 @@
             </v-app-bar>
 
             <v-main>
+                <div class="text-center">
+                    <v-alert v-model="success" variant="elevated" type="success" closable close-icon="mdi-close" close-label="close alert">
+                        
+                            <!-- <template v-slot:append>
+                                <v-btn link variant="text" @click="success = false">
+                                    <v-icon>mdi-close</v-icon>
+                                </v-btn>
+                            </template>
+                        -->
+                                Horario confirmado
+                          
+                        
+                
+                    </v-alert>
+                
+                </div>
                 <div v-if="(profile_prof.length >= 1)">
                     <v-row v-for="prof in profile_prof" :key="prof.id">
                         <v-col class="d-flex" cols="auto" sm="6">
@@ -429,9 +450,10 @@
             </v-sheet>
 
         </v-dialog>
+       
     </div>
 
-
+    
 
 </template>
 
@@ -451,6 +473,8 @@ export default {
         profile_prof: [],
         dialog: false,
         file: [],
+        notificationIndex: -1,
+        success: false,
     }),
     methods: {
         print(key) {
@@ -480,14 +504,57 @@ export default {
             axios.get(`/user/getNotifications`)
                 .then((response) => {
                     this.notifications = response.data;
-                    console.log(this.notifications);
-
-                    //return this.notifications.push(response.data);
                 })
                 .catch((response) => {
                     return false;
                 });
         },
+        markasread(notification, index) {
+            this.notificationIndex = this.notifications.indexOf(index);
+            axios.post(`/user/markasread/${notification.id}`)
+            .then((response) => {
+                return this.notifications.splice(this.notificationIndex);
+            })
+            .catch((response) => {
+                alert(response);
+            });
+        },
+        markedAllRead(){
+            axios.post(`/user/markAll`)
+            .then((response) => {
+                return this.notifications.splice(this.notifications);
+            })
+            .catch((response) => {
+                alert(response);
+            });
+        },
+        confirmService(notification, index){
+            axios.post(`/service/marked/alterStatus/${notification.data.service_id}`)
+            .then((response) => {
+                this.markasread(notification, index);
+                this.success = response.data;
+                return setTimeout(() => {
+                    this.success = false;
+                }, 2000);
+
+               // return this.markasread(notification, index);
+            })
+            .catch((response) => {
+                alert(response);
+            });
+        },  
+        removeNotification(notification,index) {
+            this.notificationIndex = this.notifications.indexOf(index);
+            console.log(this.notificationIndex);
+            axios.post(`/service/marked/remove/${notification.data.service_id}`)
+                .then((response) => {
+                    return this.markasread(notification,index);
+                    //return this.notifications.splice(this.notificationIndex);
+                })
+                .catch((response) => {
+                    alert(response);
+                });
+        },  
         ProfileImg() {
             axios.get('/profileImg')
                 .then((response) => {

@@ -68,7 +68,9 @@ class TimeRequest extends Notification
             'note' => $this->services->note,
             'id_user' => $this->services->user_id,
             'client_id' => $this->services->client_id,
-            'appointment_id' => $this->services->appointment_id
+            'appointment_id' => $this->services->appointment_id,
+            'service_id' => $this->services->id,
+            'service_status' => false
         ];
     }
 }

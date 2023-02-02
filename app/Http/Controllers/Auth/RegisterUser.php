@@ -46,4 +46,29 @@ class RegisterUser extends Controller
         $user_notifications = Auth::user();
         echo $user_notifications->unreadNotifications;
     }
+    public function markasread($id){
+        try{
+            $user_notifications = Auth::user();
+            if($user_notifications){
+                echo $user_notifications->notifications->where('id','=', $id)->first()->markAsRead();
+            }
+            return;
+        }
+        catch(Exception $e){
+            return \Response::json($e);
+        }
+       
+    }
+    public function markAll(){
+        $user_notifications = Auth::user();
+        foreach($user_notifications->notifications as $notification){
+            echo $notification->markAsRead();
+        }
+    }
+    public function removeNotification($id){
+        $user_notifications = Auth::user();
+        if($user_notifications){
+            echo $user_notifications->notifications->where('id', '=', $id)->first()->delete();
+        }
+    }
 }
