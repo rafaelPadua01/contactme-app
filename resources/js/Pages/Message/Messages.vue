@@ -247,7 +247,7 @@ export default {
             .then((response) => {
                 this.user = response.data;
                window.Echo.private(`message-event.${this.user.id}`)
-                .listen('MessageEvent', (e) => this.messages.push(e.message));
+                .listen('MessageEvent', (e) => this.messages.push(e.message)); 
                 return this.getMessages();
              
             })
