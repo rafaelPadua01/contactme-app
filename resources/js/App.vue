@@ -321,18 +321,14 @@
                 <div class="text-center">
                     <v-alert v-model="success" variant="elevated" type="success" closable close-icon="mdi-close" close-label="close alert">
                         
-                            <!-- <template v-slot:append>
-                                <v-btn link variant="text" @click="success = false">
-                                    <v-icon>mdi-close</v-icon>
-                                </v-btn>
-                            </template>
-                        -->
+
+
                                 Horario confirmado
                           
                         
                 
                     </v-alert>
-                
+
                 </div>
                 <div v-if="(profile_prof.length >= 1)">
                     <v-row v-for="prof in profile_prof" :key="prof.id">
@@ -459,6 +455,7 @@
 
 <script>
 import axios from 'axios';
+import Echo from 'laravel-echo';
 
 export default {
 
@@ -479,6 +476,10 @@ export default {
     methods: {
         print(key) {
             alert(JSON.stringify(this.$refs.app.getLayoutItem((key), null, 2)))
+        },
+        listenMessageEvent(){
+            window.Echo.channel("message-event",)
+                .listen('MessageEvent', (e) => console.log('Private Message-Event: ' + JSON.stringify(e.message)));
         },
         user() {
             axios.get('/user')
@@ -610,6 +611,7 @@ export default {
         this.user();
         this.profile();
         this.ProfileImg();
+        this.listenMessageEvent();
     },
     mounted() {
         this.getNotifications();

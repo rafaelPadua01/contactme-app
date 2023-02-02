@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Broadcast;
+use App\Models\Message;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +18,8 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
+
+Broadcast::channel('message-event.{user_id}', function($user, $id){
+   $message = Message::where('receiver_id', '=', (int) $id)->first();
+    return $user->id === $message->receiver_id;
+ });

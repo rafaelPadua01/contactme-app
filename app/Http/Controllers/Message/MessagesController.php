@@ -26,20 +26,22 @@ class MessagesController extends Controller
         catch(Exception $e){
             return \Response::json($e);
         }
-        
     }
-
     public static function send(Request $request, $id){
+     
        $message = $request->messages;
        $status  = false;
-       $receiver = User::where('users.id', '=', $id)
+       $receiver = User::where('users.id', '=', $request->id)
        ->join('profile_users', 'profile_users.user_id', '=','users.id')
        ->first([
             'users.name',
             'profile_users.lastname'
        ]); //remetente
       
-       $chat = Chat::where('receiver_id', '=', $id)->first();
+       $chat = Chat::where('receiver_id', '=', $request->id)->first();
+      if(!$chat){
+        $chat = Chat::where('sender_id', '=', $request->id)->first();
+      }
        $user_id = \Auth::id();
      
        try{
@@ -50,9 +52,11 @@ class MessagesController extends Controller
             'user_lastname' => $receiver->lastname,
             'user_id' => $user_id,
             'chat_id' => $chat->id,
-            'receiver_id' => $chat->receiver_id
+            'receiver_id' => (int) $id
         ]);
-        
+        if($insert_message){
+            event(new \App\Events\MessageEvent($insert_message));
+         }
         return \Response::json($insert_message);
        }
        catch(Exception $e)
