@@ -52,32 +52,27 @@ public function __construct(Chat $chats)
         }
     }
     public function create(Request $request, $id){
-        $profile_user = ProfileUser::where('user_id', '=', $id)->first();
-        $chat = Chat::where('sender_id', '=', $profile_user->user_id)->first();
+        $profile_user = ProfileUser::where('user_id', '=', (int) $id)->first();
+        $chat = Chat::where('receiver_id', '=', $profile_user->user_id)->first();
         $user = \Auth::user();
-        if($chat){
-                $insert_chat = Chat::where('receiver_id', '=', (int) $user->id)->update([
+        if(!$chat){
+            try{
+                $insert_chat = Chat::create([
                     'receiver_id' => (int) $id,
                     'sender_id' => $user->id,
                 ]);
-         
-                return MessagesController::send($request, (int) $id);
                 
-        }
-        else if(!$chat){
-             $insert_chat = Chat::create([
-                    'receiver_id' => (int) $id,
-                    'sender_id' => $user->id,
-                ]);
-                if($insert_chat){
-                    return MessagesController::send($request,(int) $id);
-                     
-                }
-                else{
-                    echo "não foi possível enviar a mensagem...";
-                    return false;
-                }
             }
+            catch(Exception $e){
+                return $e;
+            }
+            return MessagesController::send($request, $insert_chat->id);
+        }
+        else{
+            //dd($profile_user, $chat, $user, $user->id, $id, $request->receiver_id);
+           return MessagesController::send($request, (int) $id);
+        }
+       
     }
 
     public function selectChat($id){

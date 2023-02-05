@@ -288,8 +288,8 @@ export default {
                 });
         },
         sendMessage(chat) {
-            let messages = { messages: this.textMessage }
-            axios.post(`/chats/create/${chat.sender_id}`, messages)
+            let messages = { messages: this.textMessage, chat_id: chat.id}
+            axios.post(`/messages/send/${chat.id}`, messages)
                 .then((response) => {
                     this.dialogMessage = false;
                     this.textMessage = '';
