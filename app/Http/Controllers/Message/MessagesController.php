@@ -65,7 +65,7 @@ class MessagesController extends Controller
                     return \Response::json($e);
                 }
                 return \Response::json($insert_message);
-            } else {
+            } 
                 $receiver = User::where('users.id', '=', $chat->sender_id)
                     ->join('profile_users', 'profile_users.user_id', '=', 'users.id')
                     ->first([
@@ -92,7 +92,7 @@ class MessagesController extends Controller
                 catch (Exception $e) {
                     return \Response::json($e);
                 }
-            }
+            
       }
 
     public function show($id)
@@ -101,8 +101,9 @@ class MessagesController extends Controller
             $messages = Chat::where('chats.id', '=', $id)
                 ->join('messages', 'messages.chat_id', '=', 'chats.id')
                 ->get([
+                    'chats.id',
                     'messages.*',
-                    'chats.id'
+                    
                 ]);
 
             return \Response::json($messages);
