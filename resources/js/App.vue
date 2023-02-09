@@ -204,21 +204,17 @@
                     <v-menu>
                         <template v-slot:activator="{ props }">
                             <v-btn icon v-bind="props" stacked>
-                                <v-badge
-                                    color="red"
-                                    dot
-                                    v-if="notifications.length >= 1"
-                                    content="+9"
-                                >
+                                <v-badge color="red" dot v-if="notifications.length >= 1" content="+9">
                                     <v-icon>mdi-bell-sleep</v-icon>
                                 </v-badge>
                                 <v-icon v-else>mdi-bell-sleep</v-icon>
-                             
+
                             </v-btn>
                         </template>
-                        <v-list v-if="notifications.length >= 1">
+                        <v-list
+                            v-if="notifications.length >= 1 && notifications.type == 'App\Notifications\TimeResquest'">
                             <v-list-item v-for="notification, index in notifications" :key="index" :value="index">
-                              
+
                                 <v-list-item-title @click="markasread(notification, index)">
                                     <div>
                                         <v-avatar>
@@ -227,37 +223,80 @@
                                         <b>Cliente:</b> {{ notification.data.client_name }}
                                         <b> Dia: </b> {{ notification.data.marked_day }}
                                     </div>
-                                   
+
                                 </v-list-item-title>
-                              
-                                    <div class="text-center">
-                                        {{notification.data.service_status}}
-                                       <b>Hora:</b> {{ notification.data.marked_hour }}
-                                        <b>Service:</b> {{ notification.data.marked_service }}
-                                    </div>
-                                    <div class="text-center">
-                                        <b>Obs:</b> {{ notification.data.note }}
-                                    </div>
-                                    <hr>
-                                        <v-btn-group>
-                                            <v-btn color="pink-accent-4" link variant="plain" :to="`/searchProfile/${notification.data.client_id}`">Ver perfil</v-btn>
-                                            <v-btn color="pink-accent-4" link variant="plain" @click="confirmService(notification, index)">Confirmar</v-btn>
-                                            <v-btn color="pink-accent-4" link variant="plain" @click="removeNotification(notification, index)">Recusar</v-btn>
-                                           
-                                        </v-btn-group>
-                                        
-                                  
+
+                                <div class="text-center">
+                                    {{ notification.data.service_status }}
+                                    <b>Hora:</b> {{ notification.data.marked_hour }}
+                                    <b>Service:</b> {{ notification.data.marked_service }}
+                                </div>
+                                <div class="text-center">
+                                    <b>Obs:</b> {{ notification.data.note }}
+                                </div>
+                                <hr>
+                                <v-btn-group>
+                                    <v-btn color="pink-accent-4" link variant="plain"
+                                        :to="`/searchProfile/${notification.data.client_id}`">Ver perfil</v-btn>
+                                    <v-btn color="pink-accent-4" link variant="plain"
+                                        @click="confirmService(notification, index)">Confirmar</v-btn>
+                                    <v-btn color="pink-accent-4" link variant="plain"
+                                        @click="removeNotification(notification, index)">Recusar</v-btn>
+
+                                </v-btn-group>
+
+
                             </v-list-item>
 
                             <v-btn block color="pink-accent-4" @click="markedAllRead(notification)">Marcar todas</v-btn>
                         </v-list>
-                        
+
                         <v-list v-else>
                             <v-list-item>
                                 <v-list-item-title>Nenhuma notificação</v-list-item-title>
                             </v-list-item>
                         </v-list>
 
+
+                    </v-menu>
+                </div>
+
+                <div class="d-flex justify-space-around">
+                    <v-menu>
+                        <template v-slot:activator="{ props }">
+                            <v-btn icon v-bind="props" stacked>
+                                <v-badge color="red" dot v-if="notifications.length >= 1 
+                                    && notifications.type == 'App\Notifications\MessageNotification'" content="10"
+                                    @click="markAsRead(notification, index)">
+                                    <v-icon>mdi-chat</v-icon>
+                                </v-badge>
+                                <v-icon v-else>mdi-chat-sleep</v-icon>
+                            </v-btn>
+                        </template>
+                        <v-list v-if="notifications.length >= 1
+                        && notifications.type == 'App\Notifications\MessageNotification'">
+                            <v-list-item v-for="notification, index in notifications" :key="index" :value="index">
+                                <v-list-item-title @click="markAsRead(notification, index)">
+                                    <div>
+                                        <v-avatar>
+                                            <v-icon icon="mdi-account-circle" color="primary"></v-icon>
+                                        </v-avatar>
+                                        <b>Cliente:</b> {{ notification.data.message }}
+                                        <!-- <b> Dia: </b> {{ notification.data.marked_day }} -->
+                                    </div>
+                                </v-list-item-title>
+
+                                <div class="text-center">
+                                    {{ notification.data.message }}
+                                    <!--    <b>Hora:</b> {{ notification.data.marked_hour }}
+                                    <b>Service:</b> {{ notification.data.marked_service }} -->
+                                </div>
+                                <div class="text-center">
+                                    <!--    <b>Obs:</b> {{ notification.data.note }} -->
+                                </div>
+                                <hr>
+                            </v-list-item>
+                        </v-list>
                         
                     </v-menu>
                 </div>
@@ -319,14 +358,15 @@
 
             <v-main>
                 <div class="text-center">
-                    <v-alert v-model="success" variant="elevated" type="success" closable close-icon="mdi-close" close-label="close alert">
-                        
+                    <v-alert v-model="success" variant="elevated" type="success" closable close-icon="mdi-close"
+                        close-label="close alert">
 
 
-                                Horario confirmado
-                          
-                        
-                
+
+                        Horario confirmado
+
+
+
                     </v-alert>
 
                 </div>
@@ -446,10 +486,10 @@
             </v-sheet>
 
         </v-dialog>
-       
+
     </div>
 
-    
+
 
 </template>
 
@@ -477,7 +517,7 @@ export default {
         print(key) {
             alert(JSON.stringify(this.$refs.app.getLayoutItem((key), null, 2)))
         },
-        listenMessageEvent(){
+        listenMessageEvent() {
             window.Echo.channel("message-event",)
                 .listen('MessageEvent', (e) => console.log('Private Message-Event: ' + JSON.stringify(e.message)));
         },
@@ -513,49 +553,49 @@ export default {
         markasread(notification, index) {
             this.notificationIndex = this.notifications.indexOf(index);
             axios.post(`/user/markasread/${notification.id}`)
-            .then((response) => {
-                return this.notifications.splice(this.notificationIndex);
-            })
-            .catch((response) => {
-                alert(response);
-            });
+                .then((response) => {
+                    return this.notifications.splice(this.notificationIndex);
+                })
+                .catch((response) => {
+                    alert(response);
+                });
         },
-        markedAllRead(){
+        markedAllRead() {
             axios.post(`/user/markAll`)
-            .then((response) => {
-                return this.notifications.splice(this.notifications);
-            })
-            .catch((response) => {
-                alert(response);
-            });
+                .then((response) => {
+                    return this.notifications.splice(this.notifications);
+                })
+                .catch((response) => {
+                    alert(response);
+                });
         },
-        confirmService(notification, index){
+        confirmService(notification, index) {
             axios.post(`/service/marked/alterStatus/${notification.data.service_id}`)
-            .then((response) => {
-                this.markasread(notification, index);
-                this.success = response.data;
-                return setTimeout(() => {
-                    this.success = false;
-                }, 2000);
+                .then((response) => {
+                    this.markasread(notification, index);
+                    this.success = response.data;
+                    return setTimeout(() => {
+                        this.success = false;
+                    }, 2000);
 
-               // return this.markasread(notification, index);
-            })
-            .catch((response) => {
-                alert(response);
-            });
-        },  
-        removeNotification(notification,index) {
+                    // return this.markasread(notification, index);
+                })
+                .catch((response) => {
+                    alert(response);
+                });
+        },
+        removeNotification(notification, index) {
             this.notificationIndex = this.notifications.indexOf(index);
             console.log(this.notificationIndex);
             axios.post(`/service/marked/remove/${notification.data.service_id}`)
                 .then((response) => {
-                    return this.markasread(notification,index);
+                    return this.markasread(notification, index);
                     //return this.notifications.splice(this.notificationIndex);
                 })
                 .catch((response) => {
                     alert(response);
                 });
-        },  
+        },
         ProfileImg() {
             axios.get('/profileImg')
                 .then((response) => {

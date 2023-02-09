@@ -9,6 +9,7 @@ use App\Models\Message;
 use App\Models\User;
 use App\Models\Chat;
 use App\Models\ProfileUser;
+use App\Notifications\MessageNotification;
 
 class MessagesController extends Controller
 {
@@ -59,6 +60,8 @@ class MessagesController extends Controller
                     ]);
                     if ($insert_message) {
                         event(new \App\Events\MessageEvent($insert_message));
+                        $user_notify = \Auth::user();
+                        $user_notify->notify(new MessageNotification($insert_message));
                     }
                     return \Response::json($insert_message);
                 } catch (Exception $e) {
@@ -86,6 +89,8 @@ class MessagesController extends Controller
                     ]);
                     if ($insert_message) {
                         event(new \App\Events\MessageEvent($insert_message));
+                        $user_notify = \Auth::user();
+                        $user_notify->notify(new MessageNotification($insert_message));
                     }
                     return \Response::json($insert_message);
                 } 

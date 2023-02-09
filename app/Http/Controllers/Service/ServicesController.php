@@ -52,7 +52,7 @@ class ServicesController extends Controller {
                 //Cria uma notificação de marcalção de horario no banco de dados
                 // pega o services e armazena o valor de insert_db 
                 // retorna esse valor para o objeto da classe TimeRequest
-                //Responsável ṕelo envio da notification
+                //Responsável pelo envio da notification
                 if($insert_db){
                     $services = $insert_db;
                     $user_notify = User::where('id', '=', $id)->first();

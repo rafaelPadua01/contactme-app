@@ -31,7 +31,7 @@ class MessageNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'broadcast'];
+        return ['broadcast', 'database'];
     }
 
     /**
@@ -57,7 +57,12 @@ class MessageNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            //
+            
+            'chat_id' => $this->messages->id,
+            'send_id' => $this->messages->send_id,
+            'receiver_id' => $this->messages->receiver_id,
+            'message' => $this->messages->message,
+   
         ];
     }
     /**
