@@ -76,6 +76,9 @@
                                                             </p>
                                                         </template>
                                                     </v-chip>
+                                                   
+                                                   
+                                                   
                                                     <v-chip class="ma-2 bg-pink-accent-2" dark color="pink-accent"
                                                         @click="listItem = true" v-bind="props" v-if="!messages">
                                                         Inicie uma conversa
@@ -90,6 +93,23 @@
                                                             </p>
                                                         </template>
                                                     </v-chip>
+                                                    <div>
+                                    <v-row>
+                                        <v-col>
+                                            <v-chip class="ma-2" dark :color="chat.color"
+                                                        @click="listItem = true">
+
+                                                        <article class="clip">
+                                                          <!--  <h1>Test Here</h1> -->
+                                                            <button class="record">Record</button>
+                                                            <button class="stop">Stop</button>
+                                                            <p class="sound-clips">your clip name:</p>
+                                                        </article>
+                                                        
+                                                    </v-chip>
+                                        </v-col>
+                                    </v-row>
+                                </div>
                                                 </template>
                                                 <v-list v-model="listItem">
                                                     <v-list-item>
@@ -154,12 +174,25 @@
                                         </v-col>
                                     </v-row>
                                 </div>
-
+                              
                                 <v-spacer></v-spacer>
                             </v-card-text>
                         </v-sheet>
 
-
+                
+                                                        
+                                                     
+                                                    <!--    <template v-slot:append>
+                                                            <p class="ma-2 text-right text-grey"
+                                                                v-if="message.status == false">
+                                                                <v-icon>mdi-check</v-icon>
+                                                            </p>
+                                                            <p class="ma-2 text-right text-green"
+                                                                v-if="message.status == true">
+                                                                <v-icon>mdi-check-all</v-icon>
+                                                            </p>
+                                                        </template> -->
+                                                   
                         <v-divider></v-divider>
                         <v-spacer></v-spacer>
                         <div class="text-right">
@@ -209,7 +242,8 @@
                                             </v-card>
 
                                         </v-menu>
-                                        <v-btn icon :color="chat.color" class="mb-4 text-white">
+                                       
+                                        <v-btn icon :color="chat.color" class="mb-4 text-white record" @click="micRequest">
                                             <v-icon>mdi-microphone</v-icon>
                                         </v-btn>
                                         <v-btn icon :color="chat.color" class="mb-4 text-white"
@@ -319,7 +353,90 @@ export default {
                     return alert('Error:' + response);
                 });
         },
-       
+       micRequest(){
+            if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+                console.log('getUserMedia supported');
+
+                navigator.mediaDevices  
+                .getUserMedia(
+                    {
+                        audio: true,
+                    }
+                )
+                .then((stream) => {
+                    const mediaRecorder = new MediaRecorder(stream);
+                    const record = document.querySelector(".record");
+                    const stop = document.querySelector(".stop");
+                    const soundClips = document.querySelector(".sound-clips");
+                    let chunks = [];
+                    mediaRecorder.start();
+                  //  record.onclick = () => {
+                  //      mediaRecorder.start();
+                  //      console.log(mediaRecorder.state);
+                  //      console.log('Recorder is start');
+                  //      record.style.background = 'green';
+                  //      record.style.color = 'black';
+//
+                  //  };
+
+                    mediaRecorder.ondataavailable = (e) => {
+                        chunks.push(e.data);
+                    };
+
+                  //  stop.onclick = () => {
+                  //      mediaRecorder.stop();
+                  //      console.log(mediaRecorder.state);
+                  //      console.log('Recorder is stopped');
+                  //      stop.style.background = 'red';
+                  //      stop.style.color = 'black';
+                  //      record.style.background = "";
+                  //  };
+                    setTimeout(() => {
+                        mediaRecorder.stop();
+                    }, 10000);
+                    mediaRecorder.onstop = (e) => {
+                        console.log("recorder stopped");
+
+                        const clipName = prompt("enter a name for your sound clip");
+
+                        const clipContainer = document.createElement("v-chip");
+                        const clipLabel = document.createElement("p");
+                        const audio = document.createElement("audio");
+                        const deleteButton = document.createElement("button");
+
+                        clipContainer.classList.add("clip");
+                        audio.setAttribute("controls", "");
+                        deleteButton.innerHTML = "Remove";
+                        clipLabel.innerHTML = clipName;
+
+                        clipContainer.appendChild(audio);
+                        clipContainer.appendChild(clipLabel);
+                        clipContainer.appendChild(deleteButton);
+                        soundClips.appendChild(clipContainer);
+
+                        const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
+                        const audioUrl = window.URL.createObjectURL(blob);
+                        audio.src = audioUrl;
+
+                        deleteButton.onclick = (e) => {
+                            let evtTgt = e.target;
+                            evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
+                        };
+
+                        stop.style.background = "";
+                        stop.style.color = "";
+                        record.style.background = "";
+                        deleteButton.color = "";
+                    };
+                })
+                .catch((err) => {
+                    console.log(`The Following getUserMedia error ocurred: ${err}`);
+                });
+            }
+            else{
+                console.log('getUserMedia not supported on your browser');
+            }
+       },
         sendMessage(chat) {
             let messages = { messages: this.textMessage, chat_id: chat.id }
             axios.post(`/messages/send/${chat.id}`, messages)
@@ -356,3 +473,50 @@ export default {
 }
 </script>
 
+<style>
+    header { 
+    height: 70px;
+}
+
+.main-controls{
+    padding-bottom: 0.7rem;
+    height: 170px;
+}
+
+.soundclips{
+    box-shadow: inset 0 3px 4px rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.1);
+    height: calc(100% - 240px - 0.7rem);
+    overflow: scroll;
+}
+
+label {
+    font-family: "NotoColorEmoji";
+    font-size: 3rem;
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    z-index: 5;
+    cursor: pointer;
+}
+input[type="checkbox"] {
+    position: absolute;
+    top: -100px;
+}
+aside {
+    position: fixed;
+    top: 0;
+    left: 0;
+    text-shadow: 1px 1px 1px black;
+    width: 100%;
+    height: 100%;
+    transform: translateX(100%);
+    transition: 0.6s all;
+    background-color: #999;
+    background-image: linear-gradient(
+      to top right,
+      rgba(0, 0, 0, 0),
+      rgba(0, 0, 0, 0.5)
+    );
+}
+</style>
