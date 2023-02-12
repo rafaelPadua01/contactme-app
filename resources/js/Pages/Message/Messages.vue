@@ -93,18 +93,16 @@
                                                             </p>
                                                         </template>
                                                     </v-chip>
-                                                    <div>
+                                                    <!--   <div>
                                                         <v-row>
                                                             <v-col>
                                                                 <article class="clip ma-2" dark :color="chat.color"
                                                                     @click="listItem = true">
                                                                     <p class="sound-clips"></p>
                                                                 </article>
-
-
                                                             </v-col>
                                                         </v-row>
-                                                    </div>
+                                                    </div> -->
                                                 </template>
                                                 <v-list v-model="listItem">
                                                     <v-list-item>
@@ -152,6 +150,7 @@
                                                             </p>
                                                         </template>
                                                     </v-chip>
+
                                                 </template>
                                                 <v-list v-model="listItem">
                                                     <v-list-item>
@@ -168,6 +167,17 @@
 
                                         </v-col>
                                     </v-row>
+
+                                    <div align="right">
+                                        <v-row>
+                                            <v-col>
+                                                <article class="clip ma-2" dark :color="chat.color"
+                                                    @click="listItem = true">
+                                                    <p class="sound-clips"></p>
+                                                </article>
+                                            </v-col>
+                                        </v-row>
+                                    </div>
                                 </div>
 
                                 <v-spacer></v-spacer>
@@ -237,13 +247,14 @@
                                             </v-card>
 
                                         </v-menu>
-                                        
+
                                         <article class="clip d-flex">
-                                            <v-btn icon :color="chat.color" class="record mb-4 text-white" @click="micRequest(chat)">
+                                            <v-btn icon :color="chat.color" class="record mb-4 text-white"
+                                                @click="micRequest(chat)">
                                                 <v-icon>mdi-microphone</v-icon>
                                             </v-btn>
                                         </article>
-                                        
+
                                         <v-btn icon :color="chat.color" class="mb-4 text-white"
                                             @click="sendMessage(chat)">
                                             <v-icon>mdi-send</v-icon>
@@ -368,18 +379,15 @@ export default {
                         record.onmousedown = () => {
                             mediaRecorder.start();
                             record.style.background = 'blue';
-                            record.style.color = 'black';
-
                         };
 
                         mediaRecorder.ondataavailable = (e) => {
                             chunks.push(e.data);
-                            console.log('Enviando audio');
                         };
 
                         record.onmouseup = () => {
                             mediaRecorder.stop();
-                           record.style.background = chat.color;
+                            record.style.background = chat.color;
                         };
 
                         mediaRecorder.onstop = (e) => {
@@ -398,8 +406,30 @@ export default {
 
                             clipContainer.classList.add("clip");
                             audio.setAttribute("controls", "");
-                            deleteButton.innerHTML = "Remove";
+
+                            deleteButton.innerHTML = "<span class='mdi mdi-delete'></span>";
+                            deleteButton.style.width = '2%';
+                            deleteButton.style.height = '20%';
+                            deleteButton.style.borderRadius = '50%';
+                            deleteButton.style.background = 'grey';
+                            deleteButton.style.color = 'white';
+                            deleteButton.style.border = 'none';
+                            deleteButton.style.textAlign = 'center';
+                            deleteButton.style.fontSize = "1rem";
+                            deleteButton.style.transition = "all";
+                            deleteButton.style.cursor = "pointer";
+                            // deleteButton.style.marginTop = "0%";
+                            deleteButton.style.marginRight = '25%';
+
+
+
+                            //  deleteButton.innerHTML = "Remove";
                             clipLabel.innerHTML = clipName;
+
+                            clipLabel.style.fontSize = '0.7rem';
+                            clipLabel.style.marginTop = '0rem';
+                            clipLabel.style.color = 'blue';
+
 
                             clipContainer.appendChild(audio);
                             clipContainer.appendChild(clipLabel);
@@ -409,14 +439,27 @@ export default {
                             const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
                             const audioUrl = window.URL.createObjectURL(blob);
                             audio.src = audioUrl;
+                            let voice_message = { audio: blob, receiver_id: chat.sender_id };
+                            //console.log(mediaRecorder, stream);
+                            axios.post(`/messages/voice/${chat.id}`, voice_message, {
+                                headers: {
+                                    'Content-Type': 'multipart/form-data'
+                                }
+                            })
+                                .then((response) => {
+                                    alert('estamos aqui');
+                                })
+                                .catch((response) => {
+                                    alert('Erro' + response);
+                                });
 
                             deleteButton.onclick = (e) => {
                                 let evtTgt = e.target;
-                                evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
+                                evtTgt.parentNode.parentNode.remove(evtTgt.parentNode);
                             };
 
-                            
-                            
+
+
                         };
                     })
                     .catch((err) => {
