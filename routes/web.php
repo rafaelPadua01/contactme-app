@@ -17,6 +17,7 @@ use App\Http\Controllers\Client\ImageGaleryController;
 use App\Http\Controllers\Client\CloakController;
 use App\Http\Controllers\Message\ChatsController;
 use App\Http\Controllers\Message\MessagesController;
+use App\Http\Controllers\Message\VoiceMessageController;
 use App\Http\Controllers\AppointmentBook\AppointmentBookController;
 use App\Http\Controllers\Service\ServicesController;
 use App\Http\Controllers\Enterprise\Auth\RegisterEnterpriseController;
@@ -65,9 +66,6 @@ Route::get('/user/getNotifications', [RegisterUser::class, 'getNotifications'])-
 Route::post('/user/markasread/{id}', [RegisterUser::class, 'markasread'])->name('markasread');
 Route::post('/user/markAll', [RegisterUser::class, 'markall'])->name('markall');
 Route::post('/user/notification/remove/{id}', [RegisterUser::class, 'removeNotification'])->name('removeNotification');
-
-
-
 
 //rota insert profile usuario comum
 Route::get('/profile', [ProfileController::class, 'index'])->name('index')->middleware('auth');
@@ -133,6 +131,9 @@ Route::get('/messages/{id}', [MessagesController::class, 'index'])->name('index'
 Route::post('/messages/send/{id}', [MessagesController::class, 'send'])->name('send');
 Route::get('/messages/show/{id}', [MessagesController::class, 'show'])->name('show');
 Route::post('/messages/remove/{id}', [MessagesController::class, 'remove'])->name('remove');
+
+//Routes voice messages
+Route::post('/messages/voice/{id}', [VoiceMessageController::class, 'send'])->name('send')->middleware('auth');
 
 //Routes to Appointments (agenda, compromissos)
 Route::get('/appointments/{id}',[AppointmentBookController::class, 'index'])->name('index');
