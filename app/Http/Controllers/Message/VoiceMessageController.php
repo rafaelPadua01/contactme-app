@@ -51,4 +51,19 @@ class VoiceMessageController extends Controller {
         }
      
     }
+    public function show($id){
+        try{
+            $messages = MessageVoice::where('chat_id', '=', $id)
+            ->where(function($query) {
+                $query->where('sender_id', '=', \Auth::id());
+            })
+            ->get();
+            return \Response::json($messages);
+          
+        }
+        catch(Exception $e){
+            return \Response::json($e);
+        }
+      
+    }
 }

@@ -150,7 +150,6 @@
                                                             </p>
                                                         </template>
                                                     </v-chip>
-
                                                 </template>
                                                 <v-list v-model="listItem">
                                                     <v-list-item>
@@ -167,7 +166,36 @@
 
                                         </v-col>
                                     </v-row>
+                                    <v-row v-for="voice in voice_messages" :key="voice.id">
+                                        <v-col class="text-right">
+                                            <v-menu top>
+                                                <template v-slot:activator="{props}">
+                                                    <v-chip class="ma-2 dark" :color="chat.color" v-bind="props">
+                                                    <b>{{ voice.audio_name }}</b>
+                                                    <template v-slot:append>
+                                                            <p class="ma-2 text-right text-grey"
+                                                                v-if="voice.status == false">
+                                                                <v-icon>mdi-check</v-icon>
+                                                            </p>
+                                                            <p class="ma-2 text-right text-green"
+                                                                v-if="voice.status == true">
+                                                                <v-icon>mdi-check-all</v-icon>
+                                                            </p>
+                                                        </template>
+                                                </v-chip>
 
+                                               
+                                                </template>
+                                                <v-list v-model="listItem">
+                                                    <v-list-item-title @click="removeVoiceMessage(voice)">
+                                                        <v-icon>mdi-delete</v-icon>
+                                                        Remove
+                                                    </v-list-item-title>
+                                                </v-list>
+                                            </v-menu>
+                                          
+                                        </v-col>
+                                    </v-row>
                                     <div align="right">
                                         <v-row>
                                             <v-col>
@@ -291,6 +319,7 @@ export default {
     data: () => ({
         chats: [],
         messages: [],
+        voice_messages: [],
         swatches: [
             '#FF0000', '#AA0000', '#5500000',
             '#FFFF00', '#AAAA00', '#5555000',
@@ -351,6 +380,15 @@ export default {
                 .catch((response) => {
                     return alert('Error :' + response);
                 });
+        },
+        getVoiceMessages(){
+            axios.get(`/messages/voice/show/${this.$route.params.id}`)
+            .then((response) => {
+                this.voice_messages = response.data;
+            })
+            .catch((response) => {
+                alert('Error' + response);
+            });
         },
         getColor(colorPicker, chat) {
             let color = { colorPicker: this.colorPicker };
@@ -447,7 +485,7 @@ export default {
                                 }
                             })
                                 .then((response) => {
-                                    alert('estamos aqui');
+                                    return this.voice_messages.push(response.data);
                                 })
                                 .catch((response) => {
                                     alert('Erro' + response);
@@ -501,6 +539,7 @@ export default {
         this.getUser();
         this.getChats();
         this.getMessages();
+        this.getVoiceMessages();
         this.listenMessageEvent();
     }
 }

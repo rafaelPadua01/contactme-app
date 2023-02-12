@@ -108,7 +108,6 @@ class MessagesController extends Controller
                 ->get([
                     'chats.id',
                     'messages.*',
-                    
                 ]);
 
             return \Response::json($messages);
