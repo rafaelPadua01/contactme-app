@@ -135,7 +135,7 @@ Route::post('/messages/remove/{id}', [MessagesController::class, 'remove'])->nam
 //Routes voice messages
 Route::post('/messages/voice/{id}', [VoiceMessageController::class, 'send'])->name('send')->middleware('auth');
 Route::get('/messages/voice/show/{id}', [VoiceMessageController::class, 'show'])->name('show')->middleware('auth');
-
+Route::post('/messages/voice/delete/{id}', [VoiceMessageController::class, 'delete'])->name('delete')->middleware('auth');
 //Routes to Appointments (agenda, compromissos)
 Route::get('/appointments/{id}',[AppointmentBookController::class, 'index'])->name('index');
 Route::post('/appointments/{id}', [AppointmentBookController::class, 'save'])->name('save');

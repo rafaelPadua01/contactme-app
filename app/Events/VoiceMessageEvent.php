@@ -10,20 +10,20 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class MessageEvent implements ShouldBroadcast
+class VoiceMessageEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    public $message;
+    public $voice_messages;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($message)
+    public function __construct($voice_messages)
     {
         //
-        $this->message = $message;
+        $this->voice_messages = $voice_messages;
     }
 
     /**
@@ -33,7 +33,6 @@ class MessageEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-      
-        return new PrivateChannel('message-event.'. $this->message->receiver_id);
+        return new PrivateChannel('voice-message-event.'. $this->voice_messages->receiver_id);
     }
 }

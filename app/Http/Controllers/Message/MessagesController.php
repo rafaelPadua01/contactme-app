@@ -92,23 +92,33 @@ class MessagesController extends Controller
                         $user_notify = \Auth::user();
                         $user_notify->notify(new MessageNotification($insert_message));
                     }
+                   
                     return \Response::json($insert_message);
                 } 
                 catch (Exception $e) {
                     return \Response::json($e);
                 }
-            
-      }
-
+    }
     public function show($id)
     {
-        try {
-            $messages = Chat::where('chats.id', '=', $id)
+        $messages = Chat::where('chats.id', '=', $id)
                 ->join('messages', 'messages.chat_id', '=', 'chats.id')
                 ->get([
                     'chats.id',
                     'messages.*',
                 ]);
+                
+        foreach($messages as $message){
+             if($message->status == false){
+                $message->update(['status' => true]);
+            }
+            else{
+                echo 'asuihasu';
+            }
+        }
+            return \Response::json($messages);
+        try {
+            $messages = Message::where('chat_id', '=', $id)->get();
 
             return \Response::json($messages);
         } catch (Exception $e) {

@@ -56,18 +56,21 @@
                             <v-card-text v-else>
 
                                 <div>
+
+
+                                    <v-spacer></v-spacer>
+
                                     <v-row v-for="(message, index) in messages" :key="index">
                                         <v-col v-if="message.user_id == chat.sender_id" :color="chat.color">
                                             <v-menu top>
                                                 <template v-slot:activator="{ props }">
-
-                                                    <v-chip class="ma-2" dark :color="chat.color"
+                                                    <v-chip-group column>
+                                                         <v-chip class="ma-2" dark :color="chat.color"
                                                         @click="listItem = true" v-bind="props" v-if="messages">
 
                                                         <b> {{ message.message }}</b>
                                                         <template v-slot:append>
-                                                            <p class="ma-2 text-right text-grey"
-                                                                v-if="message.status == false">
+                                                            <p class="ma-2 text-grey" v-if="message.status == false">
                                                                 <v-icon>mdi-check</v-icon>
                                                             </p>
                                                             <p class="ma-2 text-right text-green"
@@ -76,9 +79,56 @@
                                                             </p>
                                                         </template>
                                                     </v-chip>
+                                                    </v-chip-group>
+                                                     <v-row v-for="voice in voice_messages" :key="voice.id">
+                                                        <v-col v-if="voice.sender_id == chat.sender_id">
+                                                            <v-menu top>
+                                                                <template v-slot:activator="{ props }">
+                                                                    <div class="pa-4">
+                                                                        <v-chip-group column group style="height: 65px">
+                                                                        <v-chip dark :color="chat.color"
+                                                                        v-bind="props">
+                                                                        <!-- audio player -->
+                                                                        <div class="clip">
+                                                                            <audio
+                                                                                :src="`/storage/voice/${chat.id}/${voice.audio_name}`"
+                                                                                controls>
+
+                                                                            </audio>
+                                                                           
+                                                                        </div>
 
 
+                                                                        <template v-slot:append>
+                                                                            <p class="ma-2 text-right text-grey"
+                                                                                v-if="voice.status == false">
+                                                                                <v-icon>mdi-check</v-icon>
+                                                                            </p>
+                                                                            <p class="ma-2 text-right text-green"
+                                                                                v-if="voice.status == true">
+                                                                                <v-icon>mdi-check-all</v-icon>
+                                                                            </p>
+                                                                        </template>
+                                                                    </v-chip>
 
+                                                                    </v-chip-group>
+                                                                    <p class="sound-clips">
+                                                                                {{ voice.created_at }}
+                                                                            </p>
+                                                                    </div>
+                                                                </template>
+                                                                <v-list v-model="listItem">
+                                                                    <v-list-item-title
+                                                                        @click="removeVoiceMessage(voice)">
+                                                                        <v-icon>mdi-delete</v-icon>
+                                                                        Remove
+                                                                    </v-list-item-title>
+                                                                </v-list>
+                                                            </v-menu>
+
+                                                        </v-col>
+                                                    </v-row>
+                                            
                                                     <v-chip class="ma-2 bg-pink-accent-2" dark color="pink-accent"
                                                         @click="listItem = true" v-bind="props" v-if="!messages">
                                                         Inicie uma conversa
@@ -93,16 +143,7 @@
                                                             </p>
                                                         </template>
                                                     </v-chip>
-                                                    <!--   <div>
-                                                        <v-row>
-                                                            <v-col>
-                                                                <article class="clip ma-2" dark :color="chat.color"
-                                                                    @click="listItem = true">
-                                                                    <p class="sound-clips"></p>
-                                                                </article>
-                                                            </v-col>
-                                                        </v-row>
-                                                    </div> -->
+                                                    
                                                 </template>
                                                 <v-list v-model="listItem">
                                                     <v-list-item>
@@ -118,10 +159,13 @@
                                             </v-menu>
 
                                         </v-col>
+
+
                                         <v-col v-if="message.user_id == chat.receiver_id" class="text-right">
                                             <v-menu top>
                                                 <template v-slot:activator="{ props }">
-                                                    <v-chip class="ma-2" dark :color="chat.color"
+                                                    
+                                                        <v-chip class="ma-2" dark :color="chat.color"
                                                         @click="listItem = true" v-bind="props" v-if="messages">
 
                                                         <b>{{ message.message }}</b>
@@ -150,6 +194,8 @@
                                                             </p>
                                                         </template>
                                                     </v-chip>
+                                                   
+                                                    
                                                 </template>
                                                 <v-list v-model="listItem">
                                                     <v-list-item>
@@ -166,13 +212,24 @@
 
                                         </v-col>
                                     </v-row>
-                                    <v-row v-for="voice in voice_messages" :key="voice.id">
-                                        <v-col class="text-right">
+
+
+                                    <v-row class="text-right" v-for="voice in voice_messages" :key="voice.id">
+                                        <v-col  v-if="voice.sender_id == chat.receiver_id">
                                             <v-menu top>
-                                                <template v-slot:activator="{props}">
-                                                    <v-chip class="ma-2 dark" :color="chat.color" v-bind="props">
-                                                    <b>{{ voice.audio_name }}</b>
-                                                    <template v-slot:append>
+                                                <template v-slot:activator="{ props }">
+                                               
+                                                        <v-chip class="ma-4" dark :color="chat.color" v-bind="props">
+                                                        <!-- audio player -->
+                                                        <div class="clip">
+                                                            <audio
+                                                                :src="`/storage/voice/${chat.id}/${voice.audio_name}`"
+                                                                controls></audio>
+                                                        </div>
+                                                       
+
+
+                                                        <template v-slot:append>
                                                             <p class="ma-2 text-right text-grey"
                                                                 v-if="voice.status == false">
                                                                 <v-icon>mdi-check</v-icon>
@@ -182,9 +239,14 @@
                                                                 <v-icon>mdi-check-all</v-icon>
                                                             </p>
                                                         </template>
-                                                </v-chip>
+                                                    </v-chip>
+                                                    
+                                                  
+                                                    <div>
+                                                        <p class="sound-clips">{{ voice.created_at }}</p>
+                                                    </div>
+                                                   
 
-                                               
                                                 </template>
                                                 <v-list v-model="listItem">
                                                     <v-list-item-title @click="removeVoiceMessage(voice)">
@@ -193,19 +255,10 @@
                                                     </v-list-item-title>
                                                 </v-list>
                                             </v-menu>
-                                          
+
                                         </v-col>
                                     </v-row>
-                                    <div align="right">
-                                        <v-row>
-                                            <v-col>
-                                                <article class="clip ma-2" dark :color="chat.color"
-                                                    @click="listItem = true">
-                                                    <p class="sound-clips"></p>
-                                                </article>
-                                            </v-col>
-                                        </v-row>
-                                    </div>
+
                                 </div>
 
                                 <v-spacer></v-spacer>
@@ -275,13 +328,11 @@
                                             </v-card>
 
                                         </v-menu>
+                                        <v-btn icon :color="chat.color" class="clip record mb-4 text-white"
+                                            @click="micRequest(chat)">
+                                            <v-icon>mdi-microphone</v-icon>
+                                        </v-btn>
 
-                                        <article class="clip d-flex">
-                                            <v-btn icon :color="chat.color" class="record mb-4 text-white"
-                                                @click="micRequest(chat)">
-                                                <v-icon>mdi-microphone</v-icon>
-                                            </v-btn>
-                                        </article>
 
                                         <v-btn icon :color="chat.color" class="mb-4 text-white"
                                             @click="sendMessage(chat)">
@@ -349,16 +400,23 @@ export default {
         listenMessageEvent() {
             axios.get('/user')
                 .then((response) => {
+                    console.log(response.data);
                     this.user = response.data;
                     window.Echo.private(`message-event.${this.user.id}`)
                         .listen('MessageEvent', (e) => this.messages.push(e.message));
-                    return this.getMessages();
+                    this.getMessages();
+
+                    window.Echo.private(`voice-message-event.${this.user.id}`)
+                        .listen('VoiceMessageEvent', (e) => this.voice_messages.push(e.message));
+                    return this.getVoiceMessages();
 
                 })
                 .catch((response) => {
                     return alert(response);
                 });
-            console.log();
+
+        },
+        listeVoiceMessageEvent() {
 
         },
         getChats() {
@@ -381,14 +439,14 @@ export default {
                     return alert('Error :' + response);
                 });
         },
-        getVoiceMessages(){
+        getVoiceMessages() {
             axios.get(`/messages/voice/show/${this.$route.params.id}`)
-            .then((response) => {
-                this.voice_messages = response.data;
-            })
-            .catch((response) => {
-                alert('Error' + response);
-            });
+                .then((response) => {
+                    this.voice_messages = response.data;
+                })
+                .catch((response) => {
+                    alert('Error' + response);
+                });
         },
         getColor(colorPicker, chat) {
             let color = { colorPicker: this.colorPicker };
@@ -429,56 +487,14 @@ export default {
                         };
 
                         mediaRecorder.onstop = (e) => {
-                            let date = new Date();
-                            const day = date.getDate();
-                            const month = (date.getMonth() + 1);
-                            const year = date.getFullYear();
-                            const hours = date.getHours();
-                            const minutes = date.getMinutes();
-                            const clipName = year + '-' + month + '-' + day + '-' + hours + ':' + minutes;//prompt("enter a name for your sound clip");
-
-                            const clipContainer = document.createElement("article");
-                            const clipLabel = document.createElement("p");
                             const audio = document.createElement("audio");
-                            const deleteButton = document.createElement("button");
 
-                            clipContainer.classList.add("clip");
-                            audio.setAttribute("controls", "");
-
-                            deleteButton.innerHTML = "<span class='mdi mdi-delete'></span>";
-                            deleteButton.style.width = '2%';
-                            deleteButton.style.height = '20%';
-                            deleteButton.style.borderRadius = '50%';
-                            deleteButton.style.background = 'grey';
-                            deleteButton.style.color = 'white';
-                            deleteButton.style.border = 'none';
-                            deleteButton.style.textAlign = 'center';
-                            deleteButton.style.fontSize = "1rem";
-                            deleteButton.style.transition = "all";
-                            deleteButton.style.cursor = "pointer";
-                            // deleteButton.style.marginTop = "0%";
-                            deleteButton.style.marginRight = '25%';
-
-
-
-                            //  deleteButton.innerHTML = "Remove";
-                            clipLabel.innerHTML = clipName;
-
-                            clipLabel.style.fontSize = '0.7rem';
-                            clipLabel.style.marginTop = '0rem';
-                            clipLabel.style.color = 'blue';
-
-
-                            clipContainer.appendChild(audio);
-                            clipContainer.appendChild(clipLabel);
-                            clipContainer.appendChild(deleteButton);
-                            soundClips.appendChild(clipContainer);
 
                             const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
                             const audioUrl = window.URL.createObjectURL(blob);
                             audio.src = audioUrl;
                             let voice_message = { audio: blob, receiver_id: chat.sender_id };
-                            //console.log(mediaRecorder, stream);
+
                             axios.post(`/messages/voice/${chat.id}`, voice_message, {
                                 headers: {
                                     'Content-Type': 'multipart/form-data'
@@ -495,9 +511,6 @@ export default {
                                 let evtTgt = e.target;
                                 evtTgt.parentNode.parentNode.remove(evtTgt.parentNode);
                             };
-
-
-
                         };
                     })
                     .catch((err) => {
@@ -531,7 +544,16 @@ export default {
                 })
                 .catch((response) => {
                     return alert('Error:' + response);
+                });
+        },
+        removeVoiceMessage(voice) {
+            axios.post(`/messages/voice/delete/${voice.id}`)
+                .then((response) => {
+                    return this.voice_messages.splice(this.voice_messages.indexOf(voice.id), 1);
                 })
+                .catch((response) => {
+                    alert('error:' + response);
+                });
         }
 
     },
