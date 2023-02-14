@@ -8,19 +8,20 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 
-class MessageNotification extends Notification
+class VoiceMessageNotification extends Notification
 {
     use Queueable;
-    private $messages;
+    private $voice_messages;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($messages)
+    public function __construct($voice_messages)
     {
         //
-        $this->messages = $messages;
+        $this->voice_messages = $voice_messages;
     }
 
     /**
@@ -31,7 +32,7 @@ class MessageNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['broadcast', 'database'];
+        return ['broadcast'];
     }
 
     /**
@@ -57,25 +58,16 @@ class MessageNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            
-            'chat_id' => $this->messages->id,
-            'send_id' => $this->messages->send_id,
-            'receiver_id' => $this->messages->receiver_id,
-            'message' => $this->messages->message,
+            //
         ];
     }
-    /**
-     *  Get the broadcaster representation of the notification
-     * 
-     *  @param mixed $notifiable
-     *  @return BroadcastMessage
-     */
-    public function toBroadcast($notifiable){
+
+    public function toBroadcast($notifiable){ 
         return new BroadcastMessage([
-            'chat_id' => $this->messages->id,
-            'send_id' => $this->messages->send_id,
-            'receiver_id' => $this->messages->receiver_id,
-            'message' => $this->messages->message,
+            'chat_id' => $this->voice_messages->id,
+            'sender_id' => $this->voice_messages->send_id,
+            'receiver_id' => $this->voice_messages->receiver_id,
+            'message' => $this->voice_messages->audio_name, 
         ]);
     }
 }
