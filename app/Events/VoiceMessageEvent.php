@@ -33,6 +33,6 @@ class VoiceMessageEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('voice-message-event.'. $this->voice_messages->receiver_id);
+        return new PrivateChannel('voice-message-event.' . $this->voice_messages->receiver_id);
     }
 }

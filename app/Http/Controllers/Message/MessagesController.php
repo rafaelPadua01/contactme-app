@@ -107,14 +107,23 @@ class MessagesController extends Controller
                     'chats.id',
                     'messages.*',
                 ]);
-                
-        foreach($messages as $message){
-             if($message->status == false){
+
+        $alter_status = Message::where('chat_id', '=', $id)
+                        ->where(function($query){
+                            $query->where('receiver_id', '=', \Auth::id())
+                            ->orWhere('user_id', '=', \Auth::id());
+                            
+                        })
+                        ->orderBy('id', 'desc')
+                        ->get();
+           
+        foreach($alter_status as $message){
+            //dd($message->status);
+            if($message->status === false){
                 $message->update(['status' => true]);
+               
             }
-            else{
-                echo 'asuihasu';
-            }
+            
         }
             return \Response::json($messages);
         try {

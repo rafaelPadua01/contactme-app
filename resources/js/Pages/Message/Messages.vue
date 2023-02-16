@@ -79,7 +79,11 @@
                                                             </p>
                                                         </template>
                                                     </v-chip>
+                                                    
                                                     </v-chip-group>
+                                                    <div class="text-blue-darken-4">
+                                                        <p >{{ message.created_at }}</p>
+                                                    </div> 
                                                      <v-row v-for="voice in voice_messages" :key="voice.id">
                                                         <v-col v-if="voice.sender_id == chat.sender_id">
                                                             <v-menu top>
@@ -112,9 +116,12 @@
                                                                     </v-chip>
 
                                                                     </v-chip-group>
-                                                                    <p class="sound-clips">
+                                                                    <div class="text-blue-darken-4">
+                                                                        <p class="sound-clips">
                                                                                 {{ voice.created_at }}
                                                                             </p>
+                                                                    </div>
+                                                                    
                                                                     </div>
                                                                 </template>
                                                                 <v-list v-model="listItem">
@@ -180,6 +187,10 @@
                                                             </p>
                                                         </template>
                                                     </v-chip>
+
+                                                    <div class="text-blue-darken-4">
+                                                        <p>{{message.created_at}}</p>
+                                                    </div>
                                                     <v-chip class="ma-2" dark :color="chat.color"
                                                         @click="listItem = true" v-bind="props" v-if="!messages">
                                                         Inicie uma conversa
@@ -242,7 +253,7 @@
                                                     </v-chip>
                                                     
                                                   
-                                                    <div>
+                                                    <div class="text-blue-darken-4">
                                                         <p class="sound-clips">{{ voice.created_at }}</p>
                                                     </div>
                                                    
@@ -397,33 +408,11 @@ export default {
                     alert('Error: ' + response);
                 });
         },
-        listenMessageEvent() {
-            axios.get('/user')
-                .then((response) => {
-                    console.log(response.data);
-                    this.user = response.data;
-                    window.Echo.private(`message-event.${this.user.id}`)
-                        .listen('MessageEvent', (e) => this.messages.push(e.message));
-                    this.getMessages();
-
-                    window.Echo.private(`voice-message-event.${this.user.id}`)
-                        .listen('VoiceMessageEvent', (e) => this.voice_messages.push(e.message));
-                    return this.getVoiceMessages();
-
-                })
-                .catch((response) => {
-                    return alert(response);
-                });
-
-        },
-        listeVoiceMessageEvent() {
-
-        },
+        
         getChats() {
             axios.get(`/selectChat/${this.$route.params.id}`)
                 .then((response) => {
-
-                    this.chats = response.data;
+                     this.chats = response.data;
                 })
                 .catch((response) => {
                     return alert('Error: ' + response)
@@ -450,7 +439,7 @@ export default {
         },
         getColor(colorPicker, chat) {
             let color = { colorPicker: this.colorPicker };
-            axios.post(`/chats/changeColor/${chat.id}`, color)
+            axios.post(`/chats/changeColor/${this.$route.params.id}`, color)
                 .then((response) => {
                     return chat.color = response.data;
                 })
@@ -495,7 +484,7 @@ export default {
                             audio.src = audioUrl;
                             let voice_message = { audio: blob, receiver_id: chat.sender_id };
 
-                            axios.post(`/messages/voice/${chat.id}`, voice_message, {
+                            axios.post(`/messages/voice/${this.$route.params.id}`, voice_message, {
                                 headers: {
                                     'Content-Type': 'multipart/form-data'
                                 }
@@ -507,10 +496,10 @@ export default {
                                     alert('Erro' + response);
                                 });
 
-                            deleteButton.onclick = (e) => {
-                                let evtTgt = e.target;
-                                evtTgt.parentNode.parentNode.remove(evtTgt.parentNode);
-                            };
+                         //   deleteButton.onclick = (e) => {
+                         //       let evtTgt = e.target;
+                         //       evtTgt.parentNode.parentNode.remove(evtTgt.parentNode);
+                         //   };
                         };
                     })
                     .catch((err) => {
@@ -523,7 +512,7 @@ export default {
         },
         sendMessage(chat) {
             let messages = { messages: this.textMessage, chat_id: chat.id }
-            axios.post(`/messages/send/${chat.id}`, messages)
+            axios.post(`/messages/send/${this.$route.params.id}`, messages)
                 .then((response) => {
                     this.dialogMessage = false;
                     this.textMessage = '';
@@ -543,8 +532,35 @@ export default {
                     return this.messages.splice(this.messages.indexOf(message.id), 1);
                 })
                 .catch((response) => {
-                    return alert('Error:' + response);
+                    return alert('Error:' + response.error);
                 });
+        },
+        listenMessageEvent() {
+            axios.get('/user')
+                .then((response) => {
+                    this.user = response.data;
+                    window.Echo.private(`message-event.${this.user.id}`)
+                        .listen('MessageEvent', (e) => this.messages.push(e.message));
+                    return this.getMessages()
+                   
+                })
+                .catch((response) => {
+                    return alert('Error ' + response.error);
+                });
+
+        },
+        listenVoiceMessageEvent() {
+            axios.get('/user')
+            .then((response) => {
+                this.user = response.data;
+                window.Echo.private(`voice-message-event.${this.user.id}`)
+                        .listen('VoiceMessageEvent', (e) => this.voice_messages.push(e.voice_messages));
+                        return this.getVoiceMessages();
+            })
+           .catch((response) => { 
+            return alert('error' + response.error);
+           });
+
         },
         removeVoiceMessage(voice) {
             axios.post(`/messages/voice/delete/${voice.id}`)
@@ -552,7 +568,7 @@ export default {
                     return this.voice_messages.splice(this.voice_messages.indexOf(voice.id), 1);
                 })
                 .catch((response) => {
-                    alert('error:' + response);
+                    alert('error:' + response.error);
                 });
         }
 
@@ -563,6 +579,7 @@ export default {
         this.getMessages();
         this.getVoiceMessages();
         this.listenMessageEvent();
+       this.listenVoiceMessageEvent();
     }
 }
 </script>

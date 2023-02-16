@@ -32,7 +32,7 @@ class VoiceMessageNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['broadcast'];
+        return ['broadcast', 'database'];
     }
 
     /**
@@ -44,9 +44,9 @@ class VoiceMessageNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+            ->line('The introduction to the notification.')
+            ->action('Notification Action', url('/'))
+            ->line('Thank you for using our application!');
     }
 
     /**
@@ -59,15 +59,23 @@ class VoiceMessageNotification extends Notification
     {
         return [
             //
+            'chat_id' => $this->voice_messages->id,
+            'sender_id' => $this->voice_messages->sender_id,
+            'receiver_id' => $this->voice_messages->receiver_id,
+            'audio_name' => $this->voice_messages->audio_name,
+            'status' => $this->voice_messages->status,
         ];
     }
 
-    public function toBroadcast($notifiable){ 
+    public function toBroadcast($notifiable)
+    {
+
         return new BroadcastMessage([
             'chat_id' => $this->voice_messages->id,
-            'sender_id' => $this->voice_messages->send_id,
+            'sender_id' => $this->voice_messages->sender_id,
             'receiver_id' => $this->voice_messages->receiver_id,
-            'message' => $this->voice_messages->audio_name, 
+            'audio_name' => $this->voice_messages->audio_name,
+            'status' => $this->voice_messages->status,
         ]);
     }
 }
