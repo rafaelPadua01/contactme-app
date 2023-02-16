@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\MessageVoice;
 use App\Models\Chat;
 use Illuminate\Support\Facades\Storage;
+use App\Events\VoiceMessageEvent;
+use App\Notifications\VoiceMessageNotification;
 
 class VoiceMessageController extends Controller {
     private $message;
@@ -33,7 +35,9 @@ class VoiceMessageController extends Controller {
                 ]);
                 $directory_to_file = Storage::putFileAs('public/voice/' . $chat->id, $audio_file, $name_file);
                 if($insert_db){ 
-                    event(new \App\Events\VoiceMessageEvent($insert_db));
+                    event(new VoiceMessageEvent($insert_db));
+                    $auth_user = \Auth::user();
+                    $auth_user->notify(new VoiceMessageNotification($insert_db));
                 }
                 return \Response::json($insert_db);
             }
@@ -46,6 +50,12 @@ class VoiceMessageController extends Controller {
                     'status' => false
                 ]);
                 $directory_to_file = Storage::putFileAs('public/voice/' . $chat->id, $audio_file, $name_file);
+                if($insert_db){ 
+                    event(new VoiceMessageEvent($insert_db));
+                    $auth_user = \Auth::user();
+                    $auth_user->notify(new VoiceMessageNotification($insert_db));
+                    
+                }
                 return \Response::json($insert_db);
                }
                 
@@ -62,7 +72,8 @@ class VoiceMessageController extends Controller {
             $messages = MessageVoice::where('chat_id', '=', (int) $id)
             ->where(function($query) {
                 $query->where('sender_id', '=', \Auth::id())
-                        ->orWhere('receiver_id', '=', \Auth::id());
+                        ->orWhere('receiver_id', '=', \Auth::id())
+                        ->orderBy('created_at', 'asc');
             })
             ->get();
            foreach($messages as $message){

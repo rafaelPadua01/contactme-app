@@ -17,17 +17,15 @@ use App\Models\User;
 */
 
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
+  return (int) $user->id === (int) $id;
 });
 
-Broadcast::channel('message-event.{user_id}', function($user, $id){
-   $message = Message::where('receiver_id', '=', (int) $id)->first();
-   //dd($user, $id);
-    return $user->id === (int) $id;
- });
+Broadcast::channel('message-event.{userId}', function ($user) {
 
- Broadcast::channel('voice-message-event.{user_id}', function($user, $id){
-   
-       $voice_message = MessageVoice::where('sender_id', '=', (int) $id)->first();
-    return $user->id === (int) $id;
- });
+  return $user->id === Message::where('receiver_id', '=', $user->id)->first()->receiver_id;
+});
+
+Broadcast::channel('voice-message-event.{userId}', function ($user) {
+
+  return $user->id === MessageVoice::where('receiver_id', '=', $user->id)->first()->receiver_id;
+});
