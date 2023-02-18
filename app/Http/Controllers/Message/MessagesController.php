@@ -101,36 +101,27 @@ class MessagesController extends Controller
     }
     public function show($id)
     {
-        $messages = Chat::where('chats.id', '=', $id)
-                ->join('messages', 'messages.chat_id', '=', 'chats.id')
-                ->get([
-                    'chats.id',
-                    'messages.*',
-                ]);
+        try{
+            $messages = Message::where('chat_id', '=', (int) $id)
+            ->where(function($query) {
+                $query->where('messages.receiver_id', '=', \Auth::id())
+                    ->orWhere('user_id', '=', \Auth::id());
+            })
+            ->join('chats', 'chats.id', '=', 'messages.chat_id')
+            ->orderBy('created_at', 'asc')
+            ->get([
+                'chats.id',
+                'messages.*'
+            ]);
+            foreach($messages as $message){
+                if($message->status == false){
+                    $message->update(['status' => true]);
+                }
 
-        $alter_status = Message::where('chat_id', '=', $id)
-                        ->where(function($query){
-                            $query->where('receiver_id', '=', \Auth::id())
-                            ->orWhere('user_id', '=', \Auth::id());
-                            
-                        })
-                        ->orderBy('id', 'desc')
-                        ->get();
-           
-        foreach($alter_status as $message){
-            //dd($message->status);
-            if($message->status === false){
-                $message->update(['status' => true]);
-               
+                return \Response::json($messages);
             }
-            
         }
-            return \Response::json($messages);
-        try {
-            $messages = Message::where('chat_id', '=', $id)->get();
-
-            return \Response::json($messages);
-        } catch (Exception $e) {
+        catch(Exception $e){
             return \Response::json($e);
         }
     }
