@@ -18,6 +18,7 @@ use App\Http\Controllers\Client\CloakController;
 use App\Http\Controllers\Message\ChatsController;
 use App\Http\Controllers\Message\MessagesController;
 use App\Http\Controllers\Message\VoiceMessageController;
+use App\Http\Controllers\Message\FileMessagesController;
 use App\Http\Controllers\AppointmentBook\AppointmentBookController;
 use App\Http\Controllers\Service\ServicesController;
 use App\Http\Controllers\Enterprise\Auth\RegisterEnterpriseController;
@@ -136,6 +137,9 @@ Route::post('/messages/remove/{id}', [MessagesController::class, 'remove'])->nam
 Route::post('/messages/voice/{id}', [VoiceMessageController::class, 'send'])->name('send')->middleware('auth');
 Route::get('/messages/voice/show/{id}', [VoiceMessageController::class, 'show'])->name('show')->middleware('auth');
 Route::post('/messages/voice/delete/{id}', [VoiceMessageController::class, 'delete'])->name('delete')->middleware('auth');
+
+//Routes Files
+Route::post('/messages/file/send/{id}',[FileMessagesController::class, 'send'])->name('send')->middleware('auth');
 //Routes to Appointments (agenda, compromissos)
 Route::get('/appointments/{id}',[AppointmentBookController::class, 'index'])->name('index');
 Route::post('/appointments/{id}', [AppointmentBookController::class, 'save'])->name('save');

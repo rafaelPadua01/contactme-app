@@ -208,19 +208,8 @@
                         </div>
                         <v-divider></v-divider>
                         <v-spacer></v-spacer>
-                        <div v-if="fileImport">
-                            <div>
-                                <v-chip>
-                                    {{fileImport.name}}
-                                    <template v-slot:append>
-                                        <v-btn icon>
-                                            <v-icon>mdi-close</v-icon>
-                                        </v-btn>
-                                    </template>
-                                </v-chip>
-                            </div> 
-                                       <v-img :src="fileImport.name" :alt="fileImport.name"> </v-img>
-                                    </div>
+
+
                         <div class="text-right">
                             <v-chip class="ma-2 bg-pink-accent-4" v-for="resp in message"
                                 v-if="chat.reveiver_id !== chat.sender_id"><b>Your answered: </b> {{ textMessage }}
@@ -233,22 +222,62 @@
                         </div>
                         <v-divider></v-divider>
                         <v-spacer></v-spacer>
+                        <v-card-text>
+                            <div v-if="fileImport">
+                                <div class="d-flex flex-column justify-space-between align-center">
+                                    <v-card width="350">
+                                        <v-toolbar color="primary">
+                                            <v-toolbar-title>Preview</v-toolbar-title>
+                                            <template v-slot:append>
+                                                <v-btn link @click="fileImport = ''" variant="plain">
+                                                    <v-icon>mdi-close</v-icon>
+                                                </v-btn>
+                                            </template>
+                                        </v-toolbar>
+                                        <v-card-text>
+                                            
+                                            <v-img :lazy-src="preview_image" :src="preview_image" width="100%" :alt="preview_image"
+                                                cover class="align-center">
+                                             </v-img>
 
+                                        </v-card-text>
+
+                                        <v-card-actions>
+                                            <v-btn variant="plain" class="mb-4" color="primary" @click="sendFile(chat)">
+                                                <v-icon>mdi-upload</v-icon>    
+                                                    Enviar
+                                            </v-btn>
+                                        </v-card-actions>
+                                    </v-card>
+                                    <v-card-text>
+
+                                    </v-card-text>
+
+                                    <!--     <template v-slot:append>
+                                                <v-btn link @click="fileImport = '' " variant="plain">
+                                                    <v-icon>mdi-close</v-icon>
+                                                </v-btn>
+                                            </template>-->
+
+                                </div>
+
+                            </div>
+                        </v-card-text>
                         <v-card-actions>
                             <v-text-field v-model="textMessage" placeholder="message here" variant="solo" density="compact"
                                 single-line hide-details>
                                 {{ fileName }}
                                 <template v-slot:prepend-inner>
-                                    
+
                                     <v-btn icon class="text-grey" :loading="isSelecting" @click="handleFileImport">
                                         <v-file-input ref="uploader" @change="onFileChanged" hide-input>
                                             <v-icon>mdi-paperclip</v-icon>
                                         </v-file-input>
-                                       
+
                                     </v-btn>
 
                                     <input ref="uploader" type="file" class="d-none" @change="onFileChanged">
-                               
+
                                 </template>
                                 <template v-slot:append>
                                     <v-btn-group>
@@ -332,6 +361,7 @@ export default {
         isSelecting: false,
         selectedFile: null,
         fileImport: false,
+        preview_image: null,
 
     }),
 
@@ -384,21 +414,36 @@ export default {
                     return alert('Error:' + response);
                 });
         },
-        handleFileImport(){
+        handleFileImport() {
             this.isSelecting = true;
-            
+
             window.addEventListener('focus', () => {
                 this.isSelecting = false;
-            }, {once: true});
+            }, { once: true });
 
             this.$refs.uploader.click();
         },
-        onFileChanged(e){
+        onFileChanged(e) {
             this.selectedFile = e.target.files[0];
             this.fileImport = this.selectedFile;
-            console.log(this.fileImport);
-            return this.textMessage;
+            this.preview_image = URL.createObjectURL(this.fileImport);
+            return this.preview_image;
             //doSomething
+        },
+        sendFile(chat){
+            console.log(chat);
+            let data = {file: this.fileImport, chat_id: this.$route.params.id, sender_id: chat.sender_id};
+            axios.post(`/messages/file/send/${this.$route.params.id}`, data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                }
+            })
+            .then((response) => {
+                alert(response.data);
+            })
+            .catch((response) => {
+                alert('Error:' + response);
+            });
         },
         micRequest(chat) {
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
