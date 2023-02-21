@@ -198,10 +198,48 @@
                                                 </v-list-item>
                                             </v-list>
                                         </div>
-
                                     </div>
-                                    <div v-if="fileImport">
-                                        {{ fileImport.file }}
+                                    <div v-if="file_messages">
+                                        <v-list v-for="file in file_messages" :key="file.id">
+                                            <v-list-item>
+                                                <v-card width="300" class="float-right">
+                                                    <v-img
+                                                        :lazy-src="`/storage/chats/files/${chat.id}/${file.file_directory}`"
+                                                        :src="`/storage/chats/files/${chat.id}/${file.file_directory}`"
+                                                        :alt="`${file.file_directory}`"
+                                                        :color="isHovering ? 'primary' : chat.color"
+                                                        class="bg-grey-lighten-2"
+                                                    >
+
+                                                   
+                                                    <v-hover class="bg-color-grey">
+                                                        <template v-slot:default="{ isHovering, props }">
+                                                            <v-card-title class="text-2 pink-darken" v-bind="props"
+                                                                :class="{ 'on-hover': isHovering }">
+                                                                <p :class="{ 'show-txt': !isHovering }"> 
+                                                                <v-btn-group class="float-right">
+                                                                    <v-btn color="pink-darken-1" class="mb-2" icon
+                                                                        @click="removeFile(file)">
+                                                                        <v-icon>mdi-delete-empty</v-icon>
+                                                                    </v-btn>
+                                                                    <v-btn color="pink-darken-1" class="mb-2" icon
+                                                                        @click="editImage()">
+                                                                        <v-icon>mdi-update</v-icon>
+
+                                                                    </v-btn>
+                                                                </v-btn-group> </p>
+
+
+                                                            </v-card-title>
+                                                        </template>
+                                                    </v-hover>
+                                                </v-img>
+                                                    <div class="text-blue-darken-4 text-right">
+                                                        {{ file.created_at.slice(0, 10) }}
+                                                    </div>
+                                                </v-card>
+                                             </v-list-item>
+                                        </v-list>
                                     </div>
                                 </div>
                             </v-sheet>
@@ -235,17 +273,17 @@
                                             </template>
                                         </v-toolbar>
                                         <v-card-text>
-                                            
-                                            <v-img :lazy-src="preview_image" :src="preview_image" width="100%" :alt="preview_image"
-                                                cover class="align-center">
-                                             </v-img>
+
+                                            <v-img :lazy-src="preview_image" :src="preview_image" width="100%"
+                                                :alt="preview_image" cover class="align-center">
+                                            </v-img>
 
                                         </v-card-text>
 
                                         <v-card-actions>
                                             <v-btn variant="plain" class="mb-4" color="primary" @click="sendFile(chat)">
-                                                <v-icon>mdi-upload</v-icon>    
-                                                    Enviar
+                                                <v-icon>mdi-upload</v-icon>
+                                                Enviar
                                             </v-btn>
                                         </v-card-actions>
                                     </v-card>
@@ -266,7 +304,7 @@
                         <v-card-actions>
                             <v-text-field v-model="textMessage" placeholder="message here" variant="solo" density="compact"
                                 single-line hide-details>
-                                {{ fileName }}
+
                                 <template v-slot:prepend-inner>
 
                                     <v-btn icon class="text-grey" :loading="isSelecting" @click="handleFileImport">
@@ -345,6 +383,7 @@ export default {
         chats: [],
         messages: [],
         voice_messages: [],
+        file_messages: [],
         swatches: [
             '#FF0000', '#AA0000', '#5500000',
             '#FFFF00', '#AAAA00', '#5555000',
@@ -362,6 +401,7 @@ export default {
         selectedFile: null,
         fileImport: false,
         preview_image: null,
+
 
     }),
 
@@ -404,6 +444,15 @@ export default {
                     alert('Error' + response);
                 });
         },
+        getFileMessages() {
+            axios.get(`/messages/file/show/${this.$route.params.id}`)
+                .then((response) => {
+                    return this.file_messages = response.data;
+                })
+                .catch((response) => {
+                    alert('Erro:' + response);
+                });
+        },
         getColor(colorPicker, chat) {
             let color = { colorPicker: this.colorPicker };
             axios.post(`/chats/changeColor/${this.$route.params.id}`, color)
@@ -430,20 +479,33 @@ export default {
             return this.preview_image;
             //doSomething
         },
-        sendFile(chat){
+        sendFile(chat) {
             console.log(chat);
-            let data = {file: this.fileImport, chat_id: this.$route.params.id, sender_id: chat.sender_id};
+            let data = { file: this.fileImport, chat_id: this.$route.params.id, sender_id: chat.sender_id };
             axios.post(`/messages/file/send/${this.$route.params.id}`, data, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 }
             })
+                .then((response) => {
+                    this.fileImport = '';
+                    return this.file_messages.push(response.data);
+                    //alert(response.data);
+                })
+                .catch((response) => {
+                    alert('Error:' + response);
+                    return false;
+                });
+        },
+        removeFile(file){
+            axios.post(`/messages/file/delete/${file.id}`)
             .then((response) => {
-                alert(response.data);
+                return this.file_messages.splice(this.file_messages.indexOf(file.id), 1);
             })
             .catch((response) => {
-                alert('Error:' + response);
+                alert('Erro:' + response);
             });
+            console.log(file);
         },
         micRequest(chat) {
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -576,8 +638,27 @@ export default {
         this.getChats();
         this.getMessages();
         this.getVoiceMessages();
+        this.getFileMessages();
         this.listenMessageEvent();
         this.listenVoiceMessageEvent();
     }
 }
 </script>
+<style scoped>
+.v-card-title {
+    opacity: 0.7;
+}
+
+.v-card-title:not(.on-hover) {
+    opacity: 0.0;
+}
+
+.v-hover {
+    opacity: 0.0;
+    background-color: #000;
+}
+
+.show-txt {
+    color: rgba(255, 255, 255, 1) !important;
+}
+</style>

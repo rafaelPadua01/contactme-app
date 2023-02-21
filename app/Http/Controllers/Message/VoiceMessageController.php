@@ -49,7 +49,7 @@ class VoiceMessageController extends Controller {
                     'audio_name' => $name_file,
                     'status' => false
                 ]);
-                $directory_to_file = Storage::putFileAs('public/voice/' . $chat->id, $audio_file, $name_file);
+                $directory_to_file = Storage::putFileAs('public/chats/voice/' . $chat->id, $audio_file, $name_file);
                 if($insert_db){ 
                     event(new VoiceMessageEvent($insert_db));
                     $auth_user = \Auth::user();
