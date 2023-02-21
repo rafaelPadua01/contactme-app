@@ -23,13 +23,13 @@ class FileMessagesController extends Controller{
                 'chat_id' => $id,
                 'receiver_id' => $receiver_id,
                 'sender_id' => \Auth::id(),
-                'file_derectory' => $file_name,
+                'file_directory' => $file_name,
                 'extension' => $request->file('file')->extension(),
                 'size' => $request->file('file')->getSize(),
             ]);
 
             if($insert_db){
-                $path = \Storage::putFileAs('public/chats/files'.$chat->id, $request->file('file')->getClientOriginalName(), $request->file('file')->getClientOriginalName());
+                $path = \Storage::putFileAs('public/chats/files/'.$chat->id, $file, $request->file('file')->getClientOriginalName());
                 //Criar trigger de eventos
             }
 
@@ -38,6 +38,26 @@ class FileMessagesController extends Controller{
         catch(Exception $e){
             return \Response::json($e);
         }
-        dd($request, $request->file('file'), $id);
+    }
+    public function show($id){
+        try{
+            $files = FileMessage::where('chat_id', '=', $id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+            return \Response::json($files);
+        }
+        catch(Exception $e){
+            return \Response::json($e);
+        }
+        
+    }
+    public function delete($id){
+        try{
+            $delete_file = FileMessage::findOrFail($id)->delete();
+            return \Response::json($delete_file);
+        }
+        catch(Exception $e){
+            return \Response::json($e);
+        }
     }
 }

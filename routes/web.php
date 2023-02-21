@@ -139,7 +139,9 @@ Route::get('/messages/voice/show/{id}', [VoiceMessageController::class, 'show'])
 Route::post('/messages/voice/delete/{id}', [VoiceMessageController::class, 'delete'])->name('delete')->middleware('auth');
 
 //Routes Files
+Route::get('/messages/file/show/{id}', [FileMessagesController::class, 'show'])->name('show')->middleware('auth');
 Route::post('/messages/file/send/{id}',[FileMessagesController::class, 'send'])->name('send')->middleware('auth');
+Route::post('messages/file/delete/{id}', [FileMessagesController::class, 'delete'])->name('delete')->middleware('auth');
 //Routes to Appointments (agenda, compromissos)
 Route::get('/appointments/{id}',[AppointmentBookController::class, 'index'])->name('index');
 Route::post('/appointments/{id}', [AppointmentBookController::class, 'save'])->name('save');
