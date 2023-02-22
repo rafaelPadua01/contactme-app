@@ -208,42 +208,62 @@
                                                         :src="`/storage/chats/files/${chat.id}/${file.file_directory}`"
                                                         :alt="`${file.file_directory}`"
                                                         :color="isHovering ? 'primary' : chat.color"
-                                                        class="bg-grey-lighten-2"
-                                                    >
-
-                                                   
-                                                    <v-hover class="bg-color-grey">
-                                                        <template v-slot:default="{ isHovering, props }">
-                                                            <v-card-title class="text-2 pink-darken" v-bind="props"
-                                                                :class="{ 'on-hover': isHovering }">
-                                                                <p :class="{ 'show-txt': !isHovering }"> 
-                                                                <v-btn-group class="float-right">
-                                                                    <v-btn color="pink-darken-1" class="mb-2" icon
-                                                                        @click="removeFile(file)">
-                                                                        <v-icon>mdi-delete-empty</v-icon>
-                                                                    </v-btn>
-                                                                    <v-btn color="pink-darken-1" class="mb-2" icon
-                                                                        @click="editImage()">
-                                                                        <v-icon>mdi-update</v-icon>
-
-                                                                    </v-btn>
-                                                                </v-btn-group> </p>
+                                                        class="bg-grey-lighten-2" @click="openCarousel">
 
 
-                                                            </v-card-title>
-                                                        </template>
-                                                    </v-hover>
-                                                </v-img>
+                                                        <v-hover class="bg-color-grey">
+                                                            <template v-slot:default="{ isHovering, props }">
+                                                                <v-card-title class="text-2 pink-darken" v-bind="props"
+                                                                    :class="{ 'on-hover': isHovering }">
+                                                                    <p :class="{ 'show-txt': !isHovering }">
+                                                                        <v-btn-group class="float-right">
+                                                                            <v-btn color="pink-darken-1" class="mb-2" icon
+                                                                                @click="removeFile(file)">
+                                                                                <v-icon>mdi-delete-empty</v-icon>
+                                                                            </v-btn>
+                                                                            <v-btn color="pink-darken-1" class="mb-2" icon
+                                                                                @click="editImage()">
+                                                                                <v-icon>mdi-update</v-icon>
+
+                                                                            </v-btn>
+                                                                        </v-btn-group>
+                                                                    </p>
+
+
+                                                                </v-card-title>
+                                                            </template>
+                                                        </v-hover>
+                                                    </v-img>
+
                                                     <div class="text-blue-darken-4 text-right">
                                                         {{ file.created_at.slice(0, 10) }}
                                                     </div>
+
                                                 </v-card>
-                                             </v-list-item>
+
+
+                                            </v-list-item>
                                         </v-list>
+
+
                                     </div>
+
+                                    <v-dialog cycle width="400" v-model="carousel" v-if="carousel == true">
+                                        <v-carousel >
+                                            <v-carousel-item
+                                            class="justify-center"
+                                                 v-for="file in file_messages" :key="file.id"
+                                                :src="`/storage/chats/files/${chat.id}/${file.file_directory}`" cover
+                                                :value="file.id"
+                                            >
+                                            </v-carousel-item>
+                                        </v-carousel>
+                                    </v-dialog>
                                 </div>
                             </v-sheet>
                         </div>
+
+
                         <v-divider></v-divider>
                         <v-spacer></v-spacer>
 
@@ -401,8 +421,7 @@ export default {
         selectedFile: null,
         fileImport: false,
         preview_image: null,
-
-
+        carousel: false,
     }),
 
     methods: {
@@ -497,15 +516,19 @@ export default {
                     return false;
                 });
         },
-        removeFile(file){
+        removeFile(file) {
             axios.post(`/messages/file/delete/${file.id}`)
-            .then((response) => {
-                return this.file_messages.splice(this.file_messages.indexOf(file.id), 1);
-            })
-            .catch((response) => {
-                alert('Erro:' + response);
-            });
-            console.log(file);
+                .then((response) => {
+                    this.carousel = false;
+                    return this.file_messages.splice(this.file_messages.indexOf(file.id), 1);
+                })
+                .catch((response) => {
+                    alert('Erro:' + response);
+                });
+
+        },
+        openCarousel() {
+            this.carousel = true;
         },
         micRequest(chat) {
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
