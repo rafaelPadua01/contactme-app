@@ -208,7 +208,8 @@
                                                         :src="`/storage/chats/files/${chat.id}/${file.file_directory}`"
                                                         :alt="`${file.file_directory}`"
                                                         :color="isHovering ? 'primary' : chat.color"
-                                                        class="bg-grey-lighten-2" @click="openCarousel">
+                                                        class="bg-grey-lighten-2" 
+                                                        @click="openCarousel(file)">
 
 
                                                         <v-hover class="bg-color-grey">
@@ -248,16 +249,32 @@
 
                                     </div>
 
-                                    <v-dialog cycle width="400" v-model="carousel" v-if="carousel == true">
-                                        <v-carousel >
+                                    <v-dialog cycle width="1000" v-model="carousel" v-if="carousel == true">
+                                        
+                                        <v-img 
+                                            v-if="fileObject"
+                                            :lazy-src="`/storage/chats/files/${chat.id}/${fileObject.file_directory}`" 
+                                            :src="`/storage/chats/files/${chat.id}/${fileObject.file_directory}`" 
+                                            cover
+                                        >
+                                        <v-toolbar class="bg-transparent">
+                                          
+                                          <template v-slot:append>
+                                              <v-btn icon color="white" @click="carousel = false "> 
+                                                  <v-icon>mdi-close</v-icon>
+                                              </v-btn>
+                                          </template>
+                                      </v-toolbar>
+                                        </v-img>
+                                      <!--  <v-carousel >
                                             <v-carousel-item
-                                            class="justify-center"
+                                                class="justify-center"
                                                  v-for="file in file_messages" :key="file.id"
                                                 :src="`/storage/chats/files/${chat.id}/${file.file_directory}`" cover
                                                 :value="file.id"
                                             >
                                             </v-carousel-item>
-                                        </v-carousel>
+                                        </v-carousel> -->
                                     </v-dialog>
                                 </div>
                             </v-sheet>
@@ -422,6 +439,8 @@ export default {
         fileImport: false,
         preview_image: null,
         carousel: false,
+        fileIndex: -1,
+        fileObject: false,
     }),
 
     methods: {
@@ -527,8 +546,12 @@ export default {
                 });
 
         },
-        openCarousel() {
+        openCarousel(file) {
+            //this.fileIndex = this.file_messages.indexOf(file.id);
+            this.fileObject = Object.assign({}, file);
+            console.log(this.fileObject);
             this.carousel = true;
+            return this.fileObject;
         },
         micRequest(chat) {
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
