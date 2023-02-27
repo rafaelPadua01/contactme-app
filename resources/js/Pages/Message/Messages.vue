@@ -11,14 +11,13 @@
                                         <v-img :lazy-src="`/storage/avatars/${chat.image_name}`"
                                             :src="`/storage/avatars/${chat.image_name}`" cover>
                                         </v-img>
+                                        
                                     </v-avatar>
                                     {{ chat.name }} {{ chat.lastname }}
-
+                                   
                                 </v-toolbar-title>
                                 <template v-slot:append>
-
-
-                                    <v-menu top>
+                                     <v-menu top>
                                         <template v-slot:activator="{ props }">
                                             <v-btn class="mb-4 text-white" icon color="default" @click="chatOptions = true"
                                                 v-bind="props">
@@ -31,6 +30,8 @@
                                             v-on:update:model-value="getColor(colorPicker, chat)">
 
                                         </v-color-picker>
+
+                                        
 
                                     </v-menu>
 
@@ -441,10 +442,12 @@ export default {
         carousel: false,
         fileIndex: -1,
         fileObject: false,
+        onlineUser: false,
     }),
 
     methods: {
         getUser() {
+            this.onlineUser = navigator.onLine;
             axios.get(`/user`)
                 .then((response) => {
                     return this.user = response.data;
