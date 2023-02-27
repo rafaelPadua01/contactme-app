@@ -103,6 +103,7 @@ Route::post('/service/marked/remove/{id}', [ServicesController::class, 'remove']
 
 //Rotas Follow
 Route::get('/Follower', [FollowerController::class, 'index'])->name('index');
+Route::get('/Follower/following/{id}', [FollowerController::class, 'following'])->name('following');
 Route::post('/Follower/create/{id}', [FollowerController::class, 'follow'])->name('follow');
 Route::post('/Follower/confirm/{id}', [FollowerController::class, 'followConfirm'])->name('followConfirm');
 Route::post('/Follower/alterStatus/{id}', [FollowerController::class, 'alterStatus'])->name('alterStatus');

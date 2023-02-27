@@ -160,4 +160,25 @@ class FollowerController extends Controller
             return \Response::json($e);
         }
     }
+    public function following($id){
+        try{
+            $following = Follower::where('followers.user_id', '=', (int) $id)
+            ->join('users', 'users.id', '=', 'followers.follower_id')
+            ->join('profile_users', 'profile_users.user_id', '=', 'users.id')
+            ->join('profile_images', 'profile_images.profile_id', '=', 'profile_users.id')
+            ->get([
+                'users.name',
+                'profile_users.lastname as lastname',
+                'profile_images.image_name as image_name',
+                'followers.*',
+                'followers.status',
+               
+            ]);
+           return \Response::json($following);
+        }
+        catch(Exception $e){
+            return \Response::json($e);
+        }
+       
+    }
 }
