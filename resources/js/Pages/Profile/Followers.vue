@@ -101,21 +101,139 @@
                                 </template>
 
                             </v-list-item>
+                            <v-list-item v-if="search_result" :title="search_result.name"
+                                :subtitle="search_result.lastname">
+                                <template v-slot:prepend>
+
+                                    <v-avatar color="pink-accent-4">
+                                        <v-img :lazy-src="`/storage/avatars/${search_result.image_name}`"
+                                            :src="`/storage/avatars/${search_result.image_name}`" alt="profile_image"
+                                            cover></v-img>
+                                    </v-avatar>
+
+
+                                </template>
+
+
+
+                                <div v-if="search_result.status == false">Você não segue essa pessoa</div>
+
+                                <div v-else>Seguindo</div>
+
+                                <template v-slot:append>
+                                    <v-btn v-if="search_result.status == false" text color="pink-accent-3"
+                                        icon="mdi-account-plus" @click="alterStatus(search_result)"></v-btn>
+                                    <v-btn text color="pink-accent-3" icon="mdi-account-minus"
+                                        @click="unconfirm(search_result)"></v-btn>
+                                    <v-btn text icon color="pink-accent-3" @click="remove">
+                                        <v-icon>mdi-delete</v-icon>
+                                    </v-btn>
+                                </template>
+                            </v-list-item>
                             <v-divider></v-divider>
                             <v-spacer></v-spacer>
                         </v-list>
 
                     </v-window-item>
                     <v-window-item value="following">
+                        <v-form ref="form">
+                            <v-text-field v-model="search_following" type="search" label="Search Follower" density="compact"
+                                variant="solo" append-inner-icon="mdi-magnify" single-line hide-details
+                                @change="searchFollowing">
+                                <template v-slot:append-inner v-if="search_result >= 1 || search_result">
+                                    <v-btn variant="plain" @click="search_result = ''">
+                                        <v-icon>mdi-close</v-icon>
+                                    </v-btn>
+                                </template>
+                            </v-text-field>
+
+
+                        </v-form>
+                        <v-spacer></v-spacer>
+                        <v-spacer></v-spacer>
+
                         <div v-if="following.length >= 1">
-                            {{following}}
+                            <v-list lines="trhee">
+                                <v-list-item v-if="search_not_found">
+                                <div class="text-center">
+                                    <v-chip v-model="search_not_found" class="text-center mr-2 bg-pink-accent-2">
+                                        <template v-slot:append>
+                                            <v-btn icon variant="plain" @click="search_not_found = false">
+                                                <v-icon>mdi-close</v-icon>
+                                            </v-btn>
+                                        </template>
+                                        Não foi possívem encontrar o usuário.
+                                    </v-chip>
+
+                                </div>
+
+                            </v-list-item>
+                            <v-list-item v-if="search_result" :title="search_result.name"
+                                :subtitle="search_result.lastname">
+                                <template v-slot:prepend>
+
+                                    <v-avatar color="pink-accent-4">
+                                        <v-img :lazy-src="`/storage/avatars/${search_result.image_name}`"
+                                            :src="`/storage/avatars/${search_result.image_name}`" alt="profile_image"
+                                            cover></v-img>
+                                    </v-avatar>
+
+
+                                </template>
+
+
+
+                                <div v-if="search_result.status == false">Você não segue essa pessoa</div>
+
+                                <div v-else>Seguindo</div>
+
+                                <template v-slot:append>
+                                    <v-btn v-if="search_result.status == false" text color="pink-accent-3"
+                                        icon="mdi-account-plus" @click="alterStatus(search_result)"></v-btn>
+                                    <v-btn text color="pink-accent-3" icon="mdi-account-minus"
+                                        @click="unconfirm(search_result)"></v-btn>
+                                    <v-btn text icon color="pink-accent-3" @click="remove">
+                                        <v-icon>mdi-delete</v-icon>
+                                    </v-btn>
+                                </template>
+                            </v-list-item>
+
+                                <v-list-item v-for="follow in following" :key="follow.id" :title="follow.name"
+                                    :subtitle="follow.lastname">
+                                    <template v-slot:prepend>
+
+                                        <v-avatar color="pink-accent-4">
+                                            <v-img :lazy-src="`/storage/avatars/${follow.image_name}`"
+                                                :src="`/storage/avatars/${follow.image_name}`" alt="profile_image"
+                                                cover></v-img>
+                                        </v-avatar>
+
+
+                                    </template>
+
+                                    <div v-if="follow.status == false">Você não segue essa pessoa</div>
+
+                                    <div v-else>Seguindo</div>
+
+                                    <template v-slot:append>
+                                        <v-btn v-if="follow.status == false" text color="pink-accent-3"
+                                            icon="mdi-account-plus" @click="alterStatus(follow)"></v-btn>
+                                        <v-btn text color="pink-accent-3" icon="mdi-account-minus"
+                                            @click="unconfirm(follow)"></v-btn>
+                                        <v-btn text icon color="pink-accent-3" @click="remove">
+                                            <v-icon>mdi-delete</v-icon>
+                                        </v-btn>
+                                    </template>
+                                </v-list-item>
+                            </v-list>
+
                         </div>
-                       <div v-else class="text-center">
+                        <div v-else class="text-center">
                             <v-chip class="ma-2" color="pink-accent-4">
                                 Você ainda não segue pessoas
                             </v-chip>
-                           
-                       </div>
+
+                        </div>
                     </v-window-item>
                 </v-window>
 
@@ -135,6 +253,7 @@ export default {
         followers: [],
         following: [],
         search: '',
+        search_following: '',
         search_result: false,
         search_not_found: false,
     }),
@@ -185,6 +304,20 @@ export default {
                 }
                 this.search_result = false;
                 this.search = "";
+                this.search_not_found = true;
+                
+                return this.search_result;
+            });
+        },
+        searchFollowing(){
+            this.following.filter((following) => {
+                if(this.search_following.toLowerCase() === following.name.toLowerCase() || this.search_following === following.lastname){
+                    this.search_following = "";
+                    return this.search_result = Object.assign(following);
+                    
+                }
+                this.search_result = false;
+                this.search_following = "";
                 this.search_not_found = true;
                 return this.search_result;
             });
