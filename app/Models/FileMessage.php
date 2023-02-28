@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Message extends Model
+class FileMessage extends Model
 {
     use HasFactory;
-    protected $fillable = ['message', 'status', 'user_id', 'chat_id', 'receiver_id', 'user_name','user_lastname'];
+    protected $fillable = ['file_directory', 'extension', 'size', 'sender_id', 'receiver_id', 'chat_id'];
 }

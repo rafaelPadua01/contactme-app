@@ -74,6 +74,7 @@ class SearchServicesController extends Controller
             ->join('profile_users', 'profile_users.user_id', '=', 'users.id')
             ->join('profile_images', 'profile_images.user_id', '=', 'profile_users.user_id')
             ->join('profile_profs', 'profile_profs.user_id', '=', 'profile_images.user_id')
+
             ->join('cloacks', 'cloacks.user_id', '=', 'profile_profs.user_id')
            //->where('profile_users.user_id', '=', $id)
           ////  ->where('profissao', '=', $d)
@@ -93,7 +94,26 @@ class SearchServicesController extends Controller
                            'cloacks.image_name as c_image',
                            'cloacks.selected as c_image_status'
             ]);
-            
+
+            ->join('cloacks', 'cloacks.user_id', '=', 'users.id')
+            ->get([ 'users.id',
+                            'users.name',
+                            'users.email',
+                            'profile_users.lastname',
+                            'profile_users.sexo',
+                            'profile_users.cidade',
+                            'profile_users.bairro',
+                            'profile_images.image_name',
+                            'profile_profs.profissao',
+                            'profile_profs.tempo_experiencia',
+                            'profile_profs.especialidades',
+                            'profile_profs.lastjob',
+                            'profile_profs.descricao',
+                           'cloacks.image_name as c_image',
+                           'cloacks.selected as c_image_status'
+            ]);
+           
+
 
         return \Response::json($profile_user);
         }

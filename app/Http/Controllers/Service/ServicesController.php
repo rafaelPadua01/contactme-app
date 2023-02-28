@@ -3,10 +3,15 @@
 namespace App\Http\Controllers\Service;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Http\Request;
 use App\Models\Service;
 use App\Models\User;
 use App\Models\AppointmentBook;
+use App\Notifications\TimeRequest;
+use Illuminate\Support\Facades\Notification;
+
+
 
 class ServicesController extends Controller {
     private $service;
@@ -28,23 +33,34 @@ class ServicesController extends Controller {
        
     }
     public function create(Request $request, $id){
-        $user_id = User::findOrFail($id);
-        $appoint_book = AppointmentBook::where('user_id', "=", $request->appointment_id);
+        $appointment_book = AppointmentBook::where('id', "=", $request->appointment_id)->first();
+        $marked_hour = $request->marked_hour;
         $client_id = \Auth::id();
-        $datas = $request->all();
-       
         try{
-            $insert_db = Service::create([
-                'client_name' => $request->client_name,
-                'marked_day' => $request->marked_day,
-                'marked_hour' => $request->marked_hour,
-                'marked_service' => $request->marked_service,
-                'note' => $request->note,
-                'user_id' => $id,
-                'client_id' => $client_id,
-                'appointment_id' => $request->appointment_id
-            ]);
-
+            if($appointment_book->inital_hour <= $marked_hour && $appointment_book->close_hour >= $marked_hour){
+                $insert_db = Service::create([
+                    'client_name' => $request->client_name,
+                    'marked_day' => $request->marked_day,
+                    'marked_hour' => $request->marked_hour,
+                    'marked_service' => $request->marked_service,
+                    'note' => $request->note,
+                    'user_id' => $id,
+                    'client_id' => $client_id,
+                    'appointment_id' => $request->appointment_id,
+                    'status' => false
+                 ]);
+                //Cria uma notificação de marcalção de horario no banco de dados
+                // pega o services e armazena o valor de insert_db 
+                // retorna esse valor para o objeto da classe TimeRequest
+                //Responsável pelo envio da notification
+                if($insert_db){
+                    $services = $insert_db;
+                    $user_notify = User::where('id', '=', $id)->first();
+                    $user_notify->notify(new TimeRequest($services));
+                }
+                return $insert_db;
+            }
+            
             return \Response::json($insert_db);
         }
         catch(Exception $e){
@@ -55,7 +71,7 @@ class ServicesController extends Controller {
     public function alterStatus($id){
         try{
             $client = Service::where('id', '=', $id)->update(['status' => true]);
-            $response = 'Atendimento Confirmado.';
+            //return RegisterUserController::markasread($id);
             return \Response::json($client);
         }
         catch(Exception $e){
@@ -75,6 +91,9 @@ class ServicesController extends Controller {
     public function remove($id){
         try{
             $client = Service::where('id', '=', $id)->delete();
+            if(!$client){
+                $client = Service::where('appointment_id', '=', $id)->delete();
+            }
             return \Response::json($client);
         }
         catch(Exception $e){

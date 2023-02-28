@@ -17,9 +17,13 @@ use App\Http\Controllers\Client\ImageGaleryController;
 use App\Http\Controllers\Client\CloakController;
 use App\Http\Controllers\Message\ChatsController;
 use App\Http\Controllers\Message\MessagesController;
+use App\Http\Controllers\Message\VoiceMessageController;
+use App\Http\Controllers\Message\FileMessagesController;
 use App\Http\Controllers\AppointmentBook\AppointmentBookController;
 use App\Http\Controllers\Service\ServicesController;
 use App\Http\Controllers\Enterprise\Auth\RegisterEnterpriseController;
+use LDAP\Result;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -59,7 +63,10 @@ Route::get('/user', function(){
    return \Auth::user();
 })->middleware('auth');
 Route::post('/create/{email}/{name}/{password}', [RegisterUser::class, 'insert'])->name('create');
-
+Route::get('/user/getNotifications', [RegisterUser::class, 'getNotifications'])->name('getNotifications');
+Route::post('/user/markasread/{id}', [RegisterUser::class, 'markasread'])->name('markasread');
+Route::post('/user/markAll', [RegisterUser::class, 'markall'])->name('markall');
+Route::post('/user/notification/remove/{id}', [RegisterUser::class, 'removeNotification'])->name('removeNotification');
 
 //rota insert profile usuario comum
 Route::get('/profile', [ProfileController::class, 'index'])->name('index')->middleware('auth');
@@ -96,6 +103,7 @@ Route::post('/service/marked/remove/{id}', [ServicesController::class, 'remove']
 
 //Rotas Follow
 Route::get('/Follower', [FollowerController::class, 'index'])->name('index');
+Route::get('/Follower/following/{id}', [FollowerController::class, 'following'])->name('following');
 Route::post('/Follower/create/{id}', [FollowerController::class, 'follow'])->name('follow');
 Route::post('/Follower/confirm/{id}', [FollowerController::class, 'followConfirm'])->name('followConfirm');
 Route::post('/Follower/alterStatus/{id}', [FollowerController::class, 'alterStatus'])->name('alterStatus');
@@ -123,8 +131,18 @@ Route::post('chats/changeColor/{id}', [ChatsController::class, 'changeColor'])->
 //Rotas Messages 
 Route::get('/messages/{id}', [MessagesController::class, 'index'])->name('index');
 Route::post('/messages/send/{id}', [MessagesController::class, 'send'])->name('send');
+Route::get('/messages/show/{id}', [MessagesController::class, 'show'])->name('show');
 Route::post('/messages/remove/{id}', [MessagesController::class, 'remove'])->name('remove');
 
+//Routes voice messages
+Route::post('/messages/voice/{id}', [VoiceMessageController::class, 'send'])->name('send')->middleware('auth');
+Route::get('/messages/voice/show/{id}', [VoiceMessageController::class, 'show'])->name('show')->middleware('auth');
+Route::post('/messages/voice/delete/{id}', [VoiceMessageController::class, 'delete'])->name('delete')->middleware('auth');
+
+//Routes Files
+Route::get('/messages/file/show/{id}', [FileMessagesController::class, 'show'])->name('show')->middleware('auth');
+Route::post('/messages/file/send/{id}',[FileMessagesController::class, 'send'])->name('send')->middleware('auth');
+Route::post('messages/file/delete/{id}', [FileMessagesController::class, 'delete'])->name('delete')->middleware('auth');
 //Routes to Appointments (agenda, compromissos)
 Route::get('/appointments/{id}',[AppointmentBookController::class, 'index'])->name('index');
 Route::post('/appointments/{id}', [AppointmentBookController::class, 'save'])->name('save');

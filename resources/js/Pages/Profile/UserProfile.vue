@@ -143,7 +143,7 @@
                                                             <template v-slot:append>
                                                                 <v-btn icon @click="markDialog = false">
                                                                     <v-icon>mdi-close</v-icon>
-
+                                                                        
                                                                 </v-btn>
                                                             </template>
                                                         </v-toolbar>
@@ -178,25 +178,47 @@
                                                                             :placeholder="this.auth_user.name" required>
 
                                                                         </v-text-field>
-
-                                                                        <v-text-field
+                                                                        <v-row>
+                                                                            <v-col 
+                                                                                v-for="day,index in convertDayWorkInArray()"
+                                                                                :key="day.id"
+                                                                            >
+                                                                                   
+                                                                                <v-checkbox
+                                                                                    v-model="marked_day"
+                                                                                    :rules="dayMarkerRules"
+                                                                                    :label="day"
+                                                                                    color="pink-accent-4"
+                                                                                    hide-details
+                                                                                    required
+                                                                                    :value="day"
+                                                                                >
+                                                                                    
+                                                                                </v-checkbox>
+                                                                            </v-col>
+                                                                        </v-row>
+                                                                         
+                                                                       
+                                                                        
+                                                                       <!-- <v-text-field
                                                                             :label="'selecione o dia:' + this.editAppoiment.days_work"
                                                                             v-model="marked_day" :rules="dayMarkerRules"
                                                                             type="date" required>
 
-                                                                        </v-text-field>
-
+                                                                        </v-text-field> -->
+                                                                            {{ this.profile_user.especialidades }}
                                                                         <v-select v-model="service"
                                                                             :rules="[v => !!v || 'Selecione um serviço']"
                                                                             :items="this.especialidades"
-                                                                            :item-title="this.profile_user.especialidades"
+                                                                            :item-title="this.especialidades"
                                                                             persistent-hint return-object single-line
                                                                             label="Selecione o serviço"
                                                                             :placeholder="'selecione uma especialidade'"
-                                                                            required>
+                                                                            required
+                                                                            >
 
                                                                         </v-select>
-
+                                                                        {{ this.profile_user.especialidades }}
                                                                         <v-textarea label="Observação" v-model="comment"
                                                                             placeholder="Observação..." required>
 
@@ -396,7 +418,7 @@ export default {
                 .then((response) => {
                     this.auth_user = response.data;
                 })
-                .catch((respoonse) => {
+                .catch((response) => {
                     this.error = response;
                 });
         },
@@ -404,6 +426,10 @@ export default {
             axios.get(`/searchProfile/${this.$route.params.id}`)
                 .then((response) => {
                     this.profile_user = response.data;
+                    for(let i = 0; i <= this.profile_user.length; i++){
+                        this.especialidades = JSON.parse(this.profile_user[i].especialidades);
+                        return this.especialidades;
+                    }
                     // this.especialidades = JSON.parse(this.profile_user.especialidades);
                     return this.profile_user;
                 })
@@ -432,6 +458,10 @@ export default {
                 .catch((response) => {
                     return this.error = response;
                 });
+        },
+        convertDayWorkInArray(){
+           const days_work = this.editAppoiment.days_work.split(' ');
+            return days_work;
         },
         countFollowers() {
             axios.get('/Follower')
@@ -509,20 +539,11 @@ export default {
 
         },
         saveMarker() {
-            let day_compare = new Date(this.marked_day.split('-'))
-                .toLocaleDateString('pt-br', { weekday: 'long' })
-                .normalize("NFD").replace(/[^a-zA-Z\s]/g, "")
-                .replace('feira', ''); //converte o valor do input para array e converte para dia da semana e remove a palavra 'feira' 
-            const day_work = JSON.parse(this.editAppoiment.days_work.split('-')); //remove '-' do ex: array segunda-terca para ['segunda', 'terca'] 
-
-            let findDay = day_work.find(element => element == day_compare); // percorre o array buscando o dia passado no input
-
-            if (findDay) {
                 let data = {
                     appointment_id: this.editAppoiment.id,
                     marked_hour: this.editAppoiment.initial_hour,
                     client_name: this.auth_user.name,
-                    marked_day: new Date(this.marked_day.split('-')).toLocaleString('pt-br', { weekday: 'long' }),
+                    marked_day: this.marked_day,
                     marked_service: this.service,
                     note: this.comment,
                 }
@@ -551,15 +572,6 @@ export default {
                         }, 9000);
 
                     });
-            }
-            else {
-                this.error = 'Este dia não está disponível';
-                return setTimeout(() => {
-                    this.error = false;
-                    this.editAppoinment = '';
-                }, 9000);
-            }
-
         },
         showImage(img) {
             alert(JSON.stringify(img));

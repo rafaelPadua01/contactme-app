@@ -77,12 +77,13 @@
                                             </v-expansion-panel-text>
                                         </v-expansion-panel>
                                     </v-expansion-panels>
-                                    <b>Dias de Atendimento:</b> {{ convertDayInArray() }} <b>Inicia:</b> {{ h_initial }}
-                                    <b>Encerra:</b> {{ h_close }}
-                                    <v-spacer></v-spacer>
-                                    <v-spacer></v-spacer>
-                                    <v-spacer></v-spacer>
-                                    <v-spacer></v-spacer>
+                                    <div>
+                                        <b>Dias de Atendimento:</b> {{ convertDayInArray() }}
+                                        <b>Inicia:</b> {{ h_initial }}
+                                        <b>Encerra:</b> {{ h_close }}
+                                    </div>
+                                    
+                                    
 
                                     <v-btn-group>
                                         <v-btn color="pink-accent-4" @click="save" text>
@@ -361,7 +362,7 @@
                                             <v-icon>mdi-reset</v-icon>
                                             Reset
                                         </v-btn>
-                                        <v-btn text>
+                                        <v-btn text @click="this.editDialog = false;">
                                             close
 
                                         </v-btn>
@@ -473,7 +474,7 @@ export default {
                 day_work = 'terca-quinta';
             }
 
-             return day_work.split('-');
+             return day_work.replace(/[^\w\s]/gi, ' ');
 
         },
         save() {
