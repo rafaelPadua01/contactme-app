@@ -11,8 +11,8 @@
                                 <v-form ref="form">
                                         <v-text-field v-model="search" :items="sugest_search" label="Search a Services"
                                                 placeholder="Start typing to Search" append-icon="mdi-database-search"
-                                                hide-no-data hide-selected v-on:change="searchService(values, index)"
-                                                outlined :loading="loading" desinty="compact" variant="solo"
+                                                hide-no-data hide-selected v-on:change="searchService(values, index)" outlined
+                                                :loading="loading" desinty="compact" variant="solo"
                                                 v-if="(auth_user.length != 0)" return-object>
                                         </v-text-field>
                                 </v-form>
@@ -37,8 +37,7 @@
                                                                                 <v-img :lazy-src="`storage/cloak/${cloak.image_name}`"
                                                                                         :src="`storage/cloak/${cloak.image_name}`"
                                                                                         height="250px" cover>
-                                                                                        <v-avatar cover size="200"
-                                                                                                rounded="10">
+                                                                                        <v-avatar cover size="200" rounded="10">
                                                                                                 <v-img :lazy-src="('/storage/avatars/' + prof.image_name)"
                                                                                                         :src="('/storage/avatars/' + prof.image_name)">
 
@@ -55,8 +54,7 @@
                                                                         <v-col v-else>
                                                                                 <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
                                                                                         height="250px" cover>
-                                                                                        <v-avatar cover size="200"
-                                                                                                rounded="10">
+                                                                                        <v-avatar cover size="200" rounded="10">
                                                                                                 <v-img :lazy-src="('/storage/avatars/' + prof.image_name)"
                                                                                                         :src="('/storage/avatars/' + prof.image_name)">
 
@@ -98,7 +96,7 @@
 
                                                                         </p>
                                                                 </v-card-text>
-                                                               
+
                                                                 <v-card-actions>
                                                                         <v-btn :to="'/searchProfile/' + prof.id"
                                                                                 color="pink-accent-4" class="mb-4">
@@ -117,12 +115,12 @@
                                                                         </v-btn>
                                                                         <v-spacer></v-spacer>
                                                                         <v-spacer></v-spacer>
-                                                                        <v-divider></v-divider> 
+                                                                        <v-divider></v-divider>
                                                                         <v-spacer></v-spacer>
                                                                 </v-card-actions>
-                                                                
+
                                                         </v-card>
-                                                        
+
                                                 </v-list-item-text>
                                         </v-list-item>
                                 </v-list>
@@ -142,7 +140,6 @@
                         </v-btn>
                 </v-card>
         </v-container>
-
 </template>
 
 <script>
@@ -192,7 +189,6 @@ export default {
                         axios.post('/searchService/' + this.auth_user.id, search)
                                 .then((response) => {
                                         this.profile_prof = response.data;
-                                        console.log(this.profile_prof);
                                         if (this.profile_prof == false) {
                                                 this.error = 'Não temos nenhum usuário ofertando este serviço no momento...'
                                         }
