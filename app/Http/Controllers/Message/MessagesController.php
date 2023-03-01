@@ -19,10 +19,6 @@ class MessagesController extends Controller
     {
         $this->messages = $messages;
     }
-
-    public function index()
-
-
     public function index()
     {
         try {
@@ -62,7 +58,10 @@ class MessagesController extends Controller
                     'user_name' => $receiver->name,
                     'user_lastname' => $receiver->lastname,
                     'user_id' => $user_id,
-                    'chat_id' => \Auth::id(),
+
+                    'chat_id' => $chat->id,
+
+               
                     'receiver_id' => $chat->receiver_id
                 ]);
                 if ($insert_message) {
@@ -131,7 +130,7 @@ class MessagesController extends Controller
         }
 
     }
-    public function remove($id)
+   public function remove($id)
     {
 
         try {
