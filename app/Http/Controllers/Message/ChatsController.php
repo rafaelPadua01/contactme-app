@@ -19,10 +19,11 @@ public function __construct(Chat $chats)
     } 
     public function index($id){
         try{
-            $talk = Chat::where('receiver_id', '=', $id)
+            $talk = Chat::where('chats.receiver_id', '=', $id)
             ->join('users', 'users.id', '=', 'chats.sender_id')
             ->join('profile_users', 'profile_users.user_id', '=', 'users.id')
             ->join('profile_images', 'profile_images.user_id', '=', 'profile_users.user_id')
+            ->orderBy('updated_at', 'asc')
             ->get([
                 'chats.*',
                 'users.name',
@@ -127,5 +128,13 @@ public function __construct(Chat $chats)
         }
         
     }
-    
+    public function delete($id){
+        try{
+            $delete_chat = Chat::findOrFail($id)->delete();
+            return true;
+        }
+        catch(Exception $e){
+            return \Response::json($e);
+        }
+    }
 }
