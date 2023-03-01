@@ -19,10 +19,13 @@ class MessagesController extends Controller
     {
         $this->messages = $messages;
     }
-    public function index($id)
+    public function index()
     {
         try {
-            $messages = Message::where('user_id', '!=', \Auth::id())->orderBy('messages.created_at', 'asc')->first();
+            $messages = Message::where('receiver_id', '=', \Auth::id())
+                ->orderBy('messages.created_at', 'asc')
+                ->limit(3)
+                ->get();
 
             return \Response::json($messages);
         } catch (Exception $e) {
@@ -35,93 +38,91 @@ class MessagesController extends Controller
         $status  = false;
         $user_id = \Auth::id();
         $chat = Chat::where('id', '=', $id)->first();
-        if(!$chat){
+        if (!$chat) {
             $chat = Chat::where('sender_id', '=', $id)->first();
             return $chat;
         }
         $receiver = User::where('users.id', '=', $chat->receiver_id)
-                ->join('profile_users', 'profile_users.user_id', '=', 'users.id')
-                ->first([
-                    'users.id',
-                    'users.name',
-                    'profile_users.lastname'
-                ]); //remetente
+            ->join('profile_users', 'profile_users.user_id', '=', 'users.id')
+            ->first([
+                'users.id',
+                'users.name',
+                'profile_users.lastname'
+            ]); //remetente
 
-            if ($receiver && $chat->receiver_id !== $user_id) {
-                try {
-                    $insert_message = Message::create([
-                        'message' => $messages->messages,
-                        'status' => $status,
-                        'user_name' => $receiver->name,
-                        'user_lastname' => $receiver->lastname,
-                        'user_id' => $user_id,
-                        'chat_id' => $chat->id,
-                        'receiver_id' => $chat->receiver_id
-                    ]);
-                    if ($insert_message) {
-                        event(new \App\Events\MessageEvent($insert_message));
-                        $user_notify = \Auth::user();
-                        $user_notify->notify(new MessageNotification($insert_message));
-                    }
-                    return \Response::json($insert_message);
-                } catch (Exception $e) {
-                    return \Response::json($e);
+        if ($receiver && $chat->receiver_id !== $user_id) {
+            try {
+                $insert_message = Message::create([
+                    'message' => $messages->messages,
+                    'status' => $status,
+                    'user_name' => $receiver->name,
+                    'user_lastname' => $receiver->lastname,
+                    'user_id' => $user_id,
+                    'chat_id' => $chat->id,
+                    'receiver_id' => $chat->receiver_id
+                ]);
+                if ($insert_message) {
+                    event(new \App\Events\MessageEvent($insert_message));
+                    $user_notify = \Auth::user();
+                    $user_notify->notify(new MessageNotification($insert_message));
                 }
                 return \Response::json($insert_message);
-            } 
-                $receiver = User::where('users.id', '=', $chat->sender_id)
-                    ->join('profile_users', 'profile_users.user_id', '=', 'users.id')
-                    ->first([
-                        'users.id',
-                        'users.name',
-                        'profile_users.lastname'
-                    ]); //remetente
+            } catch (Exception $e) {
+                return \Response::json($e);
+            }
+            return \Response::json($insert_message);
+        }
+        $receiver = User::where('users.id', '=', $chat->sender_id)
+            ->join('profile_users', 'profile_users.user_id', '=', 'users.id')
+            ->first([
+                'users.id',
+                'users.name',
+                'profile_users.lastname'
+            ]); //remetente
 
-                try {
-                    $insert_message = Message::create([
-                        'message' => $messages->messages,
-                        'status' => $status,
-                        'user_name' => $receiver->name,
-                        'user_lastname' => $receiver->lastname,
-                        'user_id' => $user_id,
-                        'chat_id' => $chat->id,
-                        'receiver_id' => $receiver->id
-                    ]);
-                    if ($insert_message) {
-                        event(new \App\Events\MessageEvent($insert_message));
-                        $user_notify = \Auth::user();
-                        $user_notify->notify(new MessageNotification($insert_message));
-                    }
-                   
-                    return \Response::json($insert_message);
-                } 
-                catch (Exception $e) {
-                    return \Response::json($e);
-                }
+        try {
+            $insert_message = Message::create([
+                'message' => $messages->messages,
+                'status' => $status,
+                'user_name' => $receiver->name,
+                'user_lastname' => $receiver->lastname,
+                'user_id' => $user_id,
+                'chat_id' => $chat->id,
+                'receiver_id' => $receiver->id
+            ]);
+            if ($insert_message) {
+                event(new \App\Events\MessageEvent($insert_message));
+                $user_notify = \Auth::user();
+                $user_notify->notify(new MessageNotification($insert_message));
+            }
+
+            return \Response::json($insert_message);
+        } catch (Exception $e) {
+            return \Response::json($e);
+        }
     }
     public function show($id)
     {
-        try{
+        try {
             $messages = Message::where('chat_id', '=', (int) $id)
-            ->where(function($query) {
-                $query->where('messages.receiver_id', '=', \Auth::id())
-                    ->orWhere('user_id', '=', \Auth::id());
-            })
-            ->join('chats', 'chats.id', '=', 'messages.chat_id')
-            ->orderBy('created_at', 'asc')
-            ->get([
-                'chats.id',
-                'messages.*'
-            ]);
-            foreach($messages as $message){
-                if($message->status == false){
+                ->where(function ($query) {
+                    $query->where('messages.receiver_id', '=', \Auth::id())
+                        ->orWhere('user_id', '=', \Auth::id());
+                })
+                ->join('chats', 'chats.id', '=', 'messages.chat_id')
+                ->orderBy('created_at', 'asc')
+                ->get([
+                    'chats.id',
+                    'messages.*'
+                ]);
+            foreach ($messages as $message) {
+                if ($message->status == false) {
                     $message->update(['status' => true]);
                 }
 
                 return \Response::json($messages);
             }
-        }
-        catch(Exception $e){
+        } catch (Exception $e) {
             return \Response::json($e);
         }
     }

@@ -23,7 +23,7 @@ return new class extends Migration
             $table->unsignedBigInteger('chat_id');
             $table->foreign('sender_id')->references('id')->on('users');
             $table->foreign('receiver_id')->references('id')->on('users');
-            $table->foreign('chat_id')->references('id')->on('chats');
+            $table->foreign('chat_id')->references('id')->on('chats')->onDelete('cascade');
             $table->timestamps();
         });
     }
