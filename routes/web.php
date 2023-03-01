@@ -127,6 +127,7 @@ Route::get('/chats/{id}', [ChatsController::class, 'index'])->name('index');
 Route::post('/chats/create/{id}', [ChatsController::class, 'create'])->name('create');
 Route::get('/selectChat/{id}', [ChatsController::class, 'selectChat'])->name('selectChat');
 Route::post('chats/changeColor/{id}', [ChatsController::class, 'changeColor'])->name('changeColor');
+Route::post('/chats/delete/{id}', [ChatsController::class, 'delete'])->name('delete')->middleware('auth');
 
 //Rotas Messages 
 Route::get('/messages/{id}', [MessagesController::class, 'index'])->name('index');

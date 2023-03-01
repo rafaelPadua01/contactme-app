@@ -21,6 +21,9 @@ class MessagesController extends Controller
     }
 
     public function index()
+
+
+    public function index()
     {
         try {
             $messages = Message::where('receiver_id', '=', \Auth::id())
@@ -126,6 +129,7 @@ class MessagesController extends Controller
         } catch (Exception $e) {
             return \Response::json($e);
         }
+
     }
     public function remove($id)
     {
