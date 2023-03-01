@@ -1,6 +1,9 @@
 <template>
     <v-container>
         <v-sheet>
+            <div class="text-center text-h6">
+                Faça upload de imagens e videos e matenha seu perfil sempre atualizado
+            </div>
             <v-card>
                 <v-tabs bg-color="pink-accent-4" centered stacked grow>
                     <v-tab @click="(tabUpload = true)">
@@ -11,7 +14,7 @@
                         <v-icon>mdi-heart</v-icon>
                         albuns
                     </v-tab>
-              <!--      <v-tab @click="this.getMidias();">
+                    <!--      <v-tab @click="this.getMidias();">
                         <v-icon>
                             mdi-account-box
                         </v-icon>
@@ -20,39 +23,30 @@
                 </v-tabs>
 
                 <v-window v-model="tabUpload" v-if="tabUpload">
-
                     <v-card>
                         <v-card-title>Galeria</v-card-title>
                         <v-card-text>
                             <v-form ref="form" v-model="valid" lazy-validation>
-                               <div class="text-center text-h6">
-                                Faça upload de imagens e videos e matenha seu perfil sempre atualizado
-                               </div>
-
-                               <v-divider></v-divider>
-                               <v-spacer></v-spacer>
-
                                 <v-text-field v-model="galery_name" type="text" color="pink-accent-3"
-                                    placeholder="Name of Galery" label="Name of Galery:" required :rules="galeryNameRules"
-                                >
+                                    placeholder="Name of Galery" label="Name of Galery:" required :rules="galeryNameRules">
                                 </v-text-field>
-                               
+
                                 <v-file-input v-model="files" color="pink-accent-4" label="files"
                                     placeholder="Load Files here" multiple chips counter variant="outlined"
                                     :show-size="1000" v-on:change="handleFiles()">
                                     <template v-slot:selection="{ fileNames }">
-                                       
+
                                         <template v-for="(fileName, index) in fileNames" :key="fileName">
-                                            <v-chip v-if="(index < 2)" color="pink-accent-4" label size="small"
-                                                class="mr-2" append-inner-icon="mdi-fire">
-                                                
+                                            <v-chip v-if="(index < 2)" color="pink-accent-4" label size="small" class="mr-2"
+                                                append-inner-icon="mdi-fire">
+
                                                 <v-icon>mdi-fire</v-icon>
                                                 {{ fileName }}
-                                              <!--  <v-btn icon x-small color="pink-accent-4">
+                                               <!--  <v-btn icon class="mb-4" color="pink-accent-4" variant="plain" @click="fileName.remove()">
                                                     <v-icon>
                                                         mdi-close
                                                     </v-icon>
-                                                </v-btn> -->
+                                                </v-btn>-->
                                             </v-chip>
 
                                             <span v-else-if="(index === 2)" class="text-over text-white-darken-3 mx-2">
@@ -62,10 +56,9 @@
                                     </template>
                                 </v-file-input>
 
-                                <v-textarea v-model="galery_desc" 
+                                <v-textarea v-model="galery_desc"
                                     label="descreva sua galeria, fale sobre os trabalhos e passos para a conclusão do mesmo."
-                                    append-inner-icon="mdi-comment" class="bg-pink-accent-4"
-                                    >
+                                    append-inner-icon="mdi-comment" class="bg-pink-accent-4">
 
                                 </v-textarea>
                             </v-form>
@@ -77,13 +70,13 @@
                         <v-card-actions>
                             <v-btn-group>
                                 <v-btn color="pink-accent-4" class="mb-4" @click="validate">
-                                Save
-                            </v-btn>
-                            <v-btn color="pink-accent-4" class="mb-4" @click="reset()">
-                                Reset
-                            </v-btn>
+                                    Save
+                                </v-btn>
+                                <v-btn color="pink-accent-4" class="mb-4" @click="reset()">
+                                    Reset
+                                </v-btn>
                             </v-btn-group>
-                           
+
                         </v-card-actions>
                     </v-card>
 
@@ -94,16 +87,16 @@
                         <v-row align="start" no-gutters>
                             <v-col v-for="album in albuns" :key="album.id">
                                 <v-sheet class="pa-2">
-                                  <v-card>
+                                    <v-card>
                                         <v-toolbar color="pink-accent-4" dark>
                                             <v-toolbar-title>{{ album.name_galery }}</v-toolbar-title>
                                             <v-menu>
                                                 <template v-slot:activator="{ props }">
-                                                   <v-btn v-bind="props">
-                                                    <v-icon>mdi-dots-vertical</v-icon>
-                                                   </v-btn>
+                                                    <v-btn v-bind="props">
+                                                        <v-icon>mdi-dots-vertical</v-icon>
+                                                    </v-btn>
                                                 </template>
-                                                
+
                                                 <v-list v-bind="props">
                                                     <v-list-item>
                                                         <v-list-item-title @click="editAlbum(album)">
@@ -123,31 +116,45 @@
                                         <v-divider></v-divider>
                                         <v-spacer></v-spacer>
 
-                                        <v-card-subtitle>
-                                            {{ album.created_at }}
-                                        </v-card-subtitle>
+                                       
 
                                         <v-card-text>
                                             <v-row>
-                                                <v-col v-for="img in midias" :key="img.id" class="d-flex child-flex" cols="4">
-                                                    <v-img  :src="`/storage/galery/${album.name_galery}/${img.name_image}`"
+                                                <v-col v-for="img in midias" :key="img.id" class="d-flex child-flex"
+                                                    cols="4">
+                                                    <v-img 
+                                                        :src="`/storage/galery/${album.name_galery}/${img.name_image}`"
                                                         :lazy-src="`/storage/galery/${album.name_galery}/${img.name_image}`"
-                                                        :alt="`${img.name_image}`">
+                                                        :alt="`${img.name_image}`"
+                                                        @click="dialogOpenImage(img)">
                                                     </v-img>
                                                     
-                                                  
                                                 </v-col>
                                             </v-row>
                                         </v-card-text>
 
+                                        <v-card-text class="text-h6 text-white" style="background-color: #000; opacity: 0.9;">
+                                            <div>
+                                                <p>{{ album.description }}</p>
+                                            </div>
+                                            <hr>
+                                           <div class="text-right">
+                                            {{ album.created_at.slice(0,10) }}
+                                           </div>
+                                           
+                                        </v-card-text>
+                                        
                                         <v-divider></v-divider>
                                         <v-spacer></v-spacer>
 
-                                    <v-card-actions>
-                                        <v-btn class="mb-4" color="error" :to="`/galery/selected/${album.id}`">Ver tudo</v-btn>
-                                       <!-- <v-btn class="mb-4" color="error" @click="deleteAlbum(album)">Remover</v-btn> -->
-                                    </v-card-actions> 
+                                        <v-card-actions>
+                                            <v-btn class="mb-4" color="error" :to="`/galery/selected/${album.id}`">Ver
+                                                tudo</v-btn>
+                                            <!-- <v-btn class="mb-4" color="error" @click="deleteAlbum(album)">Remover</v-btn> -->
+                                        </v-card-actions>
                                     </v-card>
+                                   
+
                                     <div class="text-center">
                                         <v-dialog v-model="editAlbumDialog" max-width="750">
                                             <v-card>
@@ -177,6 +184,35 @@
 
 
                                         </v-dialog>
+
+                                                            <v-dialog v-model="OpenImage">
+                                                              
+                                                                   <v-card>
+
+                                                                   
+                                                                        <v-img 
+                                                                            :src="`/storage/galery/${album.name_galery}/${this.selectedImg.name_image}`"
+                                                                            :lazy-src="`/storage/galery/${album.name_galery}/${this.selectedImg.name_image}`"
+                                                                            :alt="`${this.selectedImg.name_image}`"
+                                                                        >
+
+                                                                                <div class="text-white text-right">
+                                                                                    <v-btn icon variant="plain" @click="OpenImage = false">
+                                                                            <v-icon>mdi-close</v-icon>
+                                                                        </v-btn>
+                                                                           
+                                                                                </div>
+
+                                                                            
+                                                                        </v-img>
+                                                                  
+
+                                                                   </v-card>
+                                                                   
+                                                                      
+                                                                   
+                                                            </v-dialog>
+                                                     
 
                                     </div>
 
@@ -239,7 +275,7 @@
 
                 </v-window>
 
-            <!--    <v-window v-model="tabMidias" v-if="(tabMidias == true && tabUpload == false && tabAlbuns == false)">
+                <!--    <v-window v-model="tabMidias" v-if="(tabMidias == true && tabUpload == false && tabAlbuns == false)">
                     <v-container class="fill-height mb-6" fluid>
                         <v-row align="start" no-gutters>
                             <v-col v-for="midia in midias" :key="midia.id">
@@ -311,7 +347,6 @@
         </v-sheet>
 
     </v-container>
-
 </template>
 
 <script>
@@ -325,7 +360,7 @@ export default {
         galeryNameRules: [
             v => !!v || 'Name galery is required',
             v => (v && v.length < 10) || 'Name galery is required',
-        ], 
+        ],
         galery_desc: '',
         data: [],
         albuns: [],
@@ -334,6 +369,8 @@ export default {
         tabUpload: false,
         tabAlbuns: false,
         tabMidias: false,
+        OpenImage: false,
+        selectedImg: false,
         deleteAlbumDialog: false,
         deleteDialog: false,
         editAlbumDialog: false,
@@ -346,11 +383,11 @@ export default {
             this.$refs.files[0];
         },
         async validate() {
-           const { valid } = await this.$refs.form.validate();
-           if(valid) return this.save();
+            const { valid } = await this.$refs.form.validate();
+            if (valid) return this.save();
         },
         save() {
-         let datas = { files: this.files, galery_name: this.galery_name };
+            let datas = { files: this.files, galery_name: this.galery_name, description: this.galery_desc };
 
             axios.post(`/galery/create/${this.$route.params.id}`, datas, {
                 headers: {
@@ -373,7 +410,7 @@ export default {
             axios.get(`/galery/${this.$route.params.id}`)
                 .then((response) => {
                     this.albuns = response.data;
-                    return this.albuns.push(response.data);
+                    //return this.albuns.push(response.data);
                 })
                 .catch((response) => {
                     alert('Error ' + response);
@@ -403,6 +440,12 @@ export default {
                     return alert('Error: ' + response);
                 })
         },
+        dialogOpenImage(img){
+            this.OpenImage = true;
+            this.selectedImg = Object.assign({},img);
+            return this.selectedImg;
+           
+        },
         editAlbum(album) {
             this.albumIndex = this.albuns.indexOf(album);
             this.albumItem = Object.assign({}, album);
@@ -418,8 +461,7 @@ export default {
             axios.post(`/galery/edit/${this.albumItem.id}`, data)
                 .then((response) => {
                     this.editAlbumDialog = false;
-                    Object.assign(this.albuns[this.albumIndex], this.albumItem);
-                    window.location = '/dashboard';
+                   return this.albuns.push(response.data);
 
                 })
                 .catch((response) => {
@@ -464,6 +506,7 @@ export default {
         }
     },
     created() {
+        this.tabUpload;
         this.getAlbuns();
         this.getCloaks();
         this.getMidias();
