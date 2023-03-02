@@ -1,10 +1,14 @@
 <template>
     <v-container>
         <v-sheet>
-            <div class="text-center text-h6">
-                Faça upload de imagens e videos e matenha seu perfil sempre atualizado
-            </div>
+          
+            
             <v-card>
+                <v-toolbar color="pink-accent-4">
+                <v-toolbar-title >
+                    Faça upload de imagens e videos e matenha seu perfil sempre atualizado
+                </v-toolbar-title>
+            </v-toolbar>
                 <v-tabs bg-color="pink-accent-4" centered stacked grow>
                     <v-tab @click="(tabUpload = true)">
                         <v-icon>mdi-phone</v-icon>
@@ -14,12 +18,6 @@
                         <v-icon>mdi-heart</v-icon>
                         albuns
                     </v-tab>
-                    <!--      <v-tab @click="this.getMidias();">
-                        <v-icon>
-                            mdi-account-box
-                        </v-icon>
-                        midias
-                    </v-tab>  -->
                 </v-tabs>
 
                 <v-window v-model="tabUpload" v-if="tabUpload">
@@ -27,39 +25,51 @@
                         <v-card-title>Galeria</v-card-title>
                         <v-card-text>
                             <v-form ref="form" v-model="valid" lazy-validation>
-                                <v-text-field v-model="galery_name" type="text" color="pink-accent-3"
-                                    placeholder="Name of Galery" label="Name of Galery:" required :rules="galeryNameRules">
-                                </v-text-field>
+                                <v-row class="justify-center">
+                                    <v-col class="d-flex" cols="12" sm="12">
+                                        <v-text-field v-model="galery_name" type="text" placeholder="Name of Galery"
+                                            label="Name of Galery:" required variant="solo" elevation="30" :rules="galeryNameRules">
+                                        </v-text-field>
+                                    </v-col>
+                                </v-row>
+                                <v-row>
+                                    <v-col cols="12" sm="12">
+                                        <v-file-input v-model="files" color="pink-accent-4" label="files"
+                                            placeholder="Load Files here" multiple counter variant="solo" elevation="20"
+                                            :show-size="1000" show-size="1000" v-on:change="handleFiles()">
+                                            <template v-slot:selection="{ fileNames }">
 
-                                <v-file-input v-model="files" color="pink-accent-4" label="files"
-                                    placeholder="Load Files here" multiple chips counter variant="outlined"
-                                    :show-size="1000" v-on:change="handleFiles()">
-                                    <template v-slot:selection="{ fileNames }">
+                                                <template v-for="(fileName, index) in fileNames" :key="fileName">
+                                                    <v-chip v-if="(index < 2)" color="pink-accent-4" label size="small"
+                                                        class="mr-2" append-inner-icon="mdi-fire">
 
-                                        <template v-for="(fileName, index) in fileNames" :key="fileName">
-                                            <v-chip v-if="(index < 2)" color="pink-accent-4" label size="small" class="mr-2"
-                                                append-inner-icon="mdi-fire">
+                                                        <v-icon>mdi-fire</v-icon>
+                                                        {{ fileName }}
 
-                                                <v-icon>mdi-fire</v-icon>
-                                                {{ fileName }}
-                                                <!--  <v-btn icon class="mb-4" color="pink-accent-4" variant="plain" @click="fileName.remove()">
-                                                    <v-icon>
-                                                        mdi-close
-                                                    </v-icon>
-                                                </v-btn>-->
-                                            </v-chip>
+                                                    </v-chip>
 
-                                            <span v-else-if="(index === 2)" class="text-over text-white-darken-3 mx-2">
-                                                + {{ (files.length - 2) }} file(s)
-                                            </span>
-                                        </template>
-                                    </template>
-                                </v-file-input>
+                                                    <span v-else-if="(index === 2)"
+                                                        class="text-over text-white-darken-3 mx-2">
+                                                        + {{ (files.length - 2) }} file(s)
+                                                    </span>
+
+
+                                                </template>
+                                            </template>
+                                        </v-file-input>
+                                    </v-col>
+                                </v-row>
+
+
 
                                 <v-textarea v-model="galery_desc"
-                                    label="descreva sua galeria, fale sobre os trabalhos e passos para a conclusão do mesmo."
-                                    append-inner-icon="mdi-comment" class="bg-pink-accent-4">
-
+                                    label="fale sobre os trabalhos e passos para a conclusão do mesmo."
+                                    class="primary" color="pink-accent-4" variant="solo" 
+                                    elevation="10"
+                                >
+                                    <template v-slot:prepend-inner>
+                                        <v-icon color="pink-lighten-1">mdi-comment</v-icon>
+                                    </template>
                                 </v-textarea>
                             </v-form>
                         </v-card-text>
@@ -67,12 +77,12 @@
                         <v-divider></v-divider>
                         <v-spacer></v-spacer>
 
-                        <v-card-actions>
+                        <v-card-actions class="justify-center">
                             <v-btn-group>
-                                <v-btn color="pink-accent-4" class="mb-4" @click="validate">
+                                <v-btn color="pink-accent-4" class="mb-4" @click="validate" variant="tonal">
                                     Save
                                 </v-btn>
-                                <v-btn color="pink-accent-4" class="mb-4" @click="reset()">
+                                <v-btn color="pink-accent-4" class="mb-4" @click="reset()" variant="tonal">
                                     Reset
                                 </v-btn>
                             </v-btn-group>
@@ -132,7 +142,6 @@
                                                 <v-icon>mdi-eye</v-icon>
                                                 Ver
                                                 tudo</v-btn>
-                                            <!-- <v-btn class="mb-4" color="error" @click="deleteAlbum(album)">Remover</v-btn> -->
                                         </v-card-actions>
                                         <v-card-text class="text-h6 text-white"
                                             style="background-color: #000; opacity: 0.9;">
@@ -186,8 +195,6 @@
                                         <v-dialog v-model="OpenImage">
 
                                             <v-card>
-
-
                                                 <v-img
                                                     :src="`/storage/galery/${album.name_galery}/${this.selectedImg.name_image}`"
                                                     :lazy-src="`/storage/galery/${album.name_galery}/${this.selectedImg.name_image}`"
@@ -199,22 +206,13 @@
                                                         </v-btn>
 
                                                     </div>
-
-
                                                 </v-img>
-
-
                                             </v-card>
-
-
-
                                         </v-dialog>
-
 
                                     </div>
 
                                     <v-card v-if="tabMidias == true">
-
                                         <v-card-text>
                                             {{ album }}
                                         </v-card-text>
@@ -273,7 +271,7 @@
                                         <v-card-actions class="justify-center">
                                             <v-btn class="mb-4" icon color="error" :to="`/cloaks/${this.$route.params.id}`">
                                                 <v-icon>mdi-eye</v-icon>
-                                                    ver tudo
+                                                ver tudo
                                             </v-btn>
                                         </v-card-actions>
                                     </v-card>
@@ -285,28 +283,20 @@
                                                 :alt="this.selectedCloak.image_name">
 
                                                 <div class="text-white text-right">
-                                                <v-btn class="mb-4" icon variant="plain" @click="openCloak = false">
-                                                    <v-icon>mdi-close</v-icon>
-                                                </v-btn>
-                                            </div>
+                                                    <v-btn class="mb-4" icon variant="plain" @click="openCloak = false">
+                                                        <v-icon>mdi-close</v-icon>
+                                                    </v-btn>
+                                                </div>
                                             </v-img>
-
-                                           
                                         </v-dialog>
                                     </div>
                                 </v-sheet>
                             </v-col>
                         </v-row>
                     </v-container>
-
-
                 </v-window>
-
-                
             </v-card>
-
         </v-sheet>
-
     </v-container>
 </template>
 
@@ -343,7 +333,7 @@ export default {
     }),
     methods: {
         handleFiles() {
-            this.$refs.files[0];
+            this.$refs.files;
         },
         async validate() {
             const { valid } = await this.$refs.form.validate();
@@ -351,7 +341,7 @@ export default {
         },
         save() {
             let datas = { files: this.files, galery_name: this.galery_name, description: this.galery_desc };
-
+            
             axios.post(`/galery/create/${this.$route.params.id}`, datas, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -397,8 +387,7 @@ export default {
             axios.get('/cloak')
                 .then((response) => {
                     this.cloaks = response.data;
-                    console.log(this.cloaks);
-                    return this.cloaks;
+                   return this.cloaks;
                 })
                 .catch((response) => {
                     return alert('Error: ' + response);
