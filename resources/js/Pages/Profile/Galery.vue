@@ -302,73 +302,7 @@
 
                 </v-window>
 
-                <!--    <v-window v-model="tabMidias" v-if="(tabMidias == true && tabUpload == false && tabAlbuns == false)">
-                    <v-container class="fill-height mb-6" fluid>
-                        <v-row align="start" no-gutters>
-                            <v-col v-for="midia in midias" :key="midia.id">
-                                <v-sheet class="pa-2">
-                                    <v-card>
-
-                                        <v-img :src="`/storage/galery/${midia.name_galery}/${midia.name_image}`"
-                                            :alt="`/storage/galery/${midia.name_galery}/${midia.name_image}`" cover
-                                            max-heigth="500" class="bg-grey-lighten-2">
-
-                                            <v-hover>
-                                                <template v-slot:default="{ isHovering, props }">
-                                                    <v-card-title class="text-2 bg-pink-darken-1" v-bind="props"
-                                                        :class="{ 'on-hover': isHovering }">
-                                                        <p :class="{ 'show-txt': !isHovering }">
-                                                            {{ midia.name_image }}
-                                                        </p>
-                                                        <v-btn-group>
-                                                            <v-btn class="mb-4" color="pink-darken-1" icon
-                                                                @click="deleteImage(midia)">
-                                                                <v-icon>mdi-delete-empty</v-icon>
-
-                                                            </v-btn>
-                                                        </v-btn-group>
-                                                    </v-card-title>
-                                                </template>
-
-                                            </v-hover>
-                                        </v-img>
-                                    </v-card>
-                                    <div class="text-center">
-
-                                        <v-dialog v-model="deleteDialog" max-width="750">
-
-                                            <v-card>
-                                                <v-toolbar dark color="pink-accent-4">
-                                                    <v-btn @click="(deleteDialog = false)">
-                                                        <v-icon append>mdi-close</v-icon>
-                                                    </v-btn>
-                                                    <v-toolbar-title>Remove {{
-                                                        editedItem.name_image
-                                                    }}</v-toolbar-title>
-                                                </v-toolbar>
-                                                <v-card-title></v-card-title>
-
-                                                <v-card-text>
-                                                    Você tem <i>certeza</i> que deseja <b> remover</b> permanentemente
-                                                    essa
-                                                    imagem ?
-                                                </v-card-text>
-
-                                                <v-card-actions>
-                                                    <v-btn color="pink-accent-4" icon block @click="removeImage">
-                                                        <v-icon>mdi-delete</v-icon>
-                                                    </v-btn>
-
-                                                </v-card-actions>
-                                            </v-card>
-                                        </v-dialog>
-                                    </div>
-
-                                </v-sheet>
-                            </v-col>
-                        </v-row>
-                    </v-container>
-                </v-window> -->
+                
             </v-card>
 
         </v-sheet>
