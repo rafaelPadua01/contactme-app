@@ -333,7 +333,7 @@ export default {
     }),
     methods: {
         handleFiles() {
-            this.$refs.files;
+            this.$refs.files[0];
         },
         async validate() {
             const { valid } = await this.$refs.form.validate();
@@ -384,7 +384,7 @@ export default {
                 })
         },
         getCloaks() {
-            axios.get('/cloak')
+            axios.get(`/cloaks/${this.$route.params.id}`)
                 .then((response) => {
                     this.cloaks = response.data;
                    return this.cloaks;

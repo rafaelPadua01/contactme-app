@@ -9,8 +9,8 @@
             
             
         </v-row>
-        <v-row v-else-if="cloaks" align="start" no-gutters>
-        <v-col v-for="cloak in cloaks" class="d-flex" cols="12" sm="6">
+        <v-row v-else-if="cloaks" align="start">
+        <v-col v-for="cloak in cloaks"  cols="12" sm="6">
             <v-sheet class="pa-2">
                 <v-card>
                     <v-toolbar color="pink-accent-4" dark>
