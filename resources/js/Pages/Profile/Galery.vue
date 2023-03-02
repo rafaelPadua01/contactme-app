@@ -42,7 +42,7 @@
 
                                                 <v-icon>mdi-fire</v-icon>
                                                 {{ fileName }}
-                                               <!--  <v-btn icon class="mb-4" color="pink-accent-4" variant="plain" @click="fileName.remove()">
+                                                <!--  <v-btn icon class="mb-4" color="pink-accent-4" variant="plain" @click="fileName.remove()">
                                                     <v-icon>
                                                         mdi-close
                                                     </v-icon>
@@ -115,45 +115,43 @@
                                         <v-card-title>{{ album.name_galery }}</v-card-title>
                                         <v-divider></v-divider>
                                         <v-spacer></v-spacer>
-
-                                       
-
                                         <v-card-text>
                                             <v-row>
                                                 <v-col v-for="img in midias" :key="img.id" class="d-flex child-flex"
                                                     cols="4">
-                                                    <v-img 
-                                                        :src="`/storage/galery/${album.name_galery}/${img.name_image}`"
+                                                    <v-img :src="`/storage/galery/${album.name_galery}/${img.name_image}`"
                                                         :lazy-src="`/storage/galery/${album.name_galery}/${img.name_image}`"
-                                                        :alt="`${img.name_image}`"
-                                                        @click="dialogOpenImage(img)">
+                                                        :alt="`${img.name_image}`" @click="dialogOpenImage(img)">
                                                     </v-img>
-                                                    
+
                                                 </v-col>
                                             </v-row>
                                         </v-card-text>
-
-                                        <v-card-text class="text-h6 text-white" style="background-color: #000; opacity: 0.9;">
+                                        <v-card-actions class="justify-center">
+                                            <v-btn class="mb-4" color="error" :to="`/galery/selected/${album.id}`">
+                                                <v-icon>mdi-eye</v-icon>
+                                                Ver
+                                                tudo</v-btn>
+                                            <!-- <v-btn class="mb-4" color="error" @click="deleteAlbum(album)">Remover</v-btn> -->
+                                        </v-card-actions>
+                                        <v-card-text class="text-h6 text-white"
+                                            style="background-color: #000; opacity: 0.9;">
                                             <div>
                                                 <p>{{ album.description }}</p>
                                             </div>
                                             <hr>
-                                           <div class="text-right">
-                                            {{ album.created_at.slice(0,10) }}
-                                           </div>
-                                           
+                                            <div class="text-right">
+                                                {{ album.created_at.slice(0, 10) }}
+                                            </div>
+
                                         </v-card-text>
-                                        
+
                                         <v-divider></v-divider>
                                         <v-spacer></v-spacer>
 
-                                        <v-card-actions>
-                                            <v-btn class="mb-4" color="error" :to="`/galery/selected/${album.id}`">Ver
-                                                tudo</v-btn>
-                                            <!-- <v-btn class="mb-4" color="error" @click="deleteAlbum(album)">Remover</v-btn> -->
-                                        </v-card-actions>
+
                                     </v-card>
-                                   
+
 
                                     <div class="text-center">
                                         <v-dialog v-model="editAlbumDialog" max-width="750">
@@ -185,34 +183,33 @@
 
                                         </v-dialog>
 
-                                                            <v-dialog v-model="OpenImage">
-                                                              
-                                                                   <v-card>
+                                        <v-dialog v-model="OpenImage">
 
-                                                                   
-                                                                        <v-img 
-                                                                            :src="`/storage/galery/${album.name_galery}/${this.selectedImg.name_image}`"
-                                                                            :lazy-src="`/storage/galery/${album.name_galery}/${this.selectedImg.name_image}`"
-                                                                            :alt="`${this.selectedImg.name_image}`"
-                                                                        >
+                                            <v-card>
 
-                                                                                <div class="text-white text-right">
-                                                                                    <v-btn icon variant="plain" @click="OpenImage = false">
-                                                                            <v-icon>mdi-close</v-icon>
-                                                                        </v-btn>
-                                                                           
-                                                                                </div>
 
-                                                                            
-                                                                        </v-img>
-                                                                  
+                                                <v-img
+                                                    :src="`/storage/galery/${album.name_galery}/${this.selectedImg.name_image}`"
+                                                    :lazy-src="`/storage/galery/${album.name_galery}/${this.selectedImg.name_image}`"
+                                                    :alt="`${this.selectedImg.name_image}`">
 
-                                                                   </v-card>
-                                                                   
-                                                                      
-                                                                   
-                                                            </v-dialog>
-                                                     
+                                                    <div class="text-white text-right">
+                                                        <v-btn icon variant="plain" @click="OpenImage = false">
+                                                            <v-icon>mdi-close</v-icon>
+                                                        </v-btn>
+
+                                                    </div>
+
+
+                                                </v-img>
+
+
+                                            </v-card>
+
+
+
+                                        </v-dialog>
+
 
                                     </div>
 
@@ -262,11 +259,41 @@
 
                                         <v-card-title></v-card-title>
                                         <v-card-text>
-                                            <v-btn icon color="pink-accent-4" :to="`/cloaks/${this.$route.params.id}`">
-                                                <v-icon>mdi-phone</v-icon>
-                                            </v-btn>
+                                            <v-row>
+                                                <v-col v-for="cloak in cloaks" :key="cloak.id" class="d-flex child-flex"
+                                                    cols="4">
+                                                    <v-img :lazy-src="`/storage/cloak/${cloak.image_name}`"
+                                                        :src="`/storage/cloak/${cloak.image_name}`" :alt="cloak.image_name"
+                                                        @click="openCloakDialog(cloak)"></v-img>
+                                                </v-col>
+                                            </v-row>
+
                                         </v-card-text>
+
+                                        <v-card-actions class="justify-center">
+                                            <v-btn class="mb-4" icon color="error" :to="`/cloaks/${this.$route.params.id}`">
+                                                <v-icon>mdi-eye</v-icon>
+                                                    ver tudo
+                                            </v-btn>
+                                        </v-card-actions>
                                     </v-card>
+                                    <div class="text-center">
+                                        <v-dialog v-model="openCloak">
+
+                                            <v-img :lazy-src="`/storage/cloak/${this.selectedCloak.image_name}`"
+                                                :src="`/storage/cloak/${this.selectedCloak.image_name}`"
+                                                :alt="this.selectedCloak.image_name">
+
+                                                <div class="text-white text-right">
+                                                <v-btn class="mb-4" icon variant="plain" @click="openCloak = false">
+                                                    <v-icon>mdi-close</v-icon>
+                                                </v-btn>
+                                            </div>
+                                            </v-img>
+
+                                           
+                                        </v-dialog>
+                                    </div>
                                 </v-sheet>
                             </v-col>
                         </v-row>
@@ -371,6 +398,8 @@ export default {
         tabMidias: false,
         OpenImage: false,
         selectedImg: false,
+        selectedCloak: false,
+        openCloak: false,
         deleteAlbumDialog: false,
         deleteDialog: false,
         editAlbumDialog: false,
@@ -434,17 +463,23 @@ export default {
             axios.get('/cloak')
                 .then((response) => {
                     this.cloaks = response.data;
+                    console.log(this.cloaks);
                     return this.cloaks;
                 })
                 .catch((response) => {
                     return alert('Error: ' + response);
-                })
+                });
         },
-        dialogOpenImage(img){
+        dialogOpenImage(img) {
             this.OpenImage = true;
-            this.selectedImg = Object.assign({},img);
+            this.selectedImg = Object.assign({}, img);
             return this.selectedImg;
-           
+
+        },
+        openCloakDialog(cloak) {
+            this.openCloak = true;
+            this.selectedCloak = Object.assign({}, cloak);
+            return this.selectedCloak;
         },
         editAlbum(album) {
             this.albumIndex = this.albuns.indexOf(album);
@@ -461,7 +496,7 @@ export default {
             axios.post(`/galery/edit/${this.albumItem.id}`, data)
                 .then((response) => {
                     this.editAlbumDialog = false;
-                   return this.albuns.push(response.data);
+                    return this.albuns.push(response.data);
 
                 })
                 .catch((response) => {
@@ -506,7 +541,6 @@ export default {
         }
     },
     created() {
-        this.tabUpload;
         this.getAlbuns();
         this.getCloaks();
         this.getMidias();
