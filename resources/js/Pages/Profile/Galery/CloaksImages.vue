@@ -23,7 +23,8 @@
                             </template>
 
                         </v-toolbar>
-                        <v-img :lazy-src="`/storage/cloak/${cloak.image_name}`" :src="`/storage/cloak/${cloak.image_name}`">
+                        <v-img :lazy-src="`/storage/cloak/${cloak.image_name}`" :src="`/storage/cloak/${cloak.image_name}`"
+                            @click="openImage(cloak)">
                             <div class="text-white">
                                 {{ cloak.image_name }}
                             </div>
@@ -44,8 +45,61 @@
                     </v-card>
                 </v-sheet>
                 <div class="text-center">
-                    <v-dialog v-model="remove_dialog">
+                    <v-dialog v-model="openImageDialog">
+                        <v-img :src="`/storage/cloak/${objectImg.image_name}`" cover width="1600">
+                            <div class="text-right">
+                                <v-btn-group color="white">
+                                    <v-menu location="bottom">
+                                        <template v-slot:activator="{ props }">
+                                            <v-btn variant="plain" @click="openMenu(objectImg)" v-bind="props">
+                                                <v-icon>mdi-dots-vertical</v-icon>
+                                            </v-btn>
+                                        </template>
+                                       
+                                    <v-list>
+                                        <v-list-item @click="editOptionsOpen">Edit Image</v-list-item>
+                                    </v-list>
+                                    </v-menu>
+                                    <v-btn icon variant="plain" @click="closeOpenImage">
+                                        <v-icon>mdi-close</v-icon>
+                                    </v-btn>
 
+
+                                </v-btn-group>
+
+                            </div>
+
+                        </v-img>
+
+                        <div v-if="editOptionsNavigation">
+                            <v-bottom-navigation v-model="editOptionsNavigation" class="justify-center"
+                                bg-color="pink-accent-2" color="white" size="10">
+                               
+                                <v-btn value="recent">
+                                    <v-icon>mdi-history</v-icon>
+                                    recent
+                                </v-btn>
+                                <v-btn value="favorites">
+                                    <v-icon>mdi-heart</v-icon>
+                                    Favorites
+                                </v-btn>
+
+                                <v-btn value="nearby">
+                                    <v-icon>mdi-map-marker</v-icon>
+                                    nearby
+                                </v-btn>
+                                <v-btn icon class="mr-2" variant="plain" @click="editOptionsNavigation = false">
+                                    <v-icon>mdi-close</v-icon>
+                                    close
+                                </v-btn>
+                               
+                            </v-bottom-navigation>
+                            
+                        </div>
+
+                    </v-dialog>
+
+                    <v-dialog v-model="remove_dialog">
                         <v-card>
                             <v-toolbar color="pink-accent-4">
                                 <v-toolbar-title>Remove {{ imageItem.image_name }}</v-toolbar-title>
@@ -71,8 +125,6 @@
                                 </v-btn-group>
                             </v-card-actions>
                         </v-card>
-
-
                     </v-dialog>
                 </div>
             </v-col>
@@ -83,6 +135,7 @@
 <script>
 import axios from 'axios';
 
+
 export default {
     data: () => ({
         cloaks: [],
@@ -90,6 +143,11 @@ export default {
         imageIndex: -1,
         imageItem: '',
         selected: false,
+        openImageDialog: false,
+        objectImg: null,
+        editImg: null,
+        editMenu: false,
+        editOptionsNavigation: false,
     }),
     methods: {
         getCloaks() {
@@ -116,11 +174,28 @@ export default {
                     return false;
                 });
         },
+        openImage(cloak) {
+            this.objectImg = Object.assign({}, cloak);
+            return this.openImageDialog = true;
+        },
+        closeOpenImage(){
+            this.openImageDialog = false;
+            this.editOptionsNavigation = false;
+        },
+        openMenu(objectImg) {
+            this.editImg = Object.assign(objectImg);
+            return this.editMenu = true;
+        },
+        editOptionsOpen() {
+            this.editOptionsNavigation = true;
+        },
+        closeOpenOptions(){
+            this.editOptionsNavigation = false;
+        },
         removeImage(cloak) {
             this.imageIndex = this.cloaks.indexOf(cloak);
             this.imageItem = Object.assign({}, cloak);
             this.remove_dialog = true;
-
         },
         removeConfirm() {
             axios.post(`/cloak/delete/${this.imageItem.id}`)
