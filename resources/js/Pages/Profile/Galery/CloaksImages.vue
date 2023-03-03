@@ -23,13 +23,16 @@
                             </template>
 
                         </v-toolbar>
+                        
                         <v-img :lazy-src="`/storage/cloak/${cloak.image_name}`" :src="`/storage/cloak/${cloak.image_name}`"
-                            @click="openImage(cloak)">
+                            @click="openImage(cloak)" >
                             <div class="text-white">
                                 {{ cloak.image_name }}
                             </div>
-
+                            
                         </v-img>
+                      
+                      
 
                         <v-divider></v-divider>
                         <v-spacer></v-spacer>
@@ -44,9 +47,18 @@
                         </v-card-actions>
                     </v-card>
                 </v-sheet>
+               
                 <div class="text-center">
                     <v-dialog v-model="openImageDialog">
-                        <v-img :src="`/storage/cloak/${objectImg.image_name}`" cover width="1600">
+                        <v-responsive :style="`background: rgb(${red}, ${green}, ${blue}`">
+                            <v-img :src="`/storage/cloak/${objectImg.image_name}`" 
+                                :style="`filter:sepia(${sepia}%) hue-rotate(${matriz}deg) saturate(${saturate}%) opacity(${opacity});`">
+                               <div bg-color="white">
+                                {{ red }}  {{ green }} {{ blue }} {{ opacity  }}
+                               </div>
+                                    
+
+                           
                             <div class="text-right">
                                 <v-btn-group color="white">
                                     <v-menu location="bottom">
@@ -55,10 +67,10 @@
                                                 <v-icon>mdi-dots-vertical</v-icon>
                                             </v-btn>
                                         </template>
-                                       
-                                    <v-list>
-                                        <v-list-item @click="editOptionsOpen">Edit Image</v-list-item>
-                                    </v-list>
+
+                                        <v-list>
+                                            <v-list-item @click="editOptionsOpen">Edit Image</v-list-item>
+                                        </v-list>
                                     </v-menu>
                                     <v-btn icon variant="plain" @click="closeOpenImage">
                                         <v-icon>mdi-close</v-icon>
@@ -68,34 +80,178 @@
                                 </v-btn-group>
 
                             </div>
+                            <div v-if="openColorDialog" class="float-top">
+                            <v-bottom-navigation v-model="editOptionsNavigation" class="justify-center" bg-color="black"
+                                color="white" size="10" style="opacity: 0.8; margin-left: -2%; margin-bottom: 5rem;"
+                                height="100"
+                                >
+                                <v-slider 
+                                    v-model="matriz"
+                                    :max="255"
+                                    :step="1"
+                                    label="Matriz"
+                                    hide-details
+                                    class="ma-4"
+                                >
+                                   <!-- <template v-slot:append>
+                                        <v-text-field
+                                            v-model="matriz"
+                                            type="number"
+                                            style="width: 80px"
+                                            density="compact"
+                                            hide-details
+                                            variant="outlined"
+                                        >
 
-                        </v-img>
+                                        </v-text-field>
+                                    </template> -->
+                                </v-slider>   
 
-                        <div v-if="editOptionsNavigation">
-                            <v-bottom-navigation v-model="editOptionsNavigation" class="justify-center"
-                                bg-color="pink-accent-2" color="white" size="10">
-                               
-                                <v-btn value="recent">
-                                    <v-icon>mdi-history</v-icon>
-                                    recent
-                                </v-btn>
-                                <v-btn value="favorites">
-                                    <v-icon>mdi-heart</v-icon>
-                                    Favorites
-                                </v-btn>
+                                <v-slider
+                                    v-model="saturate"
+                                    :max="255"
+                                    :step="1"
+                                    label="saturate"
+                                    hide-details
+                                    class="ma-4"
+                                >
+                                   <!-- <template v-slot:append>
+                                        <v-text-field
+                                        v-model="saturate"
+                                            type="number"
+                                            style="width: 80px"
+                                            density="compact"
+                                            hide-details
+                                            variant="outlined"
+                                        >
 
-                                <v-btn value="nearby">
-                                    <v-icon>mdi-map-marker</v-icon>
-                                    nearby
-                                </v-btn>
-                                <v-btn icon class="mr-2" variant="plain" @click="editOptionsNavigation = false">
-                                    <v-icon>mdi-close</v-icon>
-                                    close
-                                </v-btn>
-                               
+                                        </v-text-field>
+                                    
+                                    </template> -->
+                                </v-slider>
+
+                                <v-slider
+                                    v-model="sepia"
+                                    :max="255"
+                                    :step="1"
+                                    label="sepia"
+                                    hide-details
+                                    class="ma-4"
+                                >
+                                   <!-- <template v-slot:append>
+                                        <v-text-field
+                                            v-model="sepia"
+                                            type="number"
+                                            style="width: 80px"
+                                            density="compact"
+                                            hide-details
+                                            variant="outlined"
+                                        >
+
+                                        </v-text-field>
+                                        
+                                    </template>
+                                    -->
+                                </v-slider>
+                                <v-slider
+                                    v-model="opacity"
+                                    thumb-label="always"
+                                    :max="1"
+                                    :min="0.6"
+                                    :step="0.1"
+                                    label="opacity"
+                                    hide-details
+                                    class="ma-4"
+                                >
+                                   <!-- <template v-slot:append>
+                                        <v-text-field
+                                            v-model="opacity"
+                                            type="number"
+                                            style="width: 80px"
+                                            density="compact"
+                                            hide-details
+                                            variant="outlined"
+                                        >
+
+                                        </v-text-field>
+                                    
+                                    </template>
+                                    -->
+                                </v-slider>
+                                <div class="text-center">
+                                    <v-btn-group>
+                                        <v-btn>Salvar</v-btn>
+                                        <v-btn icon variant="plain" class="text-white" @click="openColorDialog = false">
+                                            <v-icon>mdi-close</v-icon>
+                                        </v-btn>
+                                    </v-btn-group>
+                                   
+                                </div>
                             </v-bottom-navigation>
                             
                         </div>
+                        
+                        <div v-if="openBrightnessDialog" class="float-top">
+                            
+                            <v-bottom-navigation v-model="brightnessMenu" class="justify-center" bg-color="black"
+                                color="white" size="10"
+                                height="100" style="opacity: 0.8; margin-left: -2%; margin-bottom: 11rem;"
+                                >
+                                <v-slider
+                                    label="brightness"
+                                ></v-slider>
+                                <v-slider
+                                    label="contrast"
+                                ></v-slider>
+                               
+                                <div class="text-center">
+                                    <v-btn-group>
+                                        <v-btn>Salvar</v-btn>
+                                        <v-btn icon variant="plain" class="text-white" @click="openColorDialog = false">
+                                            <v-icon>mdi-close</v-icon>
+                                        </v-btn>
+                                    </v-btn-group>
+                                   
+                                </div>
+                            </v-bottom-navigation>
+                            
+                        </div>
+                        </v-img>
+                       
+                        </v-responsive>
+                       
+                        
+                       
+           
+                        <div v-if="editOptionsNavigation">
+                            
+                            <v-bottom-navigation v-model="editOptionsNavigation" class="justify-center" bg-color="black"
+                                color="white" size="10" style="opacity: 0.8; margin-left: -2%">
+                                <v-btn value="palette" @click="openColorMenu">
+                                    <v-icon>mdi-palette-outline</v-icon>
+                                    color
+                                </v-btn>
+
+
+                                <v-btn value="brightness" @click="openBrightnessMenu">
+                                    <v-icon>mdi-brightness-6</v-icon>
+                                    brightness/contrast
+                                </v-btn>
+
+                                <v-btn value="nearby">
+                                    <v-icon>mdi-content-cut</v-icon>
+                                    cut
+                                </v-btn>
+                                <v-btn icon class="mb-4" variant="plain" @click="editOptionsNavigation = false">
+                                    <v-icon>mdi-close</v-icon>
+                                    close
+                                </v-btn>
+
+                            </v-bottom-navigation>
+                            
+                        </div>
+                       
+                        
 
                     </v-dialog>
 
@@ -144,10 +300,17 @@ export default {
         imageItem: '',
         selected: false,
         openImageDialog: false,
+        openColorDialog: false,
+        openBrightnessDialog: false,
         objectImg: null,
         editImg: null,
         editMenu: false,
         editOptionsNavigation: false,
+        brightnessMenu: false,
+        matriz: 0,
+        saturate: 128,
+        sepia: 10,
+        opacity: 1,
     }),
     methods: {
         getCloaks() {
@@ -178,9 +341,11 @@ export default {
             this.objectImg = Object.assign({}, cloak);
             return this.openImageDialog = true;
         },
-        closeOpenImage(){
+        closeOpenImage() {
             this.openImageDialog = false;
             this.editOptionsNavigation = false;
+            this.openColorDialog = false;
+            //return;
         },
         openMenu(objectImg) {
             this.editImg = Object.assign(objectImg);
@@ -189,8 +354,16 @@ export default {
         editOptionsOpen() {
             this.editOptionsNavigation = true;
         },
-        closeOpenOptions(){
+        openColorMenu() {
+           return this.openColorDialog = true;
+            //alert('Botão de cores');
+        },
+        closeOpenOptions() {
             this.editOptionsNavigation = false;
+        },
+        openBrightnessMenu(){
+            this.brightnessMenu = true;
+            return this.openBrightnessDialog = true;
         },
         removeImage(cloak) {
             this.imageIndex = this.cloaks.indexOf(cloak);
