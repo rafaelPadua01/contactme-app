@@ -54,8 +54,8 @@
                         <v-responsive>
                             <v-img :src="`/storage/cloak/${objectImg.image_name}`"
                                 :style="`filter:sepia(${sepia}%) hue-rotate(${matriz}deg) saturate(${saturate}%) opacity(${opacity}) blur(${blur}rem)
-                                    brightness(${brightness}) contrast(${contrast}%);`">
-                                    {{ blur + 'px'}}
+                                    brightness(${brightness}) contrast(${contrast}%) drop-shadow(${w_shadow}px ${h_shadow}px ${blur_shadow}px ${color_shadow});`">
+                                  {{ h_shadow + 'px' +  w_shadow + 'px' + blur_shadow + 'px' + color_shadow + 'px'}}
                                 <div class="text-right">
                                     <v-btn-group color="white">
                                         <v-menu location="bottom">
@@ -80,7 +80,7 @@
                                 <div v-if="openColorDialog" class="float-top">
                                     <v-bottom-navigation v-model="editOptionsNavigation" class="justify-center"
                                         bg-color="black" color="white" 
-                                        style="opacity: 0.8; margin-left: -2%; margin-bottom: 5rem;" height="100">
+                                        style="opacity: 0.8; margin-left: -2%; margin-bottom: 3.5rem;" height="100">
                                         <v-slider v-model="matriz" :max="300" :step="1" label="Matriz" hide-details
                                             class="ma-4">
                                            
@@ -101,7 +101,7 @@
                                         </v-slider>
                                         <div class="text-center">
                                             <v-btn-group>
-                                                <v-btn>Salvar</v-btn>
+                                                
                                                 <v-btn icon variant="plain" class="text-white"
                                                     @click="openColorDialog = false">
                                                     <v-icon>mdi-close</v-icon>
@@ -116,7 +116,7 @@
                                 <div v-if="openBrightnessDialog">
                                      <v-bottom-navigation v-model="brightnessMenu" class="justify-center" bg-color="black"
                                         color="white" size="10" height="120"
-                                        style="opacity: 0.8; margin-left: -2%; margin-bottom: 11.2rem; padding: 1%">
+                                        style="opacity: 0.8; margin-left: -2%; margin-bottom: 9.7rem; padding: 1%">
                                        
                                         <v-slider 
                                         v-model="brightness"
@@ -127,6 +127,7 @@
                                         label="brightness"
                                         hide-details>
                                         </v-slider>
+                                        
                                         <v-slider
                                         v-model="contrast"
                                         thumb-label="always"
@@ -137,9 +138,10 @@
                                         hide-details>
                                         </v-slider>
                                         <v-spacer></v-spacer>
+
                                         <div class="text-center">
                                             <v-btn-group>
-                                                <v-btn>Salvar</v-btn>
+                                              
                                                 <v-btn icon variant="plain" class="text-white mb-4"
                                                     @click="openBrightnessDialog = false">
                                                     <v-icon>mdi-close</v-icon>
@@ -153,7 +155,7 @@
                                 <div v-if="openEfxDialog">
                                      <v-bottom-navigation v-model="efxMenu" class="justify-center" bg-color="black"
                                         color="white" size="10" height="120"
-                                        style="opacity: 0.8; margin-left: -2%; margin-bottom: 18.6rem; padding: 1%">
+                                        style="opacity: 0.8; margin-left: -2%; margin-bottom: 17.2rem; padding: 1%">
                                         <v-slider 
                                         v-model="blur"
                                         class="ma-4"
@@ -167,7 +169,69 @@
                                         <v-spacer></v-spacer>
                                         <div class="text-center">
                                             <v-btn-group>
-                                                <v-btn>Salvar</v-btn>
+                                             
+                                                <v-btn icon variant="plain" class="text-white mb-4"
+                                                    @click="openEfxDialog = false">
+                                                    <v-icon>mdi-close</v-icon>
+                                                </v-btn>
+                                            </v-btn-group>
+
+                                        </div>
+                                    </v-bottom-navigation>
+
+                                </div>
+
+                                <div v-if="openShadowDialog">
+                                     <v-bottom-navigation v-model="shadowMenu" class="justify-center" bg-color="black"
+                                        color="white" height="290"
+                                        style="opacity: 0.8; margin-left: -2%; margin-bottom: 24.6rem; padding: 1%;">
+
+                                        <v-label>Shadow</v-label>
+                                       
+                                        <v-slider 
+                                        v-model="h_shadow"
+                                        class="ma-4"
+                                        :max="255"
+                                        :step="1"
+                                        label="height"
+                                        hide-details
+                                       >
+                                        </v-slider>
+                                      
+                                        <v-slider 
+                                        v-model="w_shadow"
+                                        class="ma-4"
+                                        :max="255"
+                                        :step="1"
+                                        label="height"
+                                        hide-details>
+                                        </v-slider>
+                                        <v-slider 
+                                        v-model="blur_shadow"
+                                        class="ma-4"
+                                        :min="0"
+                                        :max="255"
+                                        :step="0"
+                                        label="blur-shadow"
+                                        hide-details>
+                                        </v-slider>
+                                        
+                                        <v-color-picker hide-canvas hide-inputs show-swatches v-model="color_shadow" size="12"></v-color-picker>
+
+                                     
+
+                                   
+                                        
+                                      
+
+                                     <!--   <div>
+                                            
+                                        </div>-->
+
+                                        <v-spacer></v-spacer>
+                                        <div class="text-center">
+                                            <v-btn-group>
+                                                
                                                 <v-btn icon variant="plain" class="text-white mb-4"
                                                     @click="openEfxDialog = false">
                                                     <v-icon>mdi-close</v-icon>
@@ -199,6 +263,20 @@
                                 <v-btn value="efx" @click="openEfxMenu">
                                     <v-icon>mdi-blur</v-icon>
                                     efx
+                                </v-btn>
+
+                                
+                                <v-btn value="drop_shadow" @click="openshadowMenu">
+                                    <v-icon>mdi-box-shadow</v-icon>
+                                    drop-shadow
+                                </v-btn>
+                                <v-btn value="drop_shadow" @click="saveEditedFile">
+                                    <v-icon>mdi-content-save-check</v-icon>
+                                    Save
+                                </v-btn>
+                                <v-btn value="drop_shadow" @click="undo">
+                                    <v-icon>mdi-file-undo</v-icon>
+                                    undo
                                 </v-btn>
                                 <v-btn icon class="mb-4" variant="plain" @click="editOptionsNavigation = false">
                                     <v-icon>mdi-close</v-icon>
@@ -258,19 +336,27 @@ export default {
         openColorDialog: false,
         openBrightnessDialog: false,
         openEfxDialog: false,
+        openShadowDialog: false,
         objectImg: null,
         editImg: null,
         editMenu: false,
         editOptionsNavigation: false,
         brightnessMenu: false,
         efxMenu: false,
+        shadowMenu: false,
         matriz: 0,
         saturate: 128,
         sepia: 10,
         opacity: 1,
         brightness: 0.4,
-        contrast: '200%',
+        contrast: '0%',
         blur: '0rem',
+        h_shadow: 0,
+        w_shadow: 0,
+        blur_shadow: 0,
+        spread_shadow: 0,
+        color_shadow: 'red',
+
     }),
     methods: {
         getCloaks() {
@@ -328,6 +414,30 @@ export default {
         openEfxMenu(){
             this.efxMenu = true;
             this.openEfxDialog = true;
+        },
+        openshadowMenu(){
+            this.shadowMenu = true;
+            this.openShadowDialog = true;
+        },
+        saveEditedFile(){
+            alert('Estamos trabalhando nisso...');
+        },
+        undo() {
+            
+            this.matriz = 0;
+            this.saturate = 128;
+            this.sepia = 10;
+            this.opacity = 1;
+            this.brightness = 0.4;
+            this.contrast = '0%';
+            this.blur = '0rem';
+            this.h_shadow = 0;
+            this.w_shadow = 0;
+            this.blur_shadow = 0;
+            this.spread_shadow = 0;
+            this.color_shadow = 'red';
+           return;
+           
         },
         removeImage(cloak) {
             this.imageIndex = this.cloaks.indexOf(cloak);
