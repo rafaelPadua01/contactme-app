@@ -87,6 +87,7 @@ Route::get('/cloak', [CloakController::class, 'index'])->name('index');
 Route::get('/cloaks/{id}', [CloakController::class, 'allCloaks'])->name('allCloaks');
 Route::post('/cloak/selected/{id}', [CloakController::class, 'selected'])->name('selected');
 Route::post('/cloak/upload/{id}', [CloakController::class, 'upload'])->name('upload');
+Route::post('/cloak/saveEdited/{id}', [CloakController::class, 'saveEdited'])->name('saveEdited');
 Route::post('/cloak/delete/{id}', [CloakController::class, 'delete'])->name('delete');
 
 //Rotas Search service 

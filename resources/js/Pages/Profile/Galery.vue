@@ -260,9 +260,12 @@
                                             <v-row>
                                                 <v-col v-for="cloak in cloaks" :key="cloak.id" class="d-flex child-flex"
                                                     cols="4">
+                                                    
                                                     <v-img :lazy-src="`/storage/cloak/${cloak.image_name}`"
                                                         :src="`/storage/cloak/${cloak.image_name}`" :alt="cloak.image_name"
-                                                        @click="openCloakDialog(cloak)"></v-img>
+                                                        @click="openCloakDialog(cloak)"
+                                                     :style="`filter:sepia(${cloak.sepia}%) hue-rotate(${cloak.matriz}deg) saturate(${cloak.saturate}%) opacity(${cloak.opacity}) blur(${cloak.blur}rem)
+                                                                                                            brightness(${cloak.brightness}) contrast(${cloak.contrast}) drop-shadow(${cloak.w_shadow}px ${cloak.h_shadow}px ${cloak.blur_shadow}px ${cloak.color_shadow});`"></v-img>
                                                 </v-col>
                                             </v-row>
 
