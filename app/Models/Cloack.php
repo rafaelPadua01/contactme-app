@@ -8,5 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Cloack extends Model
 {
     use HasFactory;
-    protected $fillable = ['user_id', 'profile_id', 'image_name', 'size', 'extension', 'selected'];
+    protected $fillable = [
+        'user_id',
+        'profile_id',
+        'image_name',
+        'size',
+        'extension',
+        'selected',
+        
+    ];
 }

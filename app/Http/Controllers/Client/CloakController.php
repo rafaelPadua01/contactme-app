@@ -77,6 +77,42 @@ class CloakController extends Controller
             return \Response::json($e);
         }
     }
+   //public function saveEdited(Request $request, $id){
+   // $image_data = base64_decode($request->file);
+   // $select_image = Cloack::findOrFail($id);
+   // try{
+   //     $select_file = fopen('./storage/cloak/'.$select_image->image_name, "r+");
+   //     $rewrite = fwrite($select_file, $image_data);
+   //     Storage::putFileAs('public/cloak', $select_file, $rewrite);
+   //     dd($rewrite);
+   // }
+   // catch(Exception $e){
+   //     return \Response::json($e);
+   // }
+   // dd($image_data, $select_image);
+   //   
+   //     try{
+   //         $save_style = $select_image->update([
+   //             'matriz' => $request->matriz,
+   //             'sature' => $request->sature,
+   //             'sepia' => $request->sepia,
+   //             'opacity' => $request->opacity,
+   //             'brightness' => $request->brightness,
+   //             'contrast' => $request->contrast,
+   //             'blur' => $request->blur,
+   //             'h_shadow' => $request->h_shadow,
+   //             'w_shadow' => $request->w_shadow,
+   //             'blur_shadow' => $request->blur_shadow,
+   //             'color_shadow' => $request->color_shadow,
+//            ]);
+//
+   //         return \Response::json($select_image);
+   //     }
+   //     catch(Exception $e){
+   //         return \Response::json($e);
+   //     }
+  //      dd($request, $id, $select_image);
+ //   }
     public function delete($id)
     {
         $file = Cloack::where('id', '=', $id)->first();
