@@ -287,7 +287,7 @@
                             <v-row>
                                 <v-col>
                                     <v-slide-group v-model="slide_image" class="pa-4" selected-class="bg-primary" show-arrows>
-                                        <v-slide-group-item v-for="(img, index) in galery_images" :key="img.id" size="150px"
+                                        <v-slide-group-item v-for="(img, index) in galery_images" :key="img.id"
                                             v-slot="{ isSelected, toggle, selectedClass }">
                                             <v-card v-if="index <= 4" color="grey-lighten-1" :class="['ma-4', selectedClass]" height="300" width="200" @click="toggle">
                                     
@@ -309,9 +309,32 @@
                     </v-col>
                 </v-row>
             </v-card>
+            <div>
+                <v-dialog v-model="showImgDialog" transition="fab-transition">
+                   <v-img 
+                    :lazy-src="`/storage/galery/${objectImg.name_galery}/${objectImg.name_image}`"
+                    :src="`/storage/galery/${objectImg.name_galery}/${objectImg.name_image}`"
+                    :alt="`/storage/galery/${objectImg.name_galery}/${objectImg.name_image}`"
+                    max-height="600"
+                   >
+                        <v-btn-group class="float-right">
+                            <v-btn icon variant="plain">
+                                <v-icon>mdi-dots-vertical</v-icon>
+                            </v-btn>
+                            <v-btn icon variant="plain" @click="showImgDialog = false">
+                                <v-icon>mdi-close</v-icon>
+                            </v-btn>
+                        </v-btn-group>
+                      
+                       
+                    </v-img>
+                   
+                </v-dialog>
+            </div>
         </v-sheet>
 
         <div class="text-center">
+            
             <v-dialog v-model="windowAppointments">
                 <v-card class="">
                     <v-toolbar color="pink-accent-4">
@@ -364,8 +387,10 @@
 
                     </v-card-text>
                 </v-card>
-
+                
             </v-dialog>
+
+            
         </div>
  </v-container>
 
@@ -395,6 +420,8 @@ export default {
         editAppoiment: '',
         comment: '',
         erroDialog: false,
+        objectImg: false,
+        indexImg: -1, 
         especialidades: [],
         initialHourRules: [
             v => !!v || '*Campo Hora é obrigatorio',
@@ -410,7 +437,7 @@ export default {
         ],
         marked_day: '',
         service: 'select a service',
-
+        showImgDialog: false,
     }),
     methods: {
         getUser() {
@@ -574,7 +601,11 @@ export default {
                     });
         },
         showImage(img) {
-            alert(JSON.stringify(img));
+            this.objectImg = Object.assign({}, img);
+            this.indexImg = this.galery_images.indexOf(img);
+            this.showImgDialog = true;
+            console.log(this.indexImg, this.showImgDialog)
+            //alert(JSON.stringify(img));
         }
     },
     created() {
