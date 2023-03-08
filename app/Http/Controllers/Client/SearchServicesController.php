@@ -28,6 +28,10 @@ class SearchServicesController extends Controller
                     $user = User::join('profile_users', 'user_id', '=', 'users.id')
                     ->join('profile_images', 'profile_images.user_id', '=', 'profile_users.user_id')
                     ->join('profile_profs', 'profile_profs.user_id', '=', 'profile_images.user_id')
+                    ->join('cloacks', function($join){
+                        $join->on('cloacks.user_id', '=', 'profile_profs.user_id')
+                            ->where('cloacks.selected', '=', true);
+                    })
                     ->where('profissao', 'LIKE', '%'. $d .'%')
                     ->orWhere('cidade', 'LIKE','%'. $d .'%')
                     ->orWhere('name', 'LIKE', '%'.$d.'%')
@@ -42,13 +46,14 @@ class SearchServicesController extends Controller
                             'profile_images.image_name',
                             'profile_profs.profissao',
                             'profile_profs.tempo_experiencia',
-                            'profile_profs.especialidades'
-                            
-                        ]);
-                        
+                            'profile_profs.especialidades',
+                            'cloacks.image_name as cloak_image',
+                            'cloacks.selected as cloak_status'
+                    ]);
+                   
                     $response = $user;
                   
-                    if(sizeOf($response) == 0){
+                    if(!$response){
                         $response = false;
                         //return $response;
                          return \Response::json($response);

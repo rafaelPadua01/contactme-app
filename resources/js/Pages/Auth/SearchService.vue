@@ -21,57 +21,88 @@
                         <v-spacer></v-spacer>
 
                         <v-card-text>
-                                <v-list v-if="profile_prof">
-                                        <v-list-item>
+                                <v-list>
+                                        <v-list-item v-if="this.profile_prof">
                                                 <v-list-item-title>Found Users
                                                         ({{ profile_prof.length }})
-
                                                 </v-list-item-title>
+                                                <v-list-item v-for="prof in profile_prof" :key="prof.id">
+                                                        <v-card v-if="prof.cloak_status == true">
+                                                                <v-img :lazy-src="`storage/cloak/${prof.cloak_image}`"
+                                                                        :src="`storage/cloak/${prof.cloak_image}`"
+                                                                        height="250px" cover>
+                                                                        <v-avatar size="200" rounded="10" class="float-center">
+                                                                                <v-img :lazy-src="`storage/avatars/${prof.image_name}`"
+                                                                                        :src="`storage/avatars/${prof.image_name}`"
+                                                                                        cover>
+                                                                                </v-img>
+                                                                        </v-avatar>
 
-                                                <v-list-item-text v-for="prof in profile_prof" :key="prof.id">
+                                                                        <b class="text-white"> {{ prof.name }} {{ prof.name }}
+                                                                        </b>
 
-                                                        <v-card>
-                                                                <v-row v-for="cloak in cloaks" :key="cloak.id">
-                                                                        <v-col
-                                                                                v-if="cloak.user_id === prof.id && cloak.selected == true">
-                                                                                <v-img :lazy-src="`storage/cloak/${cloak.image_name}`"
-                                                                                        :src="`storage/cloak/${cloak.image_name}`"
-                                                                                        height="250px" cover>
-                                                                                        <v-avatar cover size="200" rounded="10">
-                                                                                                <v-img :lazy-src="('/storage/avatars/' + prof.image_name)"
-                                                                                                        :src="('/storage/avatars/' + prof.image_name)">
+                                                                </v-img>
 
-                                                                                                </v-img>
+                                                                <v-card-subtitle>
+                                                                        <p>
+                                                                                <v-icon>mdi-map-marker</v-icon>
+                                                                                {{ prof.cidade }}
+                                                                                <v-icon>mdi-map-marker</v-icon>
+                                                                                {{ prof.bairro }}
+                                                                        </p>
 
-                                                                                        </v-avatar>
-                                                                                        <b class="text-white"> {{
-                                                                                                prof.name
-                                                                                        }} {{
+                                                                </v-card-subtitle>
+                                                                <v-card-text>
+                                                                        <p>
+                                                                                <b>Profissão:</b> {{ prof.profissao }}
+                                                                                <b>especialidades:</b> {{ prof.especialidades }}
+                                                                        </p>
+                                                                        <p>
+                                                                                <b>Seguidores: ({{ count_followers }})</b>
+                                                                        </p>
+                                                                </v-card-text>
+
+                                                                <v-card-actions>
+                                                                        <v-btn-group>
+                                                                                <v-btn class="mb-4" color="pink-accent-4"
+                                                                                        variant="plain"
+                                                                                        :to="`/searchProfile/${prof.id}`">
+                                                                                        <v-icon>mdi-account</v-icon>
+                                                                                        see profile
+                                                                                </v-btn>
+                                                                                <v-btn class="mb-4" color="pink-accent-4"
+                                                                                        variant="plain"
+                                                                                        @click="$event => sendMessage()">
+                                                                                        <v-icon>mdi-account</v-icon>
+                                                                                        send message
+                                                                                </v-btn>
+                                                                                <v-btn class="mb-4" color="pink-accent-4"
+                                                                                        variant="plain" @click="follow(prof)">
+                                                                                        <v-icon>mdi-plus</v-icon>
+                                                                                        follow
+                                                                                </v-btn>
+                                                                        </v-btn-group>
+                                                                </v-card-actions>
+                                                        </v-card>
+                                                        <v-card v-else-if="!prof.cloak_status">
+                                                                <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+                                                                        height="250px" cover>
+                                                                        <v-avatar cover size="200" rounded="10">
+                                                                                <v-img :lazy-src="('/storage/avatars/' + prof.image_name)"
+                                                                                        :src="('/storage/avatars/' + prof.image_name)">
+
+                                                                                </v-img>
+
+                                                                        </v-avatar>
+                                                                        <b class="text-white"> {{
+                                                                                prof.name
+                                                                        }} {{
         prof.lastname
 }}</b>
-                                                                                </v-img>
-                                                                        </v-col>
-                                                                        <v-col v-else>
-                                                                                <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-                                                                                        height="250px" cover>
-                                                                                        <v-avatar cover size="200" rounded="10">
-                                                                                                <v-img :lazy-src="('/storage/avatars/' + prof.image_name)"
-                                                                                                        :src="('/storage/avatars/' + prof.image_name)">
-
-                                                                                                </v-img>
-
-                                                                                        </v-avatar>
-                                                                                        <b class="text-white"> {{
-                                                                                                prof.name
-                                                                                        }} {{
-        prof.lastname
-}}</b>
 
 
-                                                                                </v-img>
-                                                                        </v-col>
+                                                                </v-img>
 
-                                                                </v-row>
                                                                 <v-card-subtitle>
                                                                         <p>
                                                                                 <v-icon>mdi-map-marker</v-icon> Cidade:
@@ -94,45 +125,28 @@
                                                                                         count_followers
                                                                                 }})
 
-                                                                        </p>
+                                                                        </p> Found Users ({{ count_followers }})
+
+                                                                        Nenhum Serviço encontrado
                                                                 </v-card-text>
 
-                                                                <v-card-actions>
-                                                                        <v-btn :to="'/searchProfile/' + prof.id"
-                                                                                color="pink-accent-4" class="mb-4">
-                                                                                <v-icon>mdi-account</v-icon>
-                                                                                see profile
-                                                                        </v-btn>
-                                                                        <v-btn class="mb-4" color="pink-accent-4"
-                                                                                @click="sendMessage()">
-                                                                                <v-icon>mdi-account</v-icon>
-                                                                                send message
-                                                                        </v-btn>
-                                                                        <v-btn class="mb-4" color="pink-accent-4"
-                                                                                @click="follow(prof)">
-                                                                                <v-icon>mdi-plus</v-icon>
-                                                                                Follow
-                                                                        </v-btn>
-                                                                        <v-spacer></v-spacer>
-                                                                        <v-spacer></v-spacer>
-                                                                        <v-divider></v-divider>
-                                                                        <v-spacer></v-spacer>
-                                                                </v-card-actions>
-
                                                         </v-card>
+                                                </v-list-item>
 
-                                                </v-list-item-text>
+                                        </v-list-item>
+                                        <v-list-item v-else-if="!this.profile_prof">
+                                                <p class="text-h6">
+                                                        Found Users ({{ 0 }})
+                                                </p>
+
+                                                <p class="text-h8">
+                                                        Nenhum Serviço encontrado
+                                                </p>
+
                                         </v-list-item>
                                 </v-list>
-                                <v-list v-else>
-                                        <v-list-item-title>Found Users ({{ count_followers }})</v-list-item-title>
-                                        <v-list-item>
-                                                Nenhum Serviço encontrado
-                                        </v-list-item>
-                                </v-list>
+
                                 <v-divider></v-divider>
-
-
                         </v-card-text>
                         <v-btn block color="primary" class="mb-4" v-if="(profile_prof.length >= 1)" @click="seeMore()">
                                 <v-icon>mdi-eye</v-icon>
@@ -167,15 +181,6 @@ export default {
                                 })
                                 .catch((response) => {
                                         return 'Error: ' + response;
-                                });
-                },
-                getCloak() {
-                        axios.get('/cloak')
-                                .then((response) => {
-                                        this.cloaks = response.data;
-                                        return this.cloaks;
-                                }).catch((response) => {
-                                        return alert('Error: '.response);
                                 });
                 },
                 onClick() {
@@ -252,8 +257,6 @@ export default {
         created() {
                 this.user();
                 this.countFollowers();
-                this.getCloak();
-
         }
 }
 </script>
