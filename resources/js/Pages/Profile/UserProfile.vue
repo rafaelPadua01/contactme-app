@@ -8,12 +8,12 @@
             </div>
             <v-card>
                 <v-row>
-                    <v-col v-for="profile in profile_user">
+                    <v-col v-for="profile in profile_user" :key="profile.id">
                         <v-card-text>
 
                             <v-parallax v-if="profile.c_image.length >= 1 && profile.c_image_status == true"
-                                :lazy-src="`/storage/cloak/${profile.c_image}`"
-                                :src="`/storage/cloak/${profile.c_image}`" height="250px" cover>
+                                :lazy-src="`/storage/cloak/${profile.c_image}`" :src="`/storage/cloak/${profile.c_image}`"
+                                height="250px" cover>
                                 <v-avatar cover size="200" rounded="10">
                                     <v-img :lazy-src="('/storage/avatars/' + profile.image_name)"
                                         :src="('/storage/avatars/' + profile.image_name)" alt="avatar" cover>
@@ -47,20 +47,26 @@
                                         </b>
                                     </small>
                                 </v-col>
-                                <v-col class="d-flex" cols="12" sm="6">
+
+                                <v-divider></v-divider>
+                                <v-col>
                                     <v-btn-group>
-                                        <v-btn v-if="followers.length == 0" color="primary" icon @click="follow">
+                                        <v-btn class="mr-4" size="x-large" v-if="followers.length == 0" color="pink-accent-2" icon @click="follow"
+                                            variant="tonal">
                                             <v-icon>mdi-account-multiple-plus</v-icon>
 
                                         </v-btn>
-                                        <v-btn v-if="followers.length >= 1" color="primary" icon @click="unfollow">
+                                        <v-btn class="mr-4" size="x-large" v-if="followers.length >= 1"
+                                            color="pink-accent-4" icon @click="unfollow" variant="tonal">
                                             <v-icon>mdi-account-multiple-minus</v-icon>
 
                                         </v-btn>
-                                        <v-btn color="primary" icon @click="windowMessage">
+                                        <v-btn class="mr-4" color="pink-accent-4" size="x-large" icon @click="windowMessage"
+                                            variant="tonal">
                                             <v-icon>mdi-message</v-icon>
                                         </v-btn>
-                                        <v-btn color="primary" icon @click="windowAppointments = true">
+                                        <v-btn class="mr-4" size="x-large" color="pink-accent-4" icon @click="windowAppointments = true"
+                                            variant="tonal">
                                             <v-icon>mdi-notebook-plus</v-icon>
                                         </v-btn>
                                     </v-btn-group>
@@ -68,6 +74,7 @@
                                         <v-dialog v-model="dialogMessage">
                                             <v-row>
                                                 <v-col>
+                                                    <v-card>
                                                     <v-toolbar color="pink-accent-3">
                                                         <v-toolbar-title>
                                                             {{ profile.name }} {{ profile.lastname }}
@@ -79,11 +86,10 @@
                                                             </v-btn>
                                                         </template>
                                                     </v-toolbar>
-                                                    <v-card>
-
-                                                        <v-card-text>
-                                                            <div class="text-center bg-pink-accent-4">
-                                                                Você Disse: {{ messages.message }}
+                                                    
+                                                    <v-card-text>
+                                                            <div>
+                                                                You say: <v-chip class="mr-2" color="pink-accent-4">{{ messages }}</v-chip>
                                                             </div>
                                                         </v-card-text>
                                                         <v-divider></v-divider>
@@ -95,24 +101,22 @@
                                                                     <v-textarea class="mx-2" rows="1" v-model="messages"
                                                                         label="Write message here...">
                                                                         <template v-slot:append-inner>
-                                                                            <v-btn class="mb-4" color="pink-accent-3"
-                                                                                icon @click="removeCharter">
+                                                                            <v-btn class="mb-4" color="pink-accent-3" icon
+                                                                                @click="removeCharter">
                                                                                 <v-icon>mdi-backspace</v-icon>
 
                                                                             </v-btn>
-
-                                                                            <v-btn class="mb-4" color="pink-accent-3"
-                                                                                icon @click="sendMessage(profile)">
-                                                                                <v-icon>mdi-message</v-icon>
-
-                                                                            </v-btn>
-
-                                                                            <v-btn class="mb-4" color="pink-accent-3"
-                                                                                icon @click="messages = ''">
+                                                                            <v-btn class="mb-4" color="pink-accent-3" icon
+                                                                                @click="messages = ''">
                                                                                 <v-icon>mdi-close</v-icon>
 
                                                                             </v-btn>
 
+                                                                            <v-btn class="mb-4" color="pink-accent-3" icon
+                                                                                @click="sendMessage(profile)">
+                                                                                <v-icon>mdi-message</v-icon>
+
+                                                                            </v-btn>
                                                                         </template>
 
                                                                     </v-textarea>
@@ -143,7 +147,7 @@
                                                             <template v-slot:append>
                                                                 <v-btn icon @click="markDialog = false">
                                                                     <v-icon>mdi-close</v-icon>
-                                                                        
+
                                                                 </v-btn>
                                                             </template>
                                                         </v-toolbar>
@@ -151,8 +155,8 @@
                                                         <v-card-text>
                                                             <v-sheet>
                                                                 <div>
-                                                                    <v-alert type="error" v-if="this.error"
-                                                                        variant="tonal" @click="this.error = false">
+                                                                    <v-alert type="error" v-if="this.error" variant="tonal"
+                                                                        @click="this.error = false">
                                                                         {{ this.error }}
                                                                     </v-alert>
                                                                     <v-alert type="success" v-if="this.success"
@@ -179,34 +183,28 @@
 
                                                                         </v-text-field>
                                                                         <v-row>
-                                                                            <v-col 
-                                                                                v-for="day,index in convertDayWorkInArray()"
-                                                                                :key="day.id"
-                                                                            >
-                                                                                   
-                                                                                <v-checkbox
-                                                                                    v-model="marked_day"
-                                                                                    :rules="dayMarkerRules"
-                                                                                    :label="day"
-                                                                                    color="pink-accent-4"
-                                                                                    hide-details
-                                                                                    required
-                                                                                    :value="day"
-                                                                                >
-                                                                                    
+                                                                            <v-col
+                                                                                v-for="day, index in convertDayWorkInArray()"
+                                                                                :key="day.id">
+
+                                                                                <v-checkbox v-model="marked_day"
+                                                                                    :rules="dayMarkerRules" :label="day"
+                                                                                    color="pink-accent-4" hide-details
+                                                                                    required :value="day">
+
                                                                                 </v-checkbox>
                                                                             </v-col>
                                                                         </v-row>
-                                                                         
-                                                                       
-                                                                        
-                                                                       <!-- <v-text-field
+
+
+
+                                                                        <!-- <v-text-field
                                                                             :label="'selecione o dia:' + this.editAppoiment.days_work"
                                                                             v-model="marked_day" :rules="dayMarkerRules"
                                                                             type="date" required>
 
                                                                         </v-text-field> -->
-                                                                            {{ this.profile_user.especialidades }}
+                                                                        {{ this.profile_user.especialidades }}
                                                                         <v-select v-model="service"
                                                                             :rules="[v => !!v || 'Selecione um serviço']"
                                                                             :items="this.especialidades"
@@ -214,8 +212,7 @@
                                                                             persistent-hint return-object single-line
                                                                             label="Selecione o serviço"
                                                                             :placeholder="'selecione uma especialidade'"
-                                                                            required
-                                                                            >
+                                                                            required>
 
                                                                         </v-select>
                                                                         {{ this.profile_user.especialidades }}
@@ -249,60 +246,94 @@
                         <v-card-text>
                             <v-row>
                                 <v-col class="d-flex" cols="12" sm="6" v-if="(count_followers >= 1)">
-                                    <p><b>Seguidores:</b> ({{ (count_followers) }})</p>
+                                    <p>
+                                        <b>
+                                            <v-icon>mdi-account-group-outline</v-icon> 
+                                            Seguidores:</b> ({{ (count_followers) }})</p>
                                 </v-col>
 
                                 <v-col class="d-flex" cols="12" sm="6">
-                                    <b>profissao: {{ profile.profissao }}</b>
+                                    <b>
+                                        <v-icon>mdi-engine-outline</v-icon>
+                                         profissao: {{ profile.profissao }}
+                                    </b>
                                 </v-col>
 
                             </v-row>
-                            <v-divider></v-divider>
+                           
                             <v-spacer></v-spacer>
                             <v-row>
-                                <v-col class="d-flex" cols="12" sm="6">
-                                    <b> Especialidades: {{ profile.especialidades }}</b>
+                                <v-col>
+                                    <strong>
+                                        <v-icon>mdi-toolbox</v-icon>
+                                        Especialidades:
+                                    </strong>
+                                    <v-chip class="mr-2" color="pink-accent-4" v-for="especialidade in especialidades">
+                                        <v-icon color="red-accent-4">mdi-fire</v-icon>
+                                        {{ especialidade }}
+                                    </v-chip>
+                                   
                                 </v-col>
+                            </v-row>
+                            
+                           
+                          
+                            <v-spacer></v-spacer>
+                            <v-spacer></v-spacer>
 
+                            <v-row>
+                                <v-col>
+                                    <b>
+                                        <v-icon>mdi-email-fast</v-icon>
+                                         E-mail: {{ profile.email }}
+                                    </b>
+                                </v-col>
                                 <v-col class="d-flex" cols="12" sm="6">
                                     <p>
-                                        <b>LastJob:</b> {{ profile.lastjob }}
+                                        <b>
+                                            <v-icon>
+                                                mdi-account-hard-hat
+                                            </v-icon> LastJob:</b> {{ profile.lastjob }}
+                                    </p>
+                                </v-col>
+                                
+                                <v-col class="d-flex" cols="12" sm="6">
+                                    <p> 
+                                        <b>
+                                        <v-icon>mdi-semantic-web</v-icon>
+                                         Bio:
+                                        </b>{{ profile.descricao }}
                                     </p>
                                 </v-col>
                             </v-row>
 
-                            <v-row>
-                                <v-col>
-                                    <b>E-mail: {{ profile.email }}</b>
-                                </v-col>
-                                <v-col class="d-flex" cols="12" sm="6">
-                                    <p> <b> Bio:</b>{{ profile.descricao }}</p>
-                                </v-col>
-                            </v-row>
-
                             <v-divider></v-divider>
                             <v-spacer></v-spacer>
                             <v-spacer></v-spacer>
 
                             <v-row>
                                 <v-col>
-                                    <v-slide-group v-model="slide_image" class="pa-4" selected-class="bg-primary" show-arrows>
+                                    <v-slide-group v-model="slide_image" class="pa-4" selected-class="bg-primary"
+                                        show-arrows>
                                         <v-slide-group-item v-for="(img, index) in galery_images" :key="img.id"
                                             v-slot="{ isSelected, toggle, selectedClass }">
-                                            <v-card v-if="index <= 4" color="grey-lighten-1" :class="['ma-4', selectedClass]" height="300" width="200" @click="toggle">
-                                    
+                                            <v-card v-if="index <= 4" color="pink-lighten-1"
+                                                :class="['ma-4', selectedClass]" height="400" width="250" @click="toggle">
+
                                                 <div class="d-flex fill-height align-center justify-center">
-                                                    <v-img cover :lazy-src="`/storage/galery/${img.name_galery}/${img.name_image}`"
-                                                        :src="`/storage/galery/${img.name_galery}/${img.name_image}`" height="2500" max-heigth="500"
-                                                        class="bg-grey-lighten-2" @click="showImage(img)">
+                                                    <v-img cover
+                                                        :lazy-src="`/storage/galery/${img.name_galery}/${img.name_image}`"
+                                                        :src="`/storage/galery/${img.name_galery}/${img.name_image}`"
+                                                        height="2500" max-heigth="500" class="bg-grey-lighten-2"
+                                                        @click="showImage(img)">
                                                     </v-img>
 
                                                 </div>
                                             </v-card>
                                         </v-slide-group-item>
                                     </v-slide-group>
-                                 
-                                 </v-col>
+
+                                </v-col>
                             </v-row>
                         </v-card-text>
 
@@ -311,12 +342,9 @@
             </v-card>
             <div>
                 <v-dialog v-model="showImgDialog" transition="fab-transition">
-                   <v-img 
-                    :lazy-src="`/storage/galery/${objectImg.name_galery}/${objectImg.name_image}`"
-                    :src="`/storage/galery/${objectImg.name_galery}/${objectImg.name_image}`"
-                    :alt="`/storage/galery/${objectImg.name_galery}/${objectImg.name_image}`"
-                    max-height="600"
-                   >
+                    <v-img :lazy-src="`/storage/galery/${objectImg.name_galery}/${objectImg.name_image}`"
+                        :src="`/storage/galery/${objectImg.name_galery}/${objectImg.name_image}`"
+                        :alt="`/storage/galery/${objectImg.name_galery}/${objectImg.name_image}`" max-height="600">
                         <v-btn-group class="float-right">
                             <v-btn icon variant="plain">
                                 <v-icon>mdi-dots-vertical</v-icon>
@@ -325,16 +353,16 @@
                                 <v-icon>mdi-close</v-icon>
                             </v-btn>
                         </v-btn-group>
-                      
-                       
+
+
                     </v-img>
-                   
+
                 </v-dialog>
             </div>
         </v-sheet>
 
         <div class="text-center">
-            
+
             <v-dialog v-model="windowAppointments">
                 <v-card class="">
                     <v-toolbar color="pink-accent-4">
@@ -387,13 +415,12 @@
 
                     </v-card-text>
                 </v-card>
-                
+
             </v-dialog>
 
-            
-        </div>
- </v-container>
 
+        </div>
+    </v-container>
 </template>
 
 <script>
@@ -421,7 +448,7 @@ export default {
         comment: '',
         erroDialog: false,
         objectImg: false,
-        indexImg: -1, 
+        indexImg: -1,
         especialidades: [],
         initialHourRules: [
             v => !!v || '*Campo Hora é obrigatorio',
@@ -453,7 +480,7 @@ export default {
             axios.get(`/searchProfile/${this.$route.params.id}`)
                 .then((response) => {
                     this.profile_user = response.data;
-                    for(let i = 0; i <= this.profile_user.length; i++){
+                    for (let i = 0; i <= this.profile_user.length; i++) {
                         this.especialidades = JSON.parse(this.profile_user[i].especialidades);
                         return this.especialidades;
                     }
@@ -486,8 +513,8 @@ export default {
                     return this.error = response;
                 });
         },
-        convertDayWorkInArray(){
-           const days_work = this.editAppoiment.days_work.split(' ');
+        convertDayWorkInArray() {
+            const days_work = this.editAppoiment.days_work.split(' ');
             return days_work;
         },
         countFollowers() {
@@ -553,7 +580,7 @@ export default {
                 });
         },
         removeCharter() {
-            alert('Trabalhando nisso aqui');
+            return this.messages = this.messages.slice(0, -1);
         },
         dialogMarker(appointment) {
             this.appointmentIndex = this.appointments.indexOf(appointment);
@@ -566,39 +593,39 @@ export default {
 
         },
         saveMarker() {
-                let data = {
-                    appointment_id: this.editAppoiment.id,
-                    marked_hour: this.editAppoiment.initial_hour,
-                    client_name: this.auth_user.name,
-                    marked_day: this.marked_day,
-                    marked_service: this.service,
-                    note: this.comment,
-                }
-                axios.post(`/service/create/${this.$route.params.id}`, data)
-                    .then((response) => {
-                        this.success = 'Sua solicitação de horario foi enviada, aguarde que em breve entraremos em contato.';
-                        return setTimeout(() => {
-                            this.success = false;
-                            this.editAppoinment = '';
-                        }, 9000)
-                        //return this.markDialog = false;
-                    })
-                    .catch((response) => {
-                        if (response.response.status == 500) {
-                            this.error = 'todos os campos devem ser preenchidos';
-                            // this.error = response;
-                            return setTimeout(() => {
-                                this.error = false;
-                                this.editAppoinment = '';
-                            }, 9000);
-                        }
-                        this.error = response;
+            let data = {
+                appointment_id: this.editAppoiment.id,
+                marked_hour: this.editAppoiment.initial_hour,
+                client_name: this.auth_user.name,
+                marked_day: this.marked_day,
+                marked_service: this.service,
+                note: this.comment,
+            }
+            axios.post(`/service/create/${this.$route.params.id}`, data)
+                .then((response) => {
+                    this.success = 'Sua solicitação de horario foi enviada, aguarde que em breve entraremos em contato.';
+                    return setTimeout(() => {
+                        this.success = false;
+                        this.editAppoinment = '';
+                    }, 9000)
+                    //return this.markDialog = false;
+                })
+                .catch((response) => {
+                    if (response.response.status == 500) {
+                        this.error = 'todos os campos devem ser preenchidos';
+                        // this.error = response;
                         return setTimeout(() => {
                             this.error = false;
                             this.editAppoinment = '';
                         }, 9000);
+                    }
+                    this.error = response;
+                    return setTimeout(() => {
+                        this.error = false;
+                        this.editAppoinment = '';
+                    }, 9000);
 
-                    });
+                });
         },
         showImage(img) {
             this.objectImg = Object.assign({}, img);
