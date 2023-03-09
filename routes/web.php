@@ -81,6 +81,7 @@ Route::post('/professionalProfile/{id}', [ProfileProfController::class, 'save'])
 Route::get('/profileImg', [ImageProfileController::class, 'index'])->name('index');
 Route::post('/profileImg/upload/{id}', [ImageProfileController::class, 'upload'])->name('upload');
 Route::post('/profileImg/update/{id}', [ImageProfileController::class, 'update'])->name('update');
+Route::delete('/profileImg/delete/{id}', [ImageProfileController::class, 'delete'])->name('delete');
 
 //Route Cloak (capa profile)
 Route::get('/cloak', [CloakController::class, 'index'])->name('index');
