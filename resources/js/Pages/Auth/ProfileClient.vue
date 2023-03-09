@@ -1,6 +1,6 @@
 <template>
-    <v-app style="margin-top: -1%">
-        <v-main>
+    <v-container class="py-8" fluid>
+        <v-sheet>
             <v-card>
                 <div class="text-center">
                     <v-alert type="error" v-if="this.error">
@@ -14,25 +14,19 @@
                     <v-divider></v-divider>
 
                 </div>
-                <v-container class="py-8" fluid>
-                    <p><strong>Informações Pessoais:</strong></p>
+                <v-container fluid>
+                    <p class="text-h6"><strong>Informações Pessoais:</strong></p>
 
                     <v-form ref="form" enctype="multipart/form-data">
-                        <v-expansion-panels>
+                        <v-expansion-panels v-model="personalExpansion">
                             <v-expansion-panel>
-
-                                <v-expansion-panel-title>Pessoal</v-expansion-panel-title>
-
+                                <v-expansion-panel-title class="text-h6 bg-pink-accent-4">Pessoal</v-expansion-panel-title>
                                 <v-expansion-panel-text>
                                     <v-row>
                                         <v-col>
-
                                             <v-card>
-
-
                                                 <v-avatar v-if="profile_img" style="width: 25%;" color="grey" size="200"
                                                     rounded="0">
-
                                                     <v-hover v-slot="{ isHovering, props }">
                                                         <v-img cover :src="'storage/avatars/' + profile_img.image_name"
                                                             v-bind="props">
@@ -44,7 +38,8 @@
                                                             </v-file-input>
                                                             <v-overlay :model-value="isHovering" contained scrim="grey"
                                                                 class="align-center justify-center">
-                                                                <v-btn link color="primary">
+                                                                <v-btn link color="primary"
+                                                                    @click="removeProfileImg(profile_img)">
                                                                     Remover
                                                                 </v-btn>
                                                             </v-overlay>
@@ -101,16 +96,16 @@
                         <v-expansion-panels>
 
                             <v-expansion-panel>
-                                <v-expansion-panel-title>
+                                <v-expansion-panel-title class="text-h6 bg-pink-accent-3">
                                     Endereço
                                 </v-expansion-panel-title>
                                 <v-expansion-panel-text>
                                     <v-row>
                                         <v-col class="d-flex" cols="12" sm="6">
                                             <v-select v-model="uf" :hint="`${uf.state}, ${uf.abbr}`" label="UF"
-                                                prepend-icon="mdi-map-marker" color="pink-accent-1" filled
-                                                :items="ufItems" item-title="state" item-value="abbr" persistent-hint
-                                                return-object single-line required>
+                                                prepend-icon="mdi-map-marker" color="pink-accent-1" filled :items="ufItems"
+                                                item-title="state" item-value="abbr" persistent-hint return-object
+                                                single-line required>
 
                                             </v-select>
                                         </v-col>
@@ -140,21 +135,21 @@
                         </v-expansion-panels>
                         <v-expansion-panels>
                             <v-expansion-panel>
-                                <v-expansion-panel-title>Contatos</v-expansion-panel-title>
+                                <v-expansion-panel-title class="text-h6 bg-pink-accent-2">Contatos</v-expansion-panel-title>
                                 <v-expansion-panel-text>
                                     <v-row>
                                         <v-col>
                                             <v-text-field type="telefone" v-model="profile_user.t_residencial"
-                                                label="Telefone Residêncial" v-mask="'(##) ####-####'"
-                                                color="pink-accent-1" :placeholder="profile_user.t_residencial">
+                                                label="Telefone Residêncial" v-mask="'(##) ####-####'" color="pink-accent-1"
+                                                :placeholder="profile_user.t_residencial">
 
                                             </v-text-field>
                                         </v-col>
 
                                         <v-col>
-                                            <v-text-field type="telefone" v-model="profile_user.t_celular"
-                                                label="celular" v-mask="'55+ (##) ####-#####'" color="pink-accent-1"
-                                                required :placeholder="profile_user.t_celular">
+                                            <v-text-field type="telefone" v-model="profile_user.t_celular" label="celular"
+                                                v-mask="'55+ (##) ####-#####'" color="pink-accent-1" required
+                                                :placeholder="profile_user.t_celular">
 
                                             </v-text-field>
 
@@ -162,12 +157,23 @@
                                     </v-row>
                                 </v-expansion-panel-text>
                             </v-expansion-panel>
+                            <v-spacer></v-spacer>
+                            <v-spacer></v-spacer>
                             <v-row>
                                 <v-col>
-                                    <div>
-                                        <v-btn class="mb-4" color="primary" link @click="update">Salvar</v-btn>
-                                        <v-btn class="mb-4" color="error" link @click="reset">Limpar</v-btn>
-                                    </div>
+
+                                    <v-btn-group>
+                                        <v-btn class="mb-4" color="pink-accent-4" variant="tonal" @click="update">
+                                            <v-icon>mdi-content-save-check</v-icon>
+                                            Salvar
+                                        </v-btn>
+                                        <v-btn class="mb-4" color="error" link variant="tonal" @click="reset">
+                                            <v-icon>mdi-delete</v-icon>
+                                            Limpar
+                                        </v-btn>
+                                    </v-btn-group>
+
+
                                 </v-col>
                             </v-row>
                         </v-expansion-panels>
@@ -180,7 +186,8 @@
                     <v-form ref="formProf">
                         <v-expansion-panels>
                             <v-expansion-panel>
-                                <v-expansion-panel-title>Profissão</v-expansion-panel-title>
+                                <v-expansion-panel-title
+                                    class="text-h6 bg-pink-accent-4">Profissão</v-expansion-panel-title>
                                 <v-expansion-panel-text>
                                     <v-row>
                                         <v-col class="d-flex" cols="12" sm="6">
@@ -211,18 +218,18 @@
                             <v-expansion-panel>
                                 <v-row>
                                     <v-col>
-                                        <v-expansion-panel-title>Epecialidades</v-expansion-panel-title>
+                                        <v-expansion-panel-title
+                                            class="text-h6 bg-pink-accent-3">Epecialidades</v-expansion-panel-title>
                                         <v-expansion-panel-text>
                                             <v-row>
                                                 <v-col class="d-flex" cols="12" sm="6">
                                                     <v-select v-model="professional_profile.especialidades"
                                                         :items="['Tranças Nagô', 'Box-Braids', 'Twister-Braids', 'Pintura e decoração de unhas', 'Cortes']"
                                                         label="especialidades" color="pink-accent-4" multiple
-                                                        hint="Escolha suas especialidades" persistent-hint></v-select>
+                                                        hint="Escolha suas especialidades" persistent-hint>
+                                                    </v-select>
                                                 </v-col>
-                                            </v-row>
-                                            <v-row>
-                                                <v-col class="d-flex" cols="12" sm="6">
+                                                <v-col>
                                                     <v-chip class="ma-2" color="pink-accent-4" outlined
                                                         v-for="(p_pr_especialidade, index) in professional_profile.especialidades"
                                                         close @click="removeChip(p_pr_especialidade, index)">
@@ -231,15 +238,14 @@
                                                         </v-icon>
                                                         {{ p_pr_especialidade }}
                                                     </v-chip>
-
-
                                                 </v-col>
                                             </v-row>
 
+
                                             <v-row>
                                                 <v-col class="d-flex" cols="12" sm="6">
-                                                    <v-textarea v-model="professional_profile.descricao"
-                                                        label="descricao" color="pink-accent-4"
+                                                    <v-textarea v-model="professional_profile.descricao" label="descricao"
+                                                        color="pink-accent-4"
                                                         placeholder="Descreva sobre suas experiencias..."></v-textarea>
                                                 </v-col>
                                             </v-row>
@@ -251,12 +257,17 @@
                         </v-expansion-panels>
                         <v-row>
                             <v-col>
-                                <div>
-                                    <v-btn class="mb-4" color="primary" link @click="professionalProfile()">Salvar
+                                <v-btn-group>
+                                    <v-btn class="mb-4" color="pink-accent-4" variant="tonal"
+                                        @click="professionalProfile()">
+                                        <v-icon>mdi-content-save-check</v-icon>
+                                        Salvar
                                     </v-btn>
-                                    <v-btn class="mb-4" color="error" link
-                                        @click="this.$refs.formProf.reset()">Limpar</v-btn>
-                                </div>
+                                    <v-btn class="mb-4" color="error" variant="tonal" @click="this.$refs.formProf.reset()">
+                                        <v-icon>mdi-delete</v-icon>
+                                        Limpar
+                                    </v-btn>
+                                </v-btn-group>
                             </v-col>
                         </v-row>
                     </v-form>
@@ -264,8 +275,46 @@
                 </v-container>
 
             </v-card>
-        </v-main>
-    </v-app>
+            <v-div class="text-center">
+                <v-dialog v-model="removeProfileImgDialog">
+                    <v-card>
+                        <v-toolbar class="bg-pink-accent-4">
+                            <v-toolbar-title>Remove File ?</v-toolbar-title>
+                            <template v-slot:append>
+                                <v-btn variant="plain" @click="removeProfileImgDialog = false">
+                                    <v-icon>mdi-close</v-icon>
+                                </v-btn>
+                            </template>
+                        </v-toolbar>
+
+                        <v-card-text>
+                            Remove this file ?
+                            <v-img :lazy-src="`/storage/avatars/${this.objProfileImg.image_name}`"
+                                :src="`/storage/avatars/${this.objProfileImg.image_name}`"
+                                :alt="`${this.objProfileImg.image_name}`" height="200">
+                            </v-img>
+                        </v-card-text>
+                        <hr>
+                        <v-card-actions>
+                            <v-btn-group>
+                                <v-btn class="mr-4" variant="plain" color="pink-accent-4"
+                                    @click="confirmDeleteProfileImg(this.objProfileImg)">
+                                    <v-icon>mdi-delete-empty</v-icon>
+                                    Remove
+                                </v-btn>
+                                <v-btn class="mr-4" variant="plain" color="pink-accent-4"
+                                    @click="removeProfileImgDialog = false">
+                                    <v-icon>mdi-close</v-icon>
+                                    Cancel
+                                </v-btn>
+                            </v-btn-group>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+            </v-div>
+        </v-sheet>
+
+    </v-container>
 </template>
 
 <script>
@@ -290,15 +339,15 @@ export default {
             { state: 'Alagoas', abbr: 'Al' },
             { state: 'Amazonas', abbr: 'AM' },
             { state: 'Amapá', abbr: 'AP' },
-            {state: 'Bahia', abbr: 'BA'},
-            {state: 'Ceará', abbr: 'CE'},
-            {state: 'Distrito Federal', abbr: 'DF'},
-            {state: 'Espirito Santo', abbr: 'ES'},
-            {state: 'GO', abbr: 'Goiás'},
-            {state: 'Maranhão', abbr: 'MA'},
-            {state: 'Minas Gerais', abbr: 'MG'},
-            {state: 'Mato grosso', abbr: 'MT'},
-            {state: 'Paraná', abbr: 'PA'},
+            { state: 'Bahia', abbr: 'BA' },
+            { state: 'Ceará', abbr: 'CE' },
+            { state: 'Distrito Federal', abbr: 'DF' },
+            { state: 'Espirito Santo', abbr: 'ES' },
+            { state: 'Goiás', abbr: 'GO' },
+            { state: 'Maranhão', abbr: 'MA' },
+            { state: 'Minas Gerais', abbr: 'MG' },
+            { state: 'Mato grosso', abbr: 'MT' },
+            { state: 'Paraná', abbr: 'PA' },
             /*  
                 'PB',
                 'PI',
@@ -315,11 +364,14 @@ export default {
 
         //profissional
         professional_profile: [],
+        personalExpansion: [0, 1],
         profissao: '',
         tempo_experiencia: '',
         especialidades: [],
         lastjob: '',
         descricao: '',
+        objProfileImg: null,
+        removeProfileImgDialog: false,
     }),
     methods: {
         user() {
@@ -449,7 +501,22 @@ export default {
         },
         removeChip(p_pr_especialidade, index) {
             this.professional_profile.especialidades.splice(index, 1);
-
+        },
+        removeProfileImg(profile_img) {
+            this.objProfileImg = Object.assign({}, profile_img);
+            return this.removeProfileImgDialog = true;
+        },
+        confirmDeleteProfileImg(objProfileImg) {
+            axios.delete(`/profileImg/delete/${objProfileImg.id}`)
+                .then((response) => {
+                    this.removeProfileImgDialog = false;
+                    this.objProfileImg = '';
+                    console.log(objProfileImg);
+                    return this.profile_img.splice(this.profile_img.indexOf(objProfileImg.id), 1);
+                })
+                .catch((response) => {
+                    alert('Error:' + response);
+                });
         },
         logout() {
             axios.post('/logout')
