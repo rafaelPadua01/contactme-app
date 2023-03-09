@@ -51,23 +51,25 @@
                                 <v-divider></v-divider>
                                 <v-col>
                                     <v-btn-group>
-                                        <v-btn class="mr-4" size="x-large" v-if="followers.length == 0" color="pink-accent-2" icon @click="follow"
-                                            variant="tonal">
+                                        <v-btn class="mr-4" size="x-large" v-if="followers.length == 0"
+                                            color="pink-accent-2" icon @click="follow" variant="tonal">
                                             <v-icon>mdi-account-multiple-plus</v-icon>
-
+                                            <v-tooltip activator="parent" location="top">Follow {{ profile.name }} {{ profile.lastname }}</v-tooltip>
                                         </v-btn>
                                         <v-btn class="mr-4" size="x-large" v-if="followers.length >= 1"
                                             color="pink-accent-4" icon @click="unfollow" variant="tonal">
                                             <v-icon>mdi-account-multiple-minus</v-icon>
-
+                                            <v-tooltip activator="parent" location="top">Unfollow {{ profile.name }} {{ profile.lastname }}</v-tooltip>
                                         </v-btn>
                                         <v-btn class="mr-4" color="pink-accent-4" size="x-large" icon @click="windowMessage"
                                             variant="tonal">
                                             <v-icon>mdi-message</v-icon>
+                                            <v-tooltip activator="parent" location="top">Send message to user {{ profile.name }} {{ profile.lastname }}</v-tooltip>
                                         </v-btn>
-                                        <v-btn class="mr-4" size="x-large" color="pink-accent-4" icon @click="windowAppointments = true"
-                                            variant="tonal">
+                                        <v-btn class="mr-4" size="x-large" color="pink-accent-4" icon
+                                            @click="windowAppointments = true" variant="tonal">
                                             <v-icon>mdi-notebook-plus</v-icon>
+                                            <v-tooltip activator="parent" location="top">Available times </v-tooltip>
                                         </v-btn>
                                     </v-btn-group>
                                     <div class="text-center">
@@ -75,21 +77,22 @@
                                             <v-row>
                                                 <v-col>
                                                     <v-card>
-                                                    <v-toolbar color="pink-accent-3">
-                                                        <v-toolbar-title>
-                                                            {{ profile.name }} {{ profile.lastname }}
+                                                        <v-toolbar color="pink-accent-3">
+                                                            <v-toolbar-title>
+                                                                {{ profile.name }} {{ profile.lastname }}
 
-                                                        </v-toolbar-title>
-                                                        <template v-slot:append>
-                                                            <v-btn icon @click="dialogMessage = false">
-                                                                <v-icon>mdi-close</v-icon>
-                                                            </v-btn>
-                                                        </template>
-                                                    </v-toolbar>
-                                                    
-                                                    <v-card-text>
-                                                            <div>
-                                                                You say: <v-chip class="mr-2" color="pink-accent-4">{{ messages }}</v-chip>
+                                                            </v-toolbar-title>
+                                                            <template v-slot:append>
+                                                                <v-btn icon @click="dialogMessage = false">
+                                                                    <v-icon>mdi-close</v-icon>
+                                                                </v-btn>
+                                                            </template>
+                                                        </v-toolbar>
+
+                                                        <v-card-text>
+                                                            <div class="d-flex justify-around-space" cols="12" sm="12">
+                                                                You say: <v-chip class="mr-2" color="pink-accent-4">{{
+                                                                    messages }}</v-chip>
                                                             </div>
                                                         </v-card-text>
                                                         <v-divider></v-divider>
@@ -248,19 +251,20 @@
                                 <v-col class="d-flex" cols="12" sm="6" v-if="(count_followers >= 1)">
                                     <p>
                                         <b>
-                                            <v-icon>mdi-account-group-outline</v-icon> 
-                                            Seguidores:</b> ({{ (count_followers) }})</p>
+                                            <v-icon>mdi-account-group-outline</v-icon>
+                                            Seguidores:</b> ({{ (count_followers) }})
+                                    </p>
                                 </v-col>
 
                                 <v-col class="d-flex" cols="12" sm="6">
                                     <b>
                                         <v-icon>mdi-engine-outline</v-icon>
-                                         profissao: {{ profile.profissao }}
+                                        profissao: {{ profile.profissao }}
                                     </b>
                                 </v-col>
 
                             </v-row>
-                           
+
                             <v-spacer></v-spacer>
                             <v-row>
                                 <v-col>
@@ -272,12 +276,12 @@
                                         <v-icon color="red-accent-4">mdi-fire</v-icon>
                                         {{ especialidade }}
                                     </v-chip>
-                                   
+
                                 </v-col>
                             </v-row>
-                            
-                           
-                          
+
+
+
                             <v-spacer></v-spacer>
                             <v-spacer></v-spacer>
 
@@ -285,7 +289,7 @@
                                 <v-col>
                                     <b>
                                         <v-icon>mdi-email-fast</v-icon>
-                                         E-mail: {{ profile.email }}
+                                        E-mail: {{ profile.email }}
                                     </b>
                                 </v-col>
                                 <v-col class="d-flex" cols="12" sm="6">
@@ -296,12 +300,12 @@
                                             </v-icon> LastJob:</b> {{ profile.lastjob }}
                                     </p>
                                 </v-col>
-                                
+
                                 <v-col class="d-flex" cols="12" sm="6">
-                                    <p> 
+                                    <p>
                                         <b>
-                                        <v-icon>mdi-semantic-web</v-icon>
-                                         Bio:
+                                            <v-icon>mdi-semantic-web</v-icon>
+                                            Bio:
                                         </b>{{ profile.descricao }}
                                     </p>
                                 </v-col>
