@@ -22,6 +22,7 @@ use App\Http\Controllers\Message\FileMessagesController;
 use App\Http\Controllers\AppointmentBook\AppointmentBookController;
 use App\Http\Controllers\Service\ServicesController;
 use App\Http\Controllers\Enterprise\Auth\RegisterEnterpriseController;
+use App\Http\Controllers\Post\PostsController;
 use LDAP\Result;
 
 /*
@@ -53,6 +54,9 @@ Route::get('/dashboardEnt', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 require __DIR__.'/auth.php';
+//Rptas de posts
+Route::get('/post', [PostsController::class, 'index'])->name('index')->middleware('auth');
+Route::post('/post/create/{id}', [PostsController::class, 'save'])->name('save')->middleware('auth');
 
 //Rotas de login logoff
 Route::post('/login', [LoginRequest::class, 'authenticate'])->name('authenticate');
