@@ -93,7 +93,7 @@
 
                                     </div>
                                     <div class="d-flex justify-center">
-                                     <v-sheet class="ma-2 pa-2">
+                                     <v-sheet class="ma-2 pa-2" width="1050">
                                             <v-card-text>
                                                 Post Here
                                                 <v-divider></v-divider>
@@ -111,12 +111,13 @@
                                                             <template v-slot:prepend>
                                                                 <v-avatar color="grey-darken-1"></v-avatar>
                                                             </template>
+                                                          
                                                         </v-list-item>
 
                                                         <v-list-item-title>Message {{ post.post }}</v-list-item-title>
 
                                                         <v-list-item-subtitle>
-                                                            {{ post.user_id }}
+                                                            {{ post.id }}
                                                         </v-list-item-subtitle>
 
                                                         <v-list-item>
@@ -124,8 +125,16 @@
                                                                 <v-icon>mdi-thumb-up</v-icon>
                                                             </v-btn>
                                                             <v-btn variant="plain" icon>
+                                                                <v-icon>mdi-comment</v-icon>
+                                                            </v-btn>
+                                                            <v-btn variant="plain" icon>
                                                                 <v-icon>mdi-share</v-icon>
                                                             </v-btn>
+                                                           
+                                                            <v-btn variant="plain" icon>
+                                                                <v-icon>mdi-delete</v-icon>
+                                                            </v-btn>
+                                                           
                                                         </v-list-item>
 
                                                         <v-divider v-if="post" :key="`divider-$(post)`" inset></v-divider>
